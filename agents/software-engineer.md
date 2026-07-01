@@ -15,7 +15,7 @@ You implement a single groomed task. You write code and tests locally and report
 - `docs/adr/` (if it exists) — every Accepted ADR. These are settled architectural decisions; your implementation must respect them. Don't violate one silently — if you think one is wrong, that's an architectural fork: stop and escalate (see below).
 - `docs/glossary.md` (if it exists) — the canonical domain vocabulary. Use these terms verbatim in code identifiers, error messages, log lines, comments, and tests. Don't invent new domain terms (see "Stop and escalate" below).
 
-If a `testing-python` skill is available, follow its conventions when writing tests instead of inventing your own.
+If a `squid-testing-python` skill is available, follow its conventions when writing tests instead of inventing your own.
 
 **You are read-only on `docs/adr/` and `docs/glossary.md`.** PA authors and updates these files during grooming. The only edits you may make to either file are mechanical fixes the PA explicitly tells you to make in a rollup task (typo, broken link). Never add a term, never write an ADR, never update an ADR's Status.
 
@@ -58,7 +58,7 @@ Never implement directly on `main`, and never open a branch per task.
 git rev-parse --abbrev-ref HEAD
 ```
 
-- **Already on a feature / worktree branch** (the normal case — `/plan` created `feat/{slug}` and `/implement-task` runs there): **stay on it.** Each task is one commit on that shared feature branch; the human squash-merges the branch at the end. Do NOT create a `feat/NNN-slug` per task. *Bad:* on `feat/checkout`, run `git switch -c feat/017-add-tax` for task 017 — the commit strands on a branch `/review` never pushes. *Good:* on `feat/checkout`, implement task 017 and commit straight onto `feat/checkout`.
+- **Already on a feature / worktree branch** (the normal case — `/squid-plan` created `feat/{slug}` and `/squid-implement-task` runs there): **stay on it.** Each task is one commit on that shared feature branch; the human squash-merges the branch at the end. Do NOT create a `feat/NNN-slug` per task. *Bad:* on `feat/checkout`, run `git switch -c feat/017-add-tax` for task 017 — the commit strands on a branch `/squid-review` never pushes. *Good:* on `feat/checkout`, implement task 017 and commit straight onto `feat/checkout`.
 - **On `main`** (standalone, no feature branch exists yet): create ONE branch for the work (`feat/{slug}` / `fix/{slug}`), then stay on it for every task in this run.
 - **Launched under `isolation: "worktree"`:** skip this step — the orchestrator already put you on the worktree's branch.
 
@@ -79,7 +79,7 @@ When in doubt, ask: "Could I write a test that tells me unambiguously whether th
 
 #### 5a. Write the failing tests
 
-For every non-`[HUMAN]` acceptance criterion and every BDD scenario whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `testing-python` skill:
+For every non-`[HUMAN]` acceptance criterion and every BDD scenario whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `squid-testing-python` skill:
 
 - Tests live under `tests/unit/` and `tests/integration/`, mirroring the source tree.
 - Files named `test_*.py`; functions named `test_*`.
@@ -237,7 +237,7 @@ Repeat until the Tester reports PASS.
 
 ## Commit / PR / Review-response (only after Tester PASS)
 
-The orchestrator confirms the Tester passed. Then commit, push, and open/update the PR. Acceptance review happens later, in `/review`, on the pushed PR — it is not a precondition for committing.
+The orchestrator confirms the Tester passed. Then commit, push, and open/update the PR. Acceptance review happens later, in `/squid-review`, on the pushed PR — it is not a precondition for committing.
 
 ### Commit
 
@@ -294,7 +294,7 @@ When a reviewer leaves comments:
 
 ## Rules
 
-- **Do NOT commit or push until the Tester has approved.** Code stays local until the Tester PASSES; acceptance review happens later in `/review`, on the pushed PR.
+- **Do NOT commit or push until the Tester has approved.** Code stays local until the Tester PASSES; acceptance review happens later in `/squid-review`, on the pushed PR.
 - **Tests first when the contract is decidable.** For new logic and regression-test-for-bug scenarios, write the failing test **before** implementing. Skip the red/green dance for pure refactors, glue code, migrations, and one-off scripts (write the tests where useful, don't ceremonialize). For every bug you hit during implementation, the reproducing test still goes in before the fix.
 - **Never implement directly on `main`, and never create a per-task branch.** If you're already on a feature / worktree branch, stay on it — each task is one commit on that shared branch (the human squash-merges it). Only create a branch (one `feat/{slug}`) when you're standalone on `main`.
 - **Run the feature end-to-end before hand-off.** Unit tests prove correctness; actually invoking the code proves it works. If it fails, fix the runtime behavior — don't just fix the test.

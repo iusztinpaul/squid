@@ -10,29 +10,29 @@ Claude Code writes code fast. It's worse at writing the code *your team* would a
 
 ## How it works
 
-Run `/plan <feature-spec>` then `/implement-night`, and Squid drives this end-to-end:
+Run `/squid-plan <feature-spec>` then `/squid-implement-night`, and Squid drives this end-to-end:
 
 ```
   feature spec
        │
-       ▼   /plan
+       ▼   /squid-plan
   ┌──────────────────────────────────────────────────────────────┐
   │ grill → PA grooms Tasks Plan (+ADR) → HUMAN approves (1/2)     │
   │ → branch + worktree                                            │
   └──────────────────────────────────────────────────────────────┘
-       │   /implement-night  (runs end-to-end in the worktree)
+       │   /squid-implement-night  (runs end-to-end in the worktree)
        ▼
-  ┌─────────────────┐    ┌──────────────────────┐    ┌─────────────────┐
-  │ /implement-task │──▶ │ /review              │──▶ │ /review-ci      │
-  │ SWE ↔ Tester    │    │ push → PA accept →   │    │ On-Call drives  │
-  │ commit each task│    │ PR-Reviewer          │    │ CI to green     │
-  └─────────────────┘    └──────────────────────┘    └─────────────────┘
-                                                              │
-                                                              ▼
-                                                   HUMAN squash-merges (2/2)
+  ┌──────────────────────┐    ┌───────────────────┐    ┌─────────────────┐
+  │ /squid-implement-task│──▶ │ /squid-review     │──▶ │ /squid-review-ci│
+  │ SWE ↔ Tester         │    │ push → PA accept →│    │ On-Call drives  │
+  │ commit each task     │    │ PR-Reviewer       │    │ CI to green     │
+  └──────────────────────┘    └───────────────────┘    └─────────────────┘
+                                                                │
+                                                                ▼
+                                                    HUMAN squash-merges (2/2)
 ```
 
-Branch + worktree, grooming, the per-task implement/verify loop, push, diff review, and CI are all automated — you only show up for the two gates. For a quick single change, run `/implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/scaffold` first — it interviews you about the stack and writes a tailored `AGENTS.md` plus a folder skeleton (no application source).
+Branch + worktree, grooming, the per-task implement/verify loop, push, diff review, and CI are all automated — you only show up for the two gates. For a quick single change, run `/squid-implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/squid-scaffold` first — it interviews you about the stack and writes a tailored `AGENTS.md` plus a folder skeleton (no application source).
 
 ## Who this is for
 
@@ -106,12 +106,12 @@ npx skills add iusztinpaul/squid
 It scans the repo for `SKILL.md` files and installs them into whichever agents it detects (Claude Code, Cursor, Codex, and 70+ more). Add `-g` to install into your user directory instead of the current project, or `--skill <name>` to grab specific ones:
 
 ```
-npx skills add iusztinpaul/squid --skill plan --skill implement-task -g
+npx skills add iusztinpaul/squid --skill squid-plan --skill squid-implement-task -g
 ```
 
 Manage them with `npx skills list`, `npx skills update`, and `npx skills remove <name>`.
 
-> **Skills only.** This installs the `/plan`, `/implement-task`, … skills but **not** Squid's five sub-agents (PA, SWE, Tester, PR-Reviewer, On-Call) or the bundled MCP plugins. The pipeline skills invoke those agents, so the full flow only works through the `/plugin install` path above — reach for `npx skills` when you want individual skills inside another agent.
+> **Skills only.** This installs the `/squid-plan`, `/squid-implement-task`, … skills but **not** Squid's five sub-agents (PA, SWE, Tester, PR-Reviewer, On-Call) or the bundled MCP plugins. The pipeline skills invoke those agents, so the full flow only works through the `/plugin install` path above — reach for `npx skills` when you want individual skills inside another agent.
 
 </details>
 
@@ -136,15 +136,15 @@ Installed via `npx skills` instead? Remove those with `npx skills remove <name>`
 
 | Surface | What it does |
 |---|---|
-| `/scaffold` | Interactive bootstrap. Asks what you're building (backend / frontend / TUI / mix), reads the relevant specs, writes a tailored `AGENTS.md`, and lays down an empty folder skeleton. Run `/plan` next to start building. |
-| `/plan <feature-spec>` | Plan a feature: grill the spec, PA grooms an approved Tasks Plan (+ optional ADR), create the branch + worktree. Start here. |
-| `/implement-night <plan>` | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR. |
-| `/implement-task` · `/review` · `/review-ci` | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation. |
-| `/refactor` · `/triage-issue` · `/architecture-review` | Standalone planning/intake helpers (not wired into the main pipeline). |
+| `/squid-scaffold` | Interactive bootstrap. Asks what you're building (backend / frontend / TUI / mix), reads the relevant specs, writes a tailored `AGENTS.md`, and lays down an empty folder skeleton. Run `/squid-plan` next to start building. |
+| `/squid-plan <feature-spec>` | Plan a feature: grill the spec, PA grooms an approved Tasks Plan (+ optional ADR), create the branch + worktree. Start here. |
+| `/squid-implement-night <plan>` | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR. |
+| `/squid-implement-task` · `/squid-review` · `/squid-review-ci` | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation. |
+| `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` | Standalone planning/intake helpers (not wired into the main pipeline). |
 | `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer` | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. |
-| `testing-python`, `grilling`, `self-improve` | Support skills the pipelines and agents lean on. |
+| `squid-testing-python`, `squid-grilling`, `squid-self-improve` | Support skills the pipelines and agents lean on. |
 
-The `/scaffold` spec library (under `skills/scaffold/specs/`) covers:
+The `/squid-scaffold` spec library (under `skills/squid-scaffold/specs/`) covers:
 
 - **Python:** backend layout, uv, pyproject, ruff, FastAPI, FastMCP, CLI tools
 - **TypeScript frontend:** package/tsconfig/vite conventions, React, Vue, Svelte, vanilla
@@ -163,20 +163,21 @@ Issues and PRs welcome — especially new specs (Rust, Java, mobile, additional 
 In an empty directory:
 
 ```
-/scaffold
+/squid-scaffold
 ```
 
 The skill asks what you want to build (components, frameworks, infra, license) and writes:
 
-- `AGENTS.md` — project brief distilled from the relevant specs (plus a one-line `CLAUDE.md` that points to it)
-- Skeleton `packages/<component>/` directories with placeholder Makefiles and component-level `AGENTS.md`s
+- `AGENTS.md` — project brief distilled from the relevant specs; the single source of truth, with `CLAUDE.md` symlinked to it for Claude Code
+- `.agents/skills/` — canonical home for project-local skills, with `.claude/skills` symlinked to it
+- Skeleton `packages/<component>/` directories with placeholder Makefiles and component-level `AGENTS.md`s (each with its own `CLAUDE.md` symlink)
 - Root `Makefile`, `.env.example`, `.gitignore`
 - Optional: `docker-compose.yml`, `.github/workflows/`, `tasks/`
 
 It does **not** write application source. That's the next step:
 
 ```
-/implement-task "Bootstrap packages/backend with a FastAPI /health endpoint and one unit test."
+/squid-implement-task "Bootstrap packages/backend with a FastAPI /health endpoint and one unit test."
 ```
 
 The SWE agent reads `AGENTS.md`, picks up the specs it references, writes real code + tests, hands off to the Tester, and commits the task once it passes.
@@ -184,9 +185,9 @@ The SWE agent reads `AGENTS.md`, picks up the specs it references, writes real c
 ## Philosophy
 
 - **Specs over templates.** Opinions live as markdown the agent reads — no Jinja, no render step, no drift between a template and what the agent produces.
-- **Progressive disclosure.** A session loads only the skills whose descriptions match the task; the spec library is gated behind `/scaffold` so it doesn't pollute every session's index.
+- **Progressive disclosure.** A session loads only the skills whose descriptions match the task; the spec library is gated behind `/squid-scaffold` so it doesn't pollute every session's index.
 - **One skill per concern.** Adding a new stack is one markdown file, not a new scaffolding engine.
-- **`AGENTS.md` is the brief.** After `/scaffold`, the generated `AGENTS.md` is the single source of truth for how that project builds. Specs are referenced, not transcluded.
+- **`AGENTS.md` is the brief.** After `/squid-scaffold`, the generated `AGENTS.md` is the single source of truth for how that project builds. Specs are referenced, not transcluded.
 - **Agents are gates.** The PA catches scope drift and signs off from the user's perspective; the Tester catches false-confidence "tests pass" claims and runs an e2e adversarial pass; the PR Reviewer catches dead/duplicate/untested code, over-engineering, and hot-path regressions; On-Call catches CI breakage. No agent both writes code and decides whether it's correct.
 
 ## License

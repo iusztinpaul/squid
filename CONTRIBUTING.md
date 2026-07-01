@@ -4,8 +4,8 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
 
 ## What we're looking for
 
-- **New `/scaffold` specs** — Rust, Java, mobile (Swift/Kotlin), additional Python/TS frameworks. Highest leverage.
-- **Stub fill-ins** — 12 of the 19 specs under `skills/scaffold/specs/` are still placeholders. Fleshing one out is a great first PR.
+- **New `/squid-scaffold` specs** — Rust, Java, mobile (Swift/Kotlin), additional Python/TS frameworks. Highest leverage.
+- **Stub fill-ins** — 12 of the 19 specs under `skills/squid-scaffold/specs/` are still placeholders. Fleshing one out is a great first PR.
 - **Agent prompt improvements** — sharpening PA, SWE, Tester, PR Reviewer, or On-Call so they fail less often.
 - **Bug reports** with a concrete repro (which skill, what input, what went wrong).
 - **Doc clarifications** in `README.md`, `CLAUDE.md`, or this file.
@@ -37,8 +37,8 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
 |---|---|
 | Agent behavior | `agents/<name>.md` |
 | Skill (top-level) | `skills/<name>/SKILL.md` |
-| New `/scaffold` spec | `skills/scaffold/specs/<name>.md` + add rows to the **Index of specs** table and the **spec-selection** table (Step 2 of the flow) in `skills/scaffold/SKILL.md` |
-| Agent-team lifecycle | `skills/scaffold/AGENTS_TEMPLATE.md` (pipeline map + cross-cutting rules) + the agent contracts |
+| New `/squid-scaffold` spec | `skills/squid-scaffold/specs/<name>.md` + add rows to the **Index of specs** table and the **spec-selection** table (Step 2 of the flow) in `skills/squid-scaffold/SKILL.md` |
+| Agent-team lifecycle | `skills/squid-scaffold/AGENTS_TEMPLATE.md` (pipeline map + cross-cutting rules) + the agent contracts |
 
 See [`CLAUDE.md`](CLAUDE.md) for full editing conventions, spec-writing style, and publishing flow.
 
@@ -58,9 +58,9 @@ Cross-reference, don't duplicate — if your spec needs uv guidance, write *"see
 
 There is no automated test suite. Testing means running the affected skill against a real scratch target.
 
-- **Spec changes** → run `/scaffold` in an empty dir and confirm the generated `CLAUDE.md` reflects your spec.
-- **Agent changes** → run `/implement-task` on a scaffolded project and confirm the agent behaves as expected.
-- **Pipeline changes** → run `/plan` then `/implement-night` end-to-end with a small feature spec.
+- **Spec changes** → run `/squid-scaffold` in an empty dir and confirm the generated `AGENTS.md` reflects your spec (and that `CLAUDE.md` is a symlink to it).
+- **Agent changes** → run `/squid-implement-task` on a scaffolded project and confirm the agent behaves as expected.
+- **Pipeline changes** → run `/squid-plan` then `/squid-implement-night` end-to-end with a small feature spec.
 - **All changes** → `claude plugin validate` must pass.
 
 ## Submitting
@@ -74,7 +74,7 @@ There is no automated test suite. Testing means running the affected skill again
 
 Open an issue with:
 
-- Which command or skill you ran (e.g. `/implement-night`, `/scaffold`, `software-engineer` agent).
+- Which command or skill you ran (e.g. `/squid-implement-night`, `/squid-scaffold`, `software-engineer` agent).
 - The exact input you gave.
 - What happened vs. what you expected.
 - Claude Code version (`claude --version`).

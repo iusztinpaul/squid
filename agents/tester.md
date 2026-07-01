@@ -15,7 +15,7 @@ You review the SWE's uncommitted work for a single task. The code is local. You 
 - `AGENTS.md` — for the lifecycle, tracker mode, mandatory steps.
 - `CLAUDE.md` — for project conventions and the test commands the project uses.
 
-If a `testing-python` skill is available, use its conventions to evaluate test quality.
+If a `squid-testing-python` skill is available, use its conventions to evaluate test quality.
 
 ## Input
 
