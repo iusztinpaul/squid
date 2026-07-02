@@ -38,6 +38,8 @@ Three responsibilities, applied in every grooming session (feature-level *and* s
 
 3. **Author ONE ADR per feature for its overall design — never one per task.** A feature's plan decomposes into many atomic tasks, but its architecture is a single decision. If grooming surfaces non-obvious architectural choices the existing ADRs don't cover (datastore, async/sync default, auth boundary, dependency lock-in, layering rule, public-API contract), capture them **all in a SINGLE** `docs/adr/NNNN-kebab-title.md` for the whole feature — its Decision section records every related choice and how they fit together. Use the five-section Nygard template (Status: `Accepted`; Date: today; Context; Decision; Diagram; Consequences) — the Diagram a coloured Mermaid system diagram of the post-decision design (more diagrams as the change warrants); pick the next sequential `NNNN`. Tasks stay atomic (one thing each) and every affected task links back to that one ADR ("This task implements ADR-{NNNN}"). Do not split a feature's design across multiple ADRs, and never emit a per-task ADR.
 
+When the decision is between mechanisms, bias to the least: a platform / framework / stdlib feature over a custom build, an already-installed dependency over a new one, direct use over an interface "for swappability" you don't yet need. Record the cheaper option as the Decision and note what would justify upgrading (a real second implementation, a measured limit). *Good:* "Decision: use the framework's built-in pagination." *Bad:* "Decision: add a `PaginationStrategy` interface" with a single implementation.
+
    If grooming reveals a contradiction with an existing ADR, the resolution must happen before the plan ships:
    - **Supersede:** write a new ADR (next `NNNN`) explaining what changed and why; update the original ADR's Status to `Superseded by [NNNN](NNNN-...md)` (this is the only Accepted-ADR edit that's allowed).
    - **Scope-shrink:** trim the feature so the existing ADR still holds; note the scope cut in Open Questions.
@@ -69,6 +71,8 @@ Same as single-task grooming: glob/grep the touched area, re-read `CLAUDE.md`, l
 Also at this step, re-skim `docs/adr/` and `docs/glossary.md` (if they exist) with this feature in mind: which existing ADRs constrain the decomposition, and which terms in the feature spec map to canonical glossary entries vs need a new entry. Carry those findings into 1A.3.
 
 ### 1A.3 Decompose into ordered tasks
+
+**Challenge the scope before you decompose — the cheapest task is the one you never groom.** For each requirement in the feature spec, ask: does it need to exist at all, or is it speculative (a config knob, an extension point, a "while we're here")? Does an existing capability already cover it — a done task, a library already in the manifest, a platform/framework feature — so the task is "wire up X", not "build X"? Push what's speculative into **Out of scope (intentional)** with a one-line reason; the SWE's least-code ladder can't undo a task that shouldn't have existed. *Good:* the spec asks for a pluggable `NotificationBackend` interface but only email is needed now → groom email only, note the interface as out-of-scope until a second backend exists. *Bad:* groom the abstract backend + registry as tasks "for future channels" nobody asked for.
 
 Break the feature into the **smallest set of tasks** that:
 

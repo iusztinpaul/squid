@@ -109,6 +109,7 @@ Walk these dimensions. For each, form 0 or more findings. Don't manufacture find
 | **Test smells** | High setup-to-assert ratio; brittle tests on private internals; flaky tests. Usually rooted in a structural problem in the SUT. |
 | **API leakage** | Internal types reaching public surface; public surface that should be private (e.g., a route that no caller uses). |
 | **Dead code** | Unused exports, unreachable branches, modules with zero importers. |
+| **Over-engineering** | Abstraction the code doesn't earn: a single-implementation interface / factory / wrapper that only forwards, a layer with one caller, config nobody sets, hand-rolled logic the stdlib ships, or a dependency duplicating a platform/framework feature. Tag each with the same `delete`/`stdlib`/`native`/`yagni`/`shrink` vocabulary the PR-Reviewer uses (Dimension F). |
 | **Drift from CLAUDE.md** | Stated rules the codebase no longer follows. The rule is right; the code drifted. |
 | **ADR drift** | Decisions ADRs describe that the code no longer reflects (silently superseded). Either update the ADR or fix the code. |
 | **Performance shape** | Sync I/O in async handlers; N+1 patterns; in-memory aggregation that should be a query. |

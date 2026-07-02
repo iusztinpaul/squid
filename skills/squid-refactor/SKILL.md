@@ -85,6 +85,7 @@ Common refactor shapes and their canonical decomposition:
 | **Library swap** | (1) introduce new lib alongside old behind an internal facade; (2) migrate call sites; (3) remove old lib. |
 | **Layer cleanup** (e.g., remove cycle) | (1) introduce the seam (new module / interface); (2) move responsibilities one batch at a time; (3) enforce direction with an architectural test. |
 | **Dead-code removal** | (1) delete callers; (2) delete leaves; (3) re-run unused-detector. Each in its own task only if the ordering matters; often this is one task. |
+| **De-abstraction / simplification** | (1) inline the single-implementation interface / factory / wrapper at its one call site; (2) swap hand-rolled logic for the stdlib / native / framework equivalent; (3) drop the now-unused dependency. Structural AC: the abstraction (or dep) is gone, public behaviour unchanged, suite green. Feeds directly from `/squid-architecture-review` over-engineering findings. |
 
 3–8 tasks is a healthy plan size. Fewer than 3 → it's too small for a Tasks Plan; do it as a single `/squid-implement-task` task. More than 8 → either decompose into multiple sequential refactors (file separate `/squid-refactor` plans), or you're sneaking feature work in.
 

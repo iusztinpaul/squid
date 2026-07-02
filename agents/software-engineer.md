@@ -98,7 +98,18 @@ A test that errors out instead of failing is broken, not red. Fix the test harne
 
 #### 5b. Implement until green
 
-- Implement the **minimum** code needed to make each failing test pass. **No extra features**, no premature abstractions, no "while I was in there" cleanup. If you spot adjacent issues, note them in your report and let the orchestrator file a new task.
+- Implement the **least code that makes each failing test pass** — climb this ladder, stop at the first rung that holds. Run it *after* you understand the task and have traced the real flow; the smallest change in the wrong place is a second bug, not laziness:
+  1. **Does it need to exist?** Speculative need → skip it, note it in one line. (YAGNI)
+  2. **Already in this codebase?** Reuse the helper / util / type / pattern that already lives here — re-implementing what sits a few files over is the most common slop.
+  3. **Stdlib does it?** Use it.
+  4. **Native platform feature covers it?** A DB constraint over app-side checks, the framework's pagination over a hand-rolled one, `<input type="date">` over a picker lib.
+  5. **An already-installed dependency solves it?** Use it — never add a new dep for what a few lines cover.
+  6. **Can it be one line?** Make it one line.
+  7. **Only then** write the minimum code that works.
+
+  *Good:* need response caching → `@lru_cache(maxsize=1000)` on the fetch fn. *Bad:* a hand-rolled `TTLCache` class with eviction knobs nobody asked for. *Good:* a one-implementation `AbstractRepository` inlined until a second impl exists. *Bad:* the interface kept "for swappability" that never comes.
+
+  The ladder shortens the code, never the safety — don't simplify away input validation at trust boundaries, error handling that prevents data loss, security, accessibility, or the test the logic still owes (Step 5a). No "while I was in there" cleanup; if you spot adjacent issues, note them in your report and let the orchestrator file a new task. When you make a deliberate trade-off (a bounded O(n²), a naive heuristic), name it in your SWE report with its ceiling and upgrade path — e.g. "O(n²) scan; index if the list grows past ~1k" — so the Tester and PA read it as intent, not slop, and real follow-up still gets a task.
 - Follow existing patterns in the codebase. If there's a convention, follow it.
 - Use `uv add` for new Python deps; update `pyproject.toml`.
 - If the task introduces new env vars, update `.env.example` and the project's settings module.
@@ -108,6 +119,8 @@ A test that errors out instead of failing is broken, not red. Fix the test harne
 #### 5c. Regression tests for bugs
 
 For every bug you hit during implementation — whether in your new code or in existing code your change exposes — write a test that reproduces the bug **before** applying the fix. The test goes from red → green when the fix lands. This is how we keep bugs from silently coming back.
+
+**Fix the root cause, not the symptom.** A failing case names a symptom; before you edit, grep every caller of the function you're about to touch and fix it once, where they all route through. One guard in the shared function is a smaller diff than one guard per caller — and patching only the path the test names leaves sibling callers still broken. *Bad:* add the guard only in the one caller the failing test names. *Good:* one guard in the shared function every caller routes through.
 
 ### 6. Format, lint, type-check
 
@@ -298,7 +311,7 @@ When a reviewer leaves comments:
 - **Tests first when the contract is decidable.** For new logic and regression-test-for-bug scenarios, write the failing test **before** implementing. Skip the red/green dance for pure refactors, glue code, migrations, and one-off scripts (write the tests where useful, don't ceremonialize). For every bug you hit during implementation, the reproducing test still goes in before the fix.
 - **Never implement directly on `main`, and never create a per-task branch.** If you're already on a feature / worktree branch, stay on it — each task is one commit on that shared branch (the human squash-merges it). Only create a branch (one `feat/{slug}`) when you're standalone on `main`.
 - **Run the feature end-to-end before hand-off.** Unit tests prove correctness; actually invoking the code proves it works. If it fails, fix the runtime behavior — don't just fix the test.
-- Implement **exactly** what the task asks for. No extra features, no premature abstractions.
+- Implement **exactly** what the task asks for — apply the least-code ladder (Step 5b). No unrequested abstractions: no one-implementation interface, no factory for one product, no config for a value that never changes.
 - Every task ships tests. All tests must pass before handing off to the Tester.
 - Follow existing patterns. If there's a convention in the codebase, follow it.
 - Always `git pull` before starting work.

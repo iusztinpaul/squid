@@ -113,12 +113,15 @@ If you're unsure whether a finding belongs in dimension D (Standards) or E (Docu
 
 #### F. Simplicity / anti-over-engineering
 
-You are also the code simplifier. Audit the diff for over-engineering and AI slop — code that's more elaborate than the job requires:
+You are also the code simplifier. Audit the diff for over-engineering and AI slop — code more elaborate than the job requires. **Write each finding as a tag naming what to cut and the concrete replacement** — a vague "consider simplifying this" is useless:
 
-- **Speculative generality** — abstractions, config knobs, hooks, or extension points added for hypothetical future needs the task didn't ask for ("we might want to swap this out later").
-- **Needless abstraction** — a base class / interface / factory / strategy with a single implementation; a wrapper that only forwards calls; indirection that adds no behavior.
-- **AI-slop boilerplate** — verbose ceremony a human wouldn't write: redundant try/except that just re-raises, comments restating the code, defensive checks for conditions that can't occur, gratuitous helper functions used once.
-- **Simplest-thing-that-works violations** — a complex mechanism where a plain function, a literal, or an existing utility would do. Keep the code simple enough to get the job done, no more.
+- `delete:` unused flexibility, or a speculative feature / config knob / extension point the diff never exercises. Replacement: nothing. (Literal never-called dead code is dimension B's.)
+- `stdlib:` a hand-rolled thing the standard library ships. Name the function.
+- `native:` code or a dependency doing what the platform / framework already ships (a lib for what CSS / the stdlib / the framework covers). Name the feature. (Framework underuse that's a *performance* problem is dimension A's.)
+- `yagni:` an abstraction with one implementation (base class / interface / factory / a wrapper that only forwards), config nobody sets, or a layer with one caller. Inline it until a second caller exists.
+- `shrink:` AI-slop ceremony (redundant try/except that just re-raises, comments restating the code, a defensive check for a condition that can't occur) or a complex mechanism where a plain function / literal / existing utility does the job — same behavior, fewer lines. Show the shorter form.
+
+*Bad:* "This EmailValidator class might be more complex than necessary." *Good:* `L12–38: stdlib: 27-line validator class → an "@" check + the confirmation mail is the real validation.` Lead each finding's rollup **What's wrong** line with its tag (e.g. `yagni: AbstractRepository, one impl → inline it`).
 
 The bar: would a senior engineer reviewing this diff say "this is more than we needed"? Tag as **Blocker** only when the over-engineering **materially hurts maintainability** (a future contributor will be misled or slowed by it). Otherwise it's a **Nit** — note it, but it doesn't block. Don't flag a missing abstraction here; that's the opposite failure and belongs in dimension D if it's a real standards issue.
 
@@ -274,7 +277,7 @@ When the orchestrator re-invokes you (after the rollup has been implemented + re
 - New non-trivial code path with no test (and not a refactor/glue/migration/one-off).
 - Hot-path performance regression you can argue would show in a profile.
 - Dead, duplicated, commented-out, or `TODO`-without-owner code being shipped.
-- Over-engineering that materially hurts maintainability (speculative generality, needless abstraction, AI-slop boilerplate).
+- Over-engineering flagged in dimension F (any `delete`/`stdlib`/`native`/`yagni`/`shrink` finding) that materially hurts maintainability.
 - Hardcoded secrets / credentials / API keys.
 - Missing security defaults the codebase otherwise enforces.
 - `git diff` includes unrelated files.
