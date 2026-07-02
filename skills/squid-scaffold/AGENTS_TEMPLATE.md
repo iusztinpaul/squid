@@ -125,6 +125,8 @@ This project uses the **squid** agent team (`/plugin marketplace add iusztinpaul
 
 Engineering discipline — TDD-first, branch off the active branch, run the feature end-to-end before hand-off, regression-test-first for bugs, the format/lint/unit/integration cadence — lives in [`agents/software-engineer.md`](agents/software-engineer.md) + [`agents/tester.md`](agents/tester.md) and is enforced automatically by the pipelines.
 
+**Optional — caveman.** If the [caveman](https://github.com/JuliusBrussee/caveman) plugin is installed, the SWE writes each commit with `/caveman-commit`, the PR-Reviewer posts one-line `/caveman-review` comments on the PR (on top of its rollup), and you can shrink this file with `/caveman-compress AGENTS.md` to cut per-session tokens. Everything works without it — the integrations fall back to native behavior.
+
 **Tracker:** `TRACKER_MODE: file` *(or `gh` for GitHub Issues)*. File mode: one `tasks/<NNN>-<slug>.md` per task with a `status:` frontmatter field (`pending` → `in-progress` → `done`); completing a task moves the file into `tasks/done/`, leaving only open tasks at the top level. See [`tasks/README.md`](tasks/README.md).
 
 Project-specific invariants the agents can't infer:

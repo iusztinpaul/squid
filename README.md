@@ -56,6 +56,24 @@ That's it. Open any repo in Claude Code; the agents and skills appear in `/agent
 
 Installing Squid also pulls in three plugins the agent team relies on, all from Anthropic's official `claude-plugins-official` marketplace — `context7` (live library docs via MCP), `code-review`, and `commit-commands`. That marketplace ships with Claude Code, so these resolve and enable on their own. (Requires Claude Code v2.1.143+ for auto-enable; v2.1.110+ for the dependency mechanism. If a dependency fails to resolve, run `/plugin marketplace update claude-plugins-official`.)
 
+### Optional companion: caveman
+
+Squid integrates with [**caveman**](https://github.com/JuliusBrussee/caveman) — an optional plugin that compresses agent output ~75%. It isn't pulled in automatically (it lives in a different marketplace); install it alongside Squid and the pipeline picks it up:
+
+```
+/plugin marketplace add JuliusBrussee/caveman
+/plugin install caveman@caveman
+```
+
+With caveman installed, Squid uses it for:
+
+- **Commits** — the SWE writes each commit via `/caveman-commit` (Conventional Commits, ≤50-char subject, why-over-what).
+- **Reviews** — the PR-Reviewer posts one-line findings on the PR in `/caveman-review` style (`L42: bug: user null. add guard.`), on top of its usual rollup task.
+- **Memory compression** — `/squid-scaffold` offers to run `/caveman-compress AGENTS.md`, so the memory file every session loads is ~46% leaner.
+- **Shorter replies** — caveman's `SessionStart` hook auto-compresses every reply; tune the level with `/caveman [lite|full|ultra]`.
+
+Squid runs fine without it — each integration falls back to its native behavior.
+
 <details>
 <summary><b>Per-project install</b> — auto-prompt for everyone who clones a specific repo</summary>
 

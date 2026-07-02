@@ -64,6 +64,17 @@ The directory layout is what Claude Code's plugin loader expects natively: `agen
 - **Bumping versions** — when you ship changes that affect end users, bump `version` in `.claude-plugin/plugin.json`. Tag with `git tag v0.x.y && git push --tags`. Without a version bump Claude Code keeps the cached copy and `/plugin update` reports "already at the latest version".
 - **Don't add language-specific build systems for the plugin contract** (no `pyproject.toml`, no `Makefile`, no `tests/`). The contract layer remains markdown.
 
+## Companion plugin: caveman (optional)
+
+Squid integrates with [caveman](https://github.com/JuliusBrussee/caveman) as an **optional** companion — a separate Claude Code plugin (`/plugin marketplace add JuliusBrussee/caveman && /plugin install caveman@caveman`). When it's installed Squid delegates to it at four touchpoints; when it's absent every touchpoint falls back to native behavior (mirroring the existing `commit-commands` pattern). Keep it optional — never make Squid hard-depend on it, and phrase each hook as "if the caveman plugin is installed…".
+
+- **Commits** → `/caveman-commit` — `agents/software-engineer.md` (Commit section + Rules), `skills/squid-implement-task` (step 2d), `skills/squid-review-ci` (CI-fix commit).
+- **Reviews** → PR-Reviewer posts one-line `/caveman-review` comments on the PR, on top of the rollup — `agents/pr-reviewer.md` (Step 3b) + `skills/squid-review` (Step 3 prompt). The rollup stays the machine-readable routing artifact.
+- **Memory compression** → `/squid-scaffold` (Step 3) offers `/caveman-compress AGENTS.md` on the file it generates.
+- **Shorter replies** → caveman's own `SessionStart` hook; no Squid wiring. User-facing docs live in `README.md`; downstream projects learn of it via `AGENTS_TEMPLATE.md`.
+
+This file (and its `CLAUDE.md` symlink) can itself be compressed with `/caveman-compress AGENTS.md`.
+
 ## Spec-writing style (for `squid-scaffold/specs/`)
 
 - **Opinions, not code.** Each spec states the rules (with rationale); it doesn't ship canonical files except as inline examples in markdown fences.

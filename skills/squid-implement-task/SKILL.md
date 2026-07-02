@@ -91,7 +91,7 @@ Spot-check the report before accepting it.
 Agent(
   subagent_type="squid:software-engineer",
   prompt="""Tester PASSED task {ID}. {Working directory: {path}.} Commit JUST this task per your role definition —
-  `commit-commands` plugin required, specific files only (never `git add -A`). Conventional Commits subject
+  use the commit-message generator (`/caveman-commit` if the caveman plugin is installed, else the `commit-commands` plugin), specific files only (never `git add -A`). Conventional Commits subject
   (`feat:` / `fix:` / `refactor:` / …). Message ends with `Closes #N` (gh mode) or `Closes-task: NNN-slug` (file mode).
   DO NOT push."""
 )

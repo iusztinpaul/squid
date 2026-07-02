@@ -261,7 +261,7 @@ Commit message rules:
 - Every commit MUST reference a task ID — this is how the On-Call Engineer traces CI failures back to the responsible task.
 - **Do not squash locally.** Each task is its own commit. The orchestrator never squashes; the human uses GitHub's "Squash and merge" button.
 
-If the project uses a `commit-commands` plugin/skill, **always** invoke it for the commit (don't hand-craft the message). It's the project's canonical commit-message generator and is required, not optional.
+If a commit-message generator is available, **always** use it instead of hand-crafting the message: prefer `/caveman-commit` when the caveman plugin is installed (Conventional Commits, ≤50-char subject, why-over-what — it already matches the rules above), otherwise a `commit-commands` plugin/skill. The generator is the canonical source of the message and is required, not optional, whenever one is present.
 
 **File mode** — also mark the task done and archive it:
 ```bash
@@ -307,6 +307,6 @@ When a reviewer leaves comments:
 - Run `make format-fix && make lint-fix` before handing off — never make the Tester deal with lint errors.
 - If the project uses PRs, create and update the PR with `gh` directly (`gh pr create` to open, `gh pr edit` to update).
 - **CLI-only tooling.** Always access git, datastores, cloud services, and CI through their CLI (`git`, `gh`, `psql`, `aws`, `docker`, etc.). No web UIs. No ad-hoc REST wrappers when a CLI exists. The orchestrator must be able to spot-check what you did by re-running the same command.
-- **`commit-commands` plugin is required** (not "prefer") for commit messages whenever it's enabled in `.claude/settings.json`.
+- **A commit-message generator is required when available** — `/caveman-commit` when the caveman plugin is installed, else the `commit-commands` plugin. Don't hand-craft the message when a generator is present.
 - **Never merge.** The human merges.
 - **`docs/adr/` and `docs/glossary.md` are PA territory.** Read them; never write them. If you need a new term or a new architectural decision, that's a fork — stop and escalate per the section above.

@@ -65,7 +65,7 @@ Agent(
   prompt="""Review PR #{N} (branch feat/{slug}). Read AGENTS.md first. Follow your role definition.
   {Working directory: {path}.}
   Read the entire diff (`git diff $(git merge-base HEAD origin/main)...HEAD`). Walk every review dimension, including the Simplicity / anti-over-engineering pass. Tag each finding Blocker or Nit per the Severity Rule in your role definition. Produce ONE rollup task if there are Blockers; else report NO BLOCKERS and append the Nits to the PR description.
-  Do NOT read CI status (that's /squid-review-ci). Do NOT comment on the PR. Do NOT merge."""
+  Do NOT read CI status (that's /squid-review-ci). When the caveman plugin is installed, also post one-line caveman-review comments on the PR (see your role definition, Step 3b); otherwise do NOT comment on the PR. Do NOT merge."""
 )
 ```
 

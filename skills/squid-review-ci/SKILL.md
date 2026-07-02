@@ -38,7 +38,7 @@ Agent(
 ```
 Agent(
   subagent_type="squid:software-engineer",
-  prompt="""CI failed on PR #{N}. {Working directory: {path}.} Fix task from On-Call: {root cause + failing command + files}. Reproduce locally with the same command CI ran, fix the root cause (not the symptom; fix the bug, not the test), re-run the local suite, commit with `Refs #N` (the original task is already closed) via the `commit-commands` plugin, and push."""
+  prompt="""CI failed on PR #{N}. {Working directory: {path}.} Fix task from On-Call: {root cause + failing command + files}. Reproduce locally with the same command CI ran, fix the root cause (not the symptom; fix the bug, not the test), re-run the local suite, commit with `Refs #N` (the original task is already closed) via the commit-message generator (`/caveman-commit` if the caveman plugin is installed, else the `commit-commands` plugin), and push."""
 )
 ```
 

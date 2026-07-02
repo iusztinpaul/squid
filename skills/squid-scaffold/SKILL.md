@@ -114,6 +114,8 @@ Write the project's root memory file from the canonical template in [`AGENTS_TEM
 
 `AGENTS.md` is the canonical, agent-agnostic memory file — the single source of truth. Alongside it, create `CLAUDE.md` as a **relative symlink** to `AGENTS.md` (`ln -s AGENTS.md CLAUDE.md`) so Claude Code loads the exact same file with zero duplication (see [`rules.md`](rules.md) `I4`).
 
+**Optional — compress with caveman.** If the caveman plugin is installed, offer to run `/caveman-compress AGENTS.md` on the composed file — it rewrites the memory file into caveman-speak (~46% fewer input tokens every session; code, paths, and URLs are byte-preserved). Ask first: the compressed form is terser to read and hand-edit. Skip silently when caveman isn't installed.
+
 ### 4. Create the folder skeleton
 
 Create these files / directories, **empty or with minimal placeholders**. Do NOT write application source.
