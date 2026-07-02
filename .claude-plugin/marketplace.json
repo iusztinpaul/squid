@@ -22,7 +22,7 @@
       },
       "homepage": "https://github.com/iusztinpaul/squid",
       "repository": "https://github.com/iusztinpaul/squid",
-      "license": "MIT",
+      "license": "Apache-2.0",
       "category": "workflow",
       "keywords": [
         "agent-team",

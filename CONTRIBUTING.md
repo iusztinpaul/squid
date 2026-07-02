@@ -110,4 +110,4 @@ After release, smoke-test from a fresh Claude Code session:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License — see [`LICENSE`](LICENSE).
+By contributing, you agree that your contributions will be licensed under the Apache License 2.0 — see [`LICENSE`](LICENSE).
