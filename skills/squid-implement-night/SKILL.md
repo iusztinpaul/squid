@@ -1,7 +1,7 @@
 ---
 name: squid-implement-night
 description: Run the full agent-team pipeline end-to-end for one feature whose Tasks Plan is already approved (by /squid-plan). A thin orchestrator — runs INSIDE the feature worktree and invokes /squid-implement-task (build + commit every task), then /squid-review (push + PA acceptance + PR-Reviewer), then /squid-review-ci (CI), then a human-gated squid-self-improve, and hands the validated PR to the human to squash-merge. Trigger after /squid-plan, or say "/squid-implement-night".
-disable-model-invocation: true
+disable-model-invocation: false
 argument-hint: <plan-ref | feature-slug>
 ---
 
