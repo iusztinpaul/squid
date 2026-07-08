@@ -1,0 +1,35 @@
+name: frontmatter
+
+# The plugin contract is markdown, and its frontmatter is load-bearing: a YAML
+# parse error makes Claude Code load the file with EVERY field silently dropped
+# (no name, no description, no disable-model-invocation). Nothing else catches
+# this — `claude plugin validate .` at the repo root only reads
+# marketplace.json, and even against a plugin dir it checks field types but
+# never values. So this is the only guard.
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "agents/**"
+      - "skills/**"
+      - "scripts/check-frontmatter.py"
+      - ".github/workflows/frontmatter.yml"
+  pull_request:
+    paths:
+      - "agents/**"
+      - "skills/**"
+      - "scripts/check-frontmatter.py"
+      - ".github/workflows/frontmatter.yml"
+
+jobs:
+  check-frontmatter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pyyaml
+      - name: every agent + skill must have parseable, valid frontmatter
+        run: python3 scripts/check-frontmatter.py
