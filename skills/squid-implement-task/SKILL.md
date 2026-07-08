@@ -1,6 +1,7 @@
 ---
 name: squid-implement-task
-description: Implement one task — or work through a whole list of tasks / an approved Tasks Plan — via the inner SWE↔Tester loop, committing each task once it passes. Autonomous: SWE implements, Tester runs the suite + e2e adversarial pass, retry up to 5×, commit on PASS, move to the next task. Use when you have one or more GROOMED tasks ready to build, or say "/squid-implement-task". To plan a feature first use /squid-plan; for the full end-to-end pipeline use /squid-implement-night.
+description: >-
+  Implement one task — or work through a whole list of tasks / an approved Tasks Plan — via the inner SWE↔Tester loop, committing each task once it passes. Autonomous: SWE implements, Tester runs the suite + e2e adversarial pass, retry up to 5×, commit on PASS, move to the next task. Use when you have one or more GROOMED tasks ready to build, or say "/squid-implement-task". To plan a feature first use /squid-plan; for the full end-to-end pipeline use /squid-implement-night.
 disable-model-invocation: false
 argument-hint: <task-ref | "task description" | plan-ref | list of task-refs>
 ---

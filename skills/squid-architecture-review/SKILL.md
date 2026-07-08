@@ -2,7 +2,7 @@
 name: squid-architecture-review
 description: Periodic architectural sweep of a codebase — reads existing ADRs to avoid re-litigating settled decisions, maps the current module/dependency graph and layering, surfaces 5–10 architectural smells with severity, and emits each finding as a refactor proposal that `/squid-refactor` can consume directly. Trigger when the user says "/squid-architecture-review", "audit the architecture", "what's wrong with this codebase", asks before a major version bump, or when long-horizon tech debt feels untracked.
 disable-model-invocation: false
-argument-hint: [scope-path or component name; default = whole repo]
+argument-hint: "[scope-path or component name; default = whole repo]"
 ---
 
 # Architecture review — periodic structural audit

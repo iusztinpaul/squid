@@ -1,6 +1,7 @@
 ---
 name: squid-review
-description: Push the committed feature branch, create or update its PR, then run Product Architect acceptance and PR-Reviewer on the pushed PR (sequentially). Each gate retries up to 3×; on failure each writes ONE rollup task to route back to /squid-implement-task. Output: a clean feature PR with no blockers, or a rollup task. Trigger after a feature's tasks are implemented and committed, or say "/squid-review".
+description: >-
+  Push the committed feature branch, create or update its PR, then run Product Architect acceptance and PR-Reviewer on the pushed PR (sequentially). Each gate retries up to 3×; on failure each writes ONE rollup task to route back to /squid-implement-task. Output: a clean feature PR with no blockers, or a rollup task. Trigger after a feature's tasks are implemented and committed, or say "/squid-review".
 disable-model-invocation: false
 argument-hint: <feature-title | plan-ref>
 ---

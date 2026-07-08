@@ -86,7 +86,13 @@ This file (and its `CLAUDE.md` symlink) can itself be compressed with `/caveman-
 
 - **Local Claude Code install (uncommitted):** `claude --plugin-dir /path/to/squid` — the only path that loads the working tree directly.
 - **Local Claude Code install (committed):** in a scratch session, `/plugin marketplace add /path/to/squid && /plugin install squid@iusztinpaul`. Note this still fetches `source: github:iusztinpaul/squid` from GitHub — not the working tree — so push first.
-- **Validate manifest:** `claude plugin validate` from the repo root checks `plugin.json`, skill/agent/command frontmatter, and `hooks/hooks.json` for syntax/schema errors.
+- **Validate manifest:** `claude plugin validate .` from the repo root only validates `.claude-plugin/marketplace.json` — it never reads `agents/` or `skills/`. A broken skill frontmatter passes. To actually validate agent/skill frontmatter, point it at a copy that has `.claude-plugin/plugin.json` but **no** `marketplace.json`:
+  ```sh
+  d=$(mktemp -d); mkdir -p "$d/.claude-plugin"
+  cp .claude-plugin/plugin.json "$d/.claude-plugin/"; cp -R agents skills "$d/"
+  claude plugin validate "$d"
+  ```
+  Note it checks YAML syntax and field *types* only, never *values* — `model: not-a-real-model` and `effort: banana` both pass.
 - **Test `/squid-scaffold`:** run it in an empty directory and confirm it produces a sensible `AGENTS.md` (with `CLAUDE.md` symlinked to it, plus a `.agents/skills/` dir and a `.claude/skills → .agents/skills` symlink) and skeleton tree without writing any application source.
 - **Test `/squid-implement-task`:** run it against a `/squid-scaffold`-generated project with one or more groomed tasks; confirm the SWE↔Tester loop runs and each task is committed on PASS.
 - **Test `/squid-plan` → `/squid-implement-night`:** run `/squid-plan` with a feature spec (free-form text or a path to a `docs/features/*.md` file) — it grills, the PA grooms a Tasks Plan, you approve, and it creates the worktree. Then `/squid-implement-night` builds the plan end-to-end (squid-implement-task → review → squid-review-ci) to a validated PR.
