@@ -1,6 +1,6 @@
 {
   "name": "squid",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Opinionated engineering agent team with progressive-disclosure specs for Python / TypeScript / Go monorepos. Ships PA / SWE / Tester / PR Reviewer / On-Call sub-agents, /squid-plan / /squid-implement-task / /squid-implement-night pipelines, and a library of language/framework/infra specs that agents load on-demand.",
   "homepage": "https://github.com/iusztinpaul/squid",
   "license": "Apache-2.0",
