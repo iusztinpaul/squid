@@ -1,6 +1,8 @@
 <p align="center"><img width="769" height="247" alt="Group 150" src="https://github.com/user-attachments/assets/5f2a57c0-2d62-4aac-9b08-e459be2d1f63"></p>
 
-# Squid: An Opinionated Software Factory for Claude Code
+<div align="center">
+<h1>Squid: An Opinionated Software Factory for Claude Code</h1>
+</div>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-2.1%2B-blue)](https://claude.com/claude-code)
