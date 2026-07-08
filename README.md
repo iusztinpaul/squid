@@ -1,3 +1,5 @@
+<p align="center"><img width="1280" height="640" alt="GitHub Repo Banner" src="https://github.com/user-attachments/assets/ba284424-15c1-4692-9065-7fb5594cebef" />
+
 # Squid: An Opinionated Software Factory for Claude Code
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
