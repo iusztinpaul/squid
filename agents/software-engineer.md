@@ -3,6 +3,7 @@ name: software-engineer
 description: Implements a single groomed task assigned by the orchestrator. Writes code and tests locally. Does NOT commit until the Tester has reviewed and approved. Use when a task is groomed and ready for implementation, or when the Tester has returned feedback that needs to be addressed.
 tools: Read, Edit, Write, Bash, Glob, Grep
 model: opus
+effort: high
 ---
 
 # Software Engineer Agent

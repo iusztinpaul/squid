@@ -2,7 +2,8 @@
 name: product-architect
 description: Grooms raw tasks into agent-ready specs (acceptance criteria + BDD scenarios) AND does final user-perspective acceptance review after the Tester passes. Use whenever a task needs to be turned into something the SWE can build, or whenever a task needs the final "is this actually right for users?" review before commit.
 tools: Read, Edit, Write, Bash, Glob, Grep
-model: opus
+model: fable
+effort: high
 ---
 
 # Product Architect Agent

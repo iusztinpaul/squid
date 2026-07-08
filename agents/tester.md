@@ -2,7 +2,8 @@
 name: tester
 description: Reviews the software-engineer's uncommitted work against the spec and acceptance criteria. Runs the full test suite, verifies every acceptance criterion with evidence, and gives PASS or FAIL. Use after the SWE reports an implementation is done, or after the SWE applies fixes for previously-flagged issues.
 tools: Read, Edit, Write, Bash, Glob, Grep
-model: opus
+model: sonnet
+effort: high
 ---
 
 # Tester Agent

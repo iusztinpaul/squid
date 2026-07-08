@@ -159,8 +159,27 @@ Installed via `npx skills` instead? Remove those with `npx skills remove <name>`
 | `/squid-implement-night <plan>` | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR. |
 | `/squid-implement-task` · `/squid-review` · `/squid-review-ci` | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation. |
 | `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` | Standalone planning/intake helpers (not wired into the main pipeline). |
-| `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer` | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. |
+| `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer` | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. See [Which model runs which agent](#which-model-runs-which-agent). |
 | `squid-testing-python`, `squid-grilling`, `squid-self-improve` | Support skills the pipelines and agents lean on. |
+
+### Which model runs which agent
+
+Squid pins a model per agent, following Anthropic's [advisor pattern](https://x.com/ClaudeDevs/status/2074606058128224365) — reasoning-heavy roles get the strongest model, and the token-hungry executor roles run one tier down, where most of the spend lands.
+
+| Agent | Model | Effort | Why |
+|---|---|---|---|
+| `product-architect` | `fable` | `high` | Grooms the Tasks Plan and does acceptance review. Pure planning + judgment, and it runs **once per feature** — highest leverage, bounded cost. |
+| `pr-reviewer` | `fable` | `high` | Reads one diff and tags Blocker/Nit. Review is judgment, not generation. |
+| `software-engineer` | `opus` | `high` | Writes all the code, across every task and every retry — the single biggest token sink in the pipeline. |
+| `tester` | `sonnet` | `high` | Full suite + adversarial e2e. High tool-call volume, and verifying is easier than generating. |
+| `oncall-engineer` | `sonnet` | `high` | Greps CI logs, root-causes, hands a fix task to the SWE. Never writes app code. |
+
+Two things worth knowing:
+
+- **Fable is for planning, not for coding.** It costs $10/$50 per MTok against Opus's $5/$25 — [benchmarks suggest](https://x.com/morganlinton/status/2074608204403908924) that coding with Fable at high effort buys you roughly what Opus already gives you, for more money. Squid deliberately keeps it off the code-writing path.
+- **`effort: high` is a downshift.** Claude Code defaults subagents to `xhigh`. Anthropic's own guidance is to start Opus 4.8 at `high` and only raise it, and Sonnet 5 already defaults to `high`. Drop `software-engineer` to `effort: medium` if you want to trade a little headroom for cost.
+
+**Overriding.** Each value lives in the agent's frontmatter (`agents/*.md`), so a fork can just edit it. Note that a `CLAUDE_CODE_SUBAGENT_MODEL` environment variable **silently overrides every agent's `model:`** — if all five agents seem to be running on one model, that's why.
 
 The `/squid-scaffold` spec library (under `skills/squid-scaffold/specs/`) covers:
 
