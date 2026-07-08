@@ -1,4 +1,4 @@
-<p align="center"><img width="1280" height="640" alt="GitHub Repo Banner" src="https://github.com/user-attachments/assets/ba284424-15c1-4692-9065-7fb5594cebef" />
+<p align="center"><img width="769" height="247" alt="Group 150" src="https://github.com/user-attachments/assets/5f2a57c0-2d62-4aac-9b08-e459be2d1f63"></p>
 
 # Squid: An Opinionated Software Factory for Claude Code
 
