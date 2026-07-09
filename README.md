@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/SquidV1.png" alt="The Opinionated Squid Logo" />
+  <img src="./assets/Squid.png" alt="The Opinionated Squid Logo" />
 </p>
 
 <div align="center">
