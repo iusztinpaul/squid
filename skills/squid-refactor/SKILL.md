@@ -1,7 +1,7 @@
 ---
 name: squid-refactor
 description: Plan a refactor as an ordered, commit-grain Tasks Plan with structural acceptance criteria (test suite green at every step, no behaviour diff, named module/coupling invariants). Output is a feature-shaped plan that `/squid-implement-night` can execute end-to-end. Trigger when the user says "/squid-refactor", asks "plan a refactor of X", "extract Y from Z", "split this module", "rename across the codebase", or describes a structural change with no user-visible feature behind it.
-disable-model-invocation: false
+disable-model-invocation: true
 argument-hint: <refactor-goal | path/to/squid-refactor-spec.md | tracker-ref>
 ---
 

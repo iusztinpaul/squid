@@ -1,7 +1,7 @@
 ---
 name: squid-scaffold
 description: Bootstrap a new polyglot monorepo (or a new component in an existing one) from an opinionated spec library, OR audit an existing scaffolded repo for drift. mode=create (default) asks what to build, picks the relevant specs from specs/, writes a tailored AGENTS.md (the single source of truth) with a CLAUDE.md symlink and a canonical .agents/skills dir (with a .claude/skills symlink), and lays down an empty folder skeleton. mode=evaluate checks whether an existing repo's AGENTS.md + scaffold output still follow the scaffold rules and reports the drift (no fixes). TRIGGER when the user says "/squid-scaffold", asks to bootstrap a project, create a new codebase, start a fresh repo, add a new component, or asks to check/audit whether an existing AGENTS.md still follows the scaffold conventions. SKIP for writing application source inside an already-scaffolded project — pick /squid-implement-task or /squid-plan instead.
-disable-model-invocation: false
+disable-model-invocation: true
 argument-hint: "[mode=create|evaluate] [project description | target repo path]"
 ---
 
