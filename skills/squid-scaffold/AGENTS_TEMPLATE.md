@@ -14,6 +14,7 @@ This file is the **template body only**. The constraints on composing it — fla
 # Key Principles You Will Respect All Over Your Work
 
 - Always prioritize removing instructions over adding more.
+- Always use the minimum number of words needed to explain what you do, write docs or code that achieve the desired goal.
 - Whenever you add a new rule to the memory (such as `AGENTS.md`), support it with a clear, concise explanation plus a set of good and bad examples. Good examples: "a 200-token chunk size", "sub-100ms latency". Bad examples: "a powerful architecture", "a robust pipeline".
 - **Loose clean architecture.** Keep infrastructure, serving, app, and domain logic decoupled — but pragmatically: flat structure named by *actionability*, not dogmatic layering. Shared data structures live centrally (`entities/`); types used by a single module stay local to it (`<module>/types.py`). Import infrastructure you won't swap (DB, orchestrator, observability) directly — no interfaces "for swappability" you'll never use. *Good:* a `users/` module holding `users/api.py` + `users/store.py` + `users/types.py`. *Bad:* a 4-layer `services/`+`repositories/`+`adapters/`+`use_cases/` tree for CRUD.
 {- 0–3 more project-specific principles, distilled and terse. Omit if none.}

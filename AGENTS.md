@@ -14,6 +14,7 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 ## Key Principles You Will Respect All Over Your Work
 
 - Always prioritize removing instructions over adding more.
+- Always use the minimum number of words needed to explain what you do, write docs or code that achieve the desired goal.
 - Whenever you add a new rule within the memory (such as AGENTS.md), resources or skills, support it with a clear, concise explanation, plus a set of good and bad examples. Good examples: "a 200-token chunk size", "sub-100ms latency". Bad examples: "a powerful architecture", "a robust pipeline".
 
 ## What's in the repo
