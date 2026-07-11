@@ -56,12 +56,14 @@ Done only when every skill in the set has both answers recorded — no sampling.
 
 ## Step 3 — Apply the keep/delete test
 
-**An instruction survives only if deleting it would change what the agent does.** Four cuts:
+**An instruction survives only if deleting it would change what the agent does.** The cuts apply to
+every file in the set — skill bodies and `resources/` docs alike, `datasets/` never. Four cuts:
 
 **Duplicates** — the same rule twice in one skill, repeated across skills, or restating a
 `resources/` doc the skill already points at (a skill body repeating `glossary.md` definitions) —
-the resource is the home, the skill keeps the pointer. When ≥2 skills share a big block, extract it
-to a `resources/` doc they reference; a one-liner stays inline — indirection costs a Read.
+the resource is the home, the skill keeps the pointer. Two resources repeating each other collapse
+to one home the same way. When ≥2 skills share a big block, extract it to a `resources/` doc they
+reference; a one-liner stays inline — indirection costs a Read.
 
 **Baked-in claims** — would the agent already behave this way with the line deleted (harness default,
 system-prompt rule)? Dead weight. "Read the file before editing it" dies; "write posts in the voice
@@ -85,7 +87,8 @@ Done only when every file in the set is read whole and judged against all four c
 
 ## Step 4 — Dangling artifacts
 
-A reference, script, or agent is dead only with **zero references** outside its own definition:
+A reference, script, agent, or `resources/` doc is dead only with **zero references** outside its
+own definition:
 
 ```sh
 grep -rn "helper.py" <harness-root> <project-root>   # prove it, don't assume
@@ -108,6 +111,7 @@ Print one table in chat. Do not write it to disk unless the user asks.
 | `skills/search/SKILL.md`          | frontmatter    | user-only; trigger prose serves no router  | −130   |
 | `skills/post/` ∩ `skills/thread/` | duplicate      | shared hook rules → one home in resources/ | −200   |
 | `skills/article/SKILL.md`         | verbose        | Step 2 restated three ways                 | −90    |
+| `resources/glossary.md`           | verbose        | each term defined twice, prose + table     | −150   |
 
 Stop and wait for explicit approval. Do not edit before it.
 
