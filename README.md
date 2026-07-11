@@ -75,7 +75,7 @@ With caveman installed, Squid uses it for:
 
 - **Commits** — the SWE writes each commit via `/caveman-commit` (Conventional Commits, ≤50-char subject, why-over-what).
 - **Reviews** — the PR-Reviewer posts one-line findings on the PR in `/caveman-review` style (`L42: bug: user null. add guard.`), on top of its usual rollup task.
-- **Memory compression** — `/squid-scaffold` offers to run `/caveman-compress AGENTS.md`, so the memory file every session loads is ~46% leaner.
+- **Memory compression** — `/squid-scaffold` offers to run `/caveman-compress AGENTS.md`, so the memory file every session loads is ~46% leaner; `/squid-clean-memory` chains the same pass with a de-duplication cut.
 - **Shorter replies** — caveman's `SessionStart` hook auto-compresses every reply; tune the level with `/caveman [lite|full|ultra]`.
 
 Squid runs fine without it — each integration falls back to its native behavior.
@@ -164,7 +164,7 @@ Installed via `npx skills` instead? Remove those with `npx skills remove <name>`
 | `/squid-plan <feature-spec>` | Plan a feature: grill the spec, PA grooms an approved Tasks Plan (+ optional ADR), create the branch + worktree. Start here. |
 | `/squid-implement-night <plan>` | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR. |
 | `/squid-implement-task` · `/squid-review` · `/squid-review-ci` | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation. |
-| `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` | Standalone planning/intake helpers (not wired into the main pipeline). |
+| `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` · `/squid-clean-docs` · `/squid-clean-memory` · `/squid-clean-harness` · `/squid-write-skill` | Standalone helpers (not wired into the main pipeline). |
 | `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer` | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. See [Which model runs which agent](#which-model-runs-which-agent). |
 | `squid-testing-python`, `squid-grilling`, `squid-self-improve` | Support skills the pipelines and agents lean on. |
 

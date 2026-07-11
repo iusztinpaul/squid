@@ -41,12 +41,16 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 │   ├── squid-implement-night/         # /squid-implement-night — end-to-end pipeline (thin orchestrator)
 │   ├── squid-review/                  # /squid-review — push + PA acceptance + PR-Reviewer
 │   ├── squid-review-ci/               # /squid-review-ci — On-Call drives CI green
-│   ├── squid-grilling/                # /squid-grilling — stress-test a plan (used inside /squid-plan)
+│   ├── squid-grilling/                # /squid-grilling — stress-test a plan (used inside /squid-plan; adapted from mattpocock/skills, MIT)
 │   ├── squid-testing-python/          # test-writing conventions
 │   ├── squid-self-improve/            # end-of-session corrections capture (human-gated by /squid-implement-night)
 │   ├── squid-refactor/                # /squid-refactor — standalone refactor planner (not wired into the pipeline)
 │   ├── squid-triage-issue/            # /squid-triage-issue — standalone bug intake (not wired into the pipeline)
-│   └── squid-architecture-review/     # /squid-architecture-review — standalone audit (not wired into the pipeline)
+│   ├── squid-architecture-review/     # /squid-architecture-review — standalone audit (not wired into the pipeline)
+│   ├── squid-clean-docs/              # /squid-clean-docs — standalone prose cleanup: docs, comments, docstrings (not wired into the pipeline)
+│   ├── squid-clean-memory/            # /squid-clean-memory — standalone memory-file shrink: compress, dedupe, merge (not wired into the pipeline)
+│   ├── squid-clean-harness/           # /squid-clean-harness — standalone .agents shrink: skills + resources, same logic fewer tokens (not wired into the pipeline)
+│   └── squid-write-skill/             # /squid-write-skill — skill-authoring reference (vendored from mattpocock/skills, MIT; not wired into the pipeline)
 ├── LICENSE
 ├── README.md                          # user-facing (install + what's inside)
 ├── AGENTS.md                          # (this file; CLAUDE.md symlinks to it)
@@ -73,7 +77,7 @@ Squid integrates with [caveman](https://github.com/JuliusBrussee/caveman) as an 
 
 - **Commits** → `/caveman-commit` — `agents/software-engineer.md` (Commit section + Rules), `skills/squid-implement-task` (step 2d), `skills/squid-review-ci` (CI-fix commit).
 - **Reviews** → PR-Reviewer posts one-line `/caveman-review` comments on the PR, on top of the rollup — `agents/pr-reviewer.md` (Step 3b) + `skills/squid-review` (Step 3 prompt). The rollup stays the machine-readable routing artifact.
-- **Memory compression** → `/squid-scaffold` (Step 3) offers `/caveman-compress AGENTS.md` on the file it generates.
+- **Memory compression** → `/squid-scaffold` (Step 3) offers `/caveman-compress AGENTS.md` on the file it generates; `/squid-clean-memory` (Step 2) runs it before de-duplicating; `/squid-clean-harness` (Step 3) drafts its wording pass with it.
 - **Shorter replies** → caveman's own `SessionStart` hook; no Squid wiring. User-facing docs live in `README.md`; downstream projects learn of it via `AGENTS_TEMPLATE.md`.
 
 This file (and its `CLAUDE.md` symlink) can itself be compressed with `/caveman-compress AGENTS.md`.
