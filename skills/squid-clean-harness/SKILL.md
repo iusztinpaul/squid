@@ -58,9 +58,10 @@ Done only when every skill in the set has both answers recorded — no sampling.
 
 **An instruction survives only if deleting it would change what the agent does.** Four cuts:
 
-**Duplicates** — the same rule twice in one skill, or repeated across skills. One home: when ≥2
-skills share a big block, extract it to a `resources/` doc they reference; a one-liner stays inline —
-indirection costs a Read.
+**Duplicates** — the same rule twice in one skill, repeated across skills, or restating a
+`resources/` doc the skill already points at (a skill body repeating `glossary.md` definitions) —
+the resource is the home, the skill keeps the pointer. When ≥2 skills share a big block, extract it
+to a `resources/` doc they reference; a one-liner stays inline — indirection costs a Read.
 
 **Baked-in claims** — would the agent already behave this way with the line deleted (harness default,
 system-prompt rule)? Dead weight. "Read the file before editing it" dies; "write posts in the voice
