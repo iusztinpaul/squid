@@ -57,13 +57,12 @@ Done only when every skill in the set has both answers recorded — no sampling.
 ## Step 3 — Apply the keep/delete test
 
 **An instruction survives only if deleting it would change what the agent does.** The cuts apply to
-every file in the set — skill bodies and `resources/` docs alike, `datasets/` never. Four cuts:
+every file in the set — skill bodies and `resources/` docs alike, `datasets/` never. Five cuts:
 
 **Duplicates** — the same rule twice in one skill, repeated across skills, or restating a
 `resources/` doc the skill already points at (a skill body repeating `glossary.md` definitions) —
 the resource is the home, the skill keeps the pointer. Two resources repeating each other collapse
-to one home the same way. When ≥2 skills share a big block, extract it to a `resources/` doc they
-reference; a one-liner stays inline — indirection costs a Read.
+to one home the same way, as does a block ≥2 skills share — **Disclosure** below says where it goes.
 
 **Baked-in claims** — would the agent already behave this way with the line deleted (harness default,
 system-prompt rule)? Dead weight. "Read the file before editing it" dies; "write posts in the voice
@@ -78,12 +77,18 @@ the caveman plugin is installed, `/caveman-compress` per file is a good first dr
 afterwards that the frontmatter is still parseable YAML.
 
 **Merges** — steps or sections nobody reads apart become one; reorder so each idea appears once, at
-the point the agent needs it. The reverse cut is disclosure: inline what every branch of a skill
-needs, push what only some branches reach into a linked file loaded on demand — fewer tokens per
-invocation even when total words stay. The pointer's wording, not its target, decides whether the
-agent reaches the material — say when to load it, not just where it lives.
+the point the agent needs it.
 
-Done only when every file in the set is read whole and judged against all four cuts.
+**Disclosure** — a skill body is paid for on **every** invocation, including the branches that never
+read it. Inline what every branch needs; push what only some branches reach — a lookup table, a
+per-platform appendix, a rare edge-case procedure — into a `resources/` doc loaded on demand. Same
+home for a block ≥2 skills share. Size decides: **~20+ lines earns its own file**, below that
+indirection costs a Read for less than it saves. Per-invocation tokens fall even when total words
+don't. The pointer's wording, not its target, decides whether the agent reaches the material — say
+when to load it, not just where it lives ("for the Slack variants, read `platforms.md`", not "see
+`platforms.md`"). Theory: `/squid-write-skill`.
+
+Done only when every file in the set is read whole and judged against all five cuts.
 
 ## Step 4 — Dangling artifacts
 
@@ -111,6 +116,7 @@ Print one table in chat. Do not write it to disk unless the user asks.
 | `skills/search/SKILL.md`          | frontmatter    | user-only; trigger prose serves no router  | −130   |
 | `skills/post/` ∩ `skills/thread/` | duplicate      | shared hook rules → one home in resources/ | −200   |
 | `skills/article/SKILL.md`         | verbose        | Step 2 restated three ways                 | −90    |
+| `skills/publish/SKILL.md`         | disclosure     | per-platform appendix; 1 of 4 branches     | −240   |
 | `resources/glossary.md`           | verbose        | each term defined twice, prose + table     | −150   |
 
 Stop and wait for explicit approval. Do not edit before it.
