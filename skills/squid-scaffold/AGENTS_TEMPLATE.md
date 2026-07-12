@@ -13,8 +13,7 @@ This file is the **template body only**. The constraints on composing it — fla
 
 # Key Principles You Will Respect All Over Your Work
 
-- Always prioritize removing instructions over adding more.
-- Always use the minimum number of words needed to explain what you do, write docs or code that achieve the desired goal.
+- Prefer removing instructions over adding them; write docs, code, and rules with the minimum words that achieve the goal.
 - Whenever you add a new rule to the memory (such as `AGENTS.md`), support it with a clear, concise explanation plus a set of good and bad examples. Good examples: "a 200-token chunk size", "sub-100ms latency". Bad examples: "a powerful architecture", "a robust pipeline".
 - **Loose clean architecture.** Keep infrastructure, serving, app, and domain logic decoupled — but pragmatically: flat structure named by *actionability*, not dogmatic layering. Shared data structures live centrally (`entities/`); types used by a single module stay local to it (`<module>/types.py`). Import infrastructure you won't swap (DB, orchestrator, observability) directly — no interfaces "for swappability" you'll never use. *Good:* a `users/` module holding `users/api.py` + `users/store.py` + `users/types.py`. *Bad:* a 4-layer `services/`+`repositories/`+`adapters/`+`use_cases/` tree for CRUD.
 {- 0–3 more project-specific principles, distilled and terse. Omit if none.}
@@ -26,18 +25,18 @@ This file is the **template body only**. The constraints on composing it — fla
 - **Backend** — [`packages/backend/`](packages/backend/): {role}. Python ({fastapi-service / fastmcp-server / cli-tool / library}); {2–3 headline conventions, e.g. Pydantic models (not dataclasses/TypedDicts), async I/O, infra imported directly, `entities/` for shared models}. Depth: the squid `python-backend` spec.
 - **Web frontend** — [`packages/frontend-web/`](packages/frontend-web/): {role}. TypeScript ({framework}); {Vite + strict tsconfig, one exported component per file}. Depth: the squid `typescript-frontend` spec.
 - **TUI frontend** — [`packages/frontend-tui/`](packages/frontend-tui/): {role}. Go ({bubbletea / tview}); {thin `cmd/<slug>/main.go`, logic in `internal/`}. Depth: the squid `go-tui` spec.
-- **Shared contracts** — [`packages/shared/`](packages/shared/): OpenAPI 3.1 spec + per-language codegen. *Only if shared chosen.*
+- **Shared contracts** — [`packages/shared/`](packages/shared/): OpenAPI 3.1 spec + per-language codegen. {Emit only if shared chosen.}
 
 ## Component dependencies
 
-*Only for multi-component projects.* How modules/components may call each other:
+{Emit this section only for multi-component projects.} How modules/components may call each other:
 
 - Cross-component contracts flow through `packages/shared/` (OpenAPI 3.1 → generated clients: `frontend-web/src/api/`, `frontend-tui/internal/api/client.go`, `backend/src/<pkg>/generated_client/` — never hand-edited). A component **never** imports another component's source directly.
 - The backend may consume `shared/` but **never imports from `frontend-*`**.
 
 # Project Structure
 
-{ASCII tree pulled from `monorepo-layout.md`, trimmed to the chosen components. Include `tasks/` when the agent team is chosen.}
+The tree on disk is the truth — don't mirror the layout here (mirrors drift). {If monorepo, append: "Component boundaries and where new files go: the squid `monorepo-layout` spec."}
 
 **Scripts & entrypoints.**
 - Python: operator scripts in `scripts/`; CLI entrypoints in `pyproject.toml` `[project.scripts]`; server/MCP mains at `scripts/serve_*.py`. **Every entrypoint module (script, server main, CLI root) calls `init_logger()` at module level before any logic or project import.**
@@ -46,16 +45,11 @@ This file is the **template body only**. The constraints on composing it — fla
 
 # Tech Stack
 
-Multi-language — each component brings its own toolchain:
-
-{- **Python 3.12+** (backend) — `uv`, `ruff`, `pytest`.}
-{- **Node.js 20+** (frontend-web) — `bun`, `vite`, `vitest`, `eslint` 9, `prettier` 3.}
-{- **Go 1.22+** (frontend-tui) — `go mod`, `gofmt`, `go test`.}
-{- **OpenAPI 3.1 + codegen** (shared) — `openapi-spec-validator`, `openapi-python-client`, `@openapitools/openapi-generator-cli`, `oapi-codegen`.}
+Each component's manifest ({`pyproject.toml`}{ / `package.json`}{ / `go.mod`}) and Makefile are the source of truth for runtimes, deps, and tools — don't restate versions here.
 
 ## Access Documentation
 
-Use the `context7` MCP server (when connected) to look up authoritative usage for any tech-stack item or external service above; falls back to web search otherwise.
+Use the `context7` MCP server (when connected) to look up authoritative usage for any dependency or external service in this project; falls back to web search otherwise.
 
 {Emit the block below only if the user named one or more `llms.txt`-publishing tools at scaffold time (rules.md P5); otherwise omit it entirely and rely on `context7` alone.}
 
@@ -69,17 +63,7 @@ Use the `context7` MCP server (when connected) to look up authoritative usage fo
 
 All core verbs run at the repo root via the [`Makefile`](Makefile), which **delegates** to each component (`$(MAKE) -C packages/<c> <verb>`) — never reimplementing per-component logic:
 
-| Verb | What it does |
-|---|---|
-| `make install` | Install/refresh every component's deps. |
-| `make test` | Run every component's test suite. |
-{| `make unit-tests` / `make integration-tests` | Backend unit / integration tests. |}
-| `make lint-check` / `make lint-fix` · `make format-check` / `make format-fix` | Static / formatting checks + auto-fix. |
-| `make pre-commit` | `format-check + lint-check + light tests`. |
-| `make build` | Build every deployable artifact (one component: `make build-<component>`). |
-| `make help` | Curated target list. |
-
-Each verb has a `-<component>` form for the fast inner loop (`make test-backend`). **Manual QA order:** `format-fix → lint-fix → format-check → lint-check → pre-commit → unit-tests`.
+`make help` prints the curated verb list — don't duplicate it here. Each verb has a `-<component>` form for the fast inner loop (`make test-backend`). **Manual QA order:** `format-fix → lint-fix → format-check → lint-check → pre-commit → unit-tests`.
 
 Commands not wrapped by `make` — use the per-component runner:
 {- **Python:** `uv run …`, `uvx <tool>` (from root: `uv --directory packages/<c> run …`).}
@@ -97,7 +81,9 @@ Access infra and external services **CLI-only** (no web UIs), so the orchestrato
 {- **Orchestrator (e.g. Prefect):** `uv run prefect ...` — *AGENT: fill in the deploy/run commands.*}
 - **Project MCP servers:** *AGENT: fill in any MCP server this project's code talks to and the config it needs.*
 
-For each external-service slug the user selected, emit one bullet below wrapped in `<!-- stack:<slug> -->` / `<!-- /stack:<slug> -->` comments (one-line summary from the spec's frontmatter `description`, with its CLI). Emit nothing for categories left `none`. Grep `<!-- stack:` to find and delete a block.
+{For each external-service slug the user selected, emit one bullet wrapped in `<!-- stack:<slug> -->` / `<!-- /stack:<slug> -->` comments — a one-line summary from the spec's frontmatter `description`, with its CLI. Emit nothing for categories left `none`. The fenced example below shows the format — never emit the fence itself.}
+
+Remove a service cleanly: grep `<!-- stack:` and delete the block.
 
 ```
 <!-- stack:mongodb -->
@@ -107,17 +93,9 @@ For each external-service slug the user selected, emit one bullet below wrapped 
 
 # Developing New Features & Bug Fixes
 
-*Only emit if agent team + tracker chosen.*
+{Emit this section only if agent team + tracker chosen.}
 
 This project uses the **squid** agent team (`/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul`) — per-role rules in `agents/`, per-phase rules in the skills. Direct chat for trivial edits; for one or a few groomed tasks use **`/squid-implement-task`**; for a whole feature use **`/squid-plan`** then **`/squid-implement-night`** (or run **`/squid-review`** / **`/squid-review-ci`** standalone).
-
-| Role | Responsibility |
-|---|---|
-| Product Architect (PA) | Grooms a feature into a Tasks Plan; authors ADRs + glossary; user-POV acceptance. |
-| Software Engineer | Implements code + tests; commits each task after the Tester passes. |
-| Tester | Full suite + **e2e adversarial QA**. |
-| PR Reviewer | Diff review — correctness, simplicity, tests, standards, docs. |
-| On-Call | Watches CI; diagnoses failures and hands fix tasks to the SWE. |
 
 ```
 /squid-plan  →  approved Tasks Plan (+ optional ADR) + branch/worktree
@@ -128,7 +106,7 @@ Engineering discipline — TDD-first, branch off the active branch, run the feat
 
 **Optional — caveman.** If the [caveman](https://github.com/JuliusBrussee/caveman) plugin is installed, the SWE writes each commit with `/caveman-commit`, the PR-Reviewer posts one-line `/caveman-review` comments on the PR (on top of its rollup), and you can shrink this file with `/caveman-compress AGENTS.md` to cut per-session tokens. Everything works without it — the integrations fall back to native behavior.
 
-**Tracker:** `TRACKER_MODE: file` *(or `gh` for GitHub Issues)*. File mode: one `tasks/<NNN>-<slug>.md` per task with a `status:` frontmatter field (`pending` → `in-progress` → `done`); completing a task moves the file into `tasks/done/`, leaving only open tasks at the top level. See [`tasks/README.md`](tasks/README.md).
+**Tracker:** `TRACKER_MODE: file` *(or `gh` for GitHub Issues)*. File mode: one `tasks/<NNN>-<slug>.md` per task, `status:` frontmatter, done tasks move to `tasks/done/` — full model in [`tasks/README.md`](tasks/README.md).
 
 Project-specific invariants the agents can't infer:
 
@@ -142,7 +120,7 @@ Project-specific invariants the agents can't infer:
 
 # Documentation Conventions
 
-*Only emit if `adr` and/or `ubiquitous-language` were chosen.*
+{Emit this section only if `adr` and/or `ubiquitous-language` were chosen.}
 
 {If `adr`:}
 - **ADRs** at [`docs/adr/`](docs/adr/) — `NNNN-kebab-title.md`, Nygard template (Status / Context / Decision / Diagram / Consequences; the Diagram a coloured Mermaid system diagram of the change). One ADR per feature, capturing its whole design (a feature's related architectural choices go in a single ADR — not one per task or per choice). Spec: squid `adr`.
