@@ -5,13 +5,9 @@ Why this exists: `claude plugin validate .` from the repo root only reads
 `.claude-plugin/marketplace.json`. It never opens `agents/` or `skills/`, so a
 skill whose frontmatter fails to parse sails straight through — and Claude Code
 then loads that skill with *every frontmatter field silently dropped* (no name,
-no description, no disable-model-invocation). That is exactly how four skills
-shipped broken. Even when pointed at a marketplace-free copy, `claude plugin
-validate` checks field *types* but never *values*: `model: not-a-real-model`
-and `effort: banana` both pass.
-
-Usage:  python3 scripts/check-frontmatter.py
-Exit:   0 = clean, 1 = at least one error
+no description, no disable-model-invocation). Even when pointed at a
+marketplace-free copy, `claude plugin validate` checks field *types* but never
+*values*: `model: not-a-real-model` and `effort: banana` both pass.
 """
 
 from __future__ import annotations
