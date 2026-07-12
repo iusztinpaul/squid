@@ -105,7 +105,7 @@ There is no `make test` or pytest suite — testing this plugin means running th
 
 ## Publishing
 
-Run `scripts/release.sh patch` (or `minor` / `major` / explicit `X.Y.Z`) from a clean `main`. The script bumps `.claude-plugin/plugin.json`, commits as `chore: release vX.Y.Z`, creates an annotated tag, and pushes both after a confirmation prompt. `.github/workflows/release-check.yml` enforces that the tag matches `plugin.json` on every tag push.
+Run `scripts/release.sh patch` (or `minor` / `major` / explicit `X.Y.Z`) from a clean `main`.
 
 Then smoke-test from another machine (or a fresh Claude Code session): `/plugin marketplace update iusztinpaul && /plugin update squid@iusztinpaul`.
 

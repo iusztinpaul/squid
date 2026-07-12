@@ -38,7 +38,7 @@ Run `/squid-plan <feature-spec>` then `/squid-implement-night`, and Squid drives
                                                     HUMAN squash-merges (2/2)
 ```
 
-Branch + worktree, grooming, the per-task implement/verify loop, push, diff review, and CI are all automated — you only show up for the two gates. For a quick single change, run `/squid-implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/squid-scaffold` first — it interviews you about the stack and writes a tailored `AGENTS.md` plus a folder skeleton (no application source).
+Branch + worktree, grooming, the per-task implement/verify loop, push, diff review, and CI are all automated — you only show up for the two gates. For a quick single change, run `/squid-implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/squid-scaffold` first (see [Quick start](#quick-start)).
 
 ## Who this is for
 

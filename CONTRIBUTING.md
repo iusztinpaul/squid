@@ -44,24 +44,11 @@ See [`CLAUDE.md`](CLAUDE.md) for full editing conventions, spec-writing style, a
 
 ## Adding a new spec (most common contribution)
 
-Specs are **opinions, not code**. They state the rules with rationale; canonical files only appear inline as fenced examples. Foundation specs follow a five-section shape:
-
-1. `When to use`
-2. `When NOT to use`
-3. `Decision tree`
-4. `Canonical principles`
-5. Supporting content (inline or in co-located docs)
-
-Cross-reference, don't duplicate — if your spec needs uv guidance, write *"see `uv-python.md`"* rather than copying its content. Stubs are fine: ship the foundations and leave the long tail terse until real usage forces detail.
+Specs are **opinions, not code** — see [`CLAUDE.md`](CLAUDE.md) → "Spec-writing style" for the five-section shape and rules.
 
 ## Testing your change
 
-There is no automated test suite. Testing means running the affected skill against a real scratch target.
-
-- **Spec changes** → run `/squid-scaffold` in an empty dir and confirm the generated `AGENTS.md` reflects your spec (and that `CLAUDE.md` is a symlink to it).
-- **Agent changes** → run `/squid-implement-task` on a scaffolded project and confirm the agent behaves as expected.
-- **Pipeline changes** → run `/squid-plan` then `/squid-implement-night` end-to-end with a small feature spec.
-- **All changes** → `claude plugin validate` must pass.
+There is no automated test suite. Testing means running the affected skill against a real scratch target — see [`CLAUDE.md`](CLAUDE.md) → "Testing the plugin" for the per-skill checks and validation commands (`scripts/check-frontmatter.py` is the guard; `claude plugin validate` alone misses broken frontmatter).
 
 ## Submitting
 
