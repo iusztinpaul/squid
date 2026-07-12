@@ -23,9 +23,9 @@ This file is the **template body only**. The constraints on composing it — fla
 
 {One bullet per enabled component. If the project has multiple apps, group them under a `## <app-name>` subheading per app. Each bullet: directory link, one-line role, language, and a SHORT design-conventions note (1–2 phrases distilled from the component's spec — link the spec for depth).}
 
-- **Backend** — [`packages/backend/`](packages/backend/): {role}. Python ({fastapi-service / fastmcp-server / cli-tool / library}); {2–3 headline conventions, e.g. Pydantic models (not dataclasses/TypedDicts), async I/O, infra imported directly, `entities/` for shared models}. Depth: [`python-backend`](skills/squid-scaffold/specs/python-backend.md).
-- **Web frontend** — [`packages/frontend-web/`](packages/frontend-web/): {role}. TypeScript ({framework}); {Vite + strict tsconfig, one exported component per file}. Depth: [`typescript-frontend`](skills/squid-scaffold/specs/typescript-frontend.md).
-- **TUI frontend** — [`packages/frontend-tui/`](packages/frontend-tui/): {role}. Go ({bubbletea / tview}); {thin `cmd/<slug>/main.go`, logic in `internal/`}. Depth: [`go-tui`](skills/squid-scaffold/specs/go-tui.md).
+- **Backend** — [`packages/backend/`](packages/backend/): {role}. Python ({fastapi-service / fastmcp-server / cli-tool / library}); {2–3 headline conventions, e.g. Pydantic models (not dataclasses/TypedDicts), async I/O, infra imported directly, `entities/` for shared models}. Depth: the squid `python-backend` spec.
+- **Web frontend** — [`packages/frontend-web/`](packages/frontend-web/): {role}. TypeScript ({framework}); {Vite + strict tsconfig, one exported component per file}. Depth: the squid `typescript-frontend` spec.
+- **TUI frontend** — [`packages/frontend-tui/`](packages/frontend-tui/): {role}. Go ({bubbletea / tview}); {thin `cmd/<slug>/main.go`, logic in `internal/`}. Depth: the squid `go-tui` spec.
 - **Shared contracts** — [`packages/shared/`](packages/shared/): OpenAPI 3.1 spec + per-language codegen. *Only if shared chosen.*
 
 ## Component dependencies
@@ -101,7 +101,7 @@ For each external-service slug the user selected, emit one bullet below wrapped 
 
 ```
 <!-- stack:mongodb -->
-- **MongoDB** — async ODM (Beanie / PyMongo); `mongosh "$MONGODB_URL"` for local queries. Spec: [`datastore-mongodb`](skills/squid-scaffold/specs/datastore-mongodb.md).
+- **MongoDB** — async ODM (Beanie / PyMongo); `mongosh "$MONGODB_URL"` for local queries. Spec: squid `datastore-mongodb`.
 <!-- /stack:mongodb -->
 ```
 
@@ -124,7 +124,7 @@ This project uses the **squid** agent team (`/plugin marketplace add iusztinpaul
 /squid-implement-night (in the worktree):  /squid-implement-task → /squid-review → /squid-review-ci  →  human squash-merges
 ```
 
-Engineering discipline — TDD-first, branch off the active branch, run the feature end-to-end before hand-off, regression-test-first for bugs, the format/lint/unit/integration cadence — lives in [`agents/software-engineer.md`](agents/software-engineer.md) + [`agents/tester.md`](agents/tester.md) and is enforced automatically by the pipelines.
+Engineering discipline — TDD-first, branch off the active branch, run the feature end-to-end before hand-off, regression-test-first for bugs, the format/lint/unit/integration cadence — lives in the squid `software-engineer` + `tester` agent contracts and is enforced automatically by the pipelines.
 
 **Optional — caveman.** If the [caveman](https://github.com/JuliusBrussee/caveman) plugin is installed, the SWE writes each commit with `/caveman-commit`, the PR-Reviewer posts one-line `/caveman-review` comments on the PR (on top of its rollup), and you can shrink this file with `/caveman-compress AGENTS.md` to cut per-session tokens. Everything works without it — the integrations fall back to native behavior.
 
@@ -138,15 +138,15 @@ Project-specific invariants the agents can't infer:
 
 # Testing E2E
 
-{AGENT: fill in the concrete way to exercise THIS project end-to-end — per e2e-testable surface, give: the exact entrypoint/command, any service that must be running first (`make run-<component>` / `make docker-up`), required env / seed data, and what "working" looks like (expected output, status code, row written). Keep it project-specific and runnable. The generic "use it like a user, then try to break it" method is the Tester's job — see [`agents/tester.md`](agents/tester.md).}
+{AGENT: fill in the concrete way to exercise THIS project end-to-end — per e2e-testable surface, give: the exact entrypoint/command, any service that must be running first (`make run-<component>` / `make docker-up`), required env / seed data, and what "working" looks like (expected output, status code, row written). Keep it project-specific and runnable. The generic "use it like a user, then try to break it" method is the Tester's job — see the squid `tester` agent contract.}
 
 # Documentation Conventions
 
 *Only emit if `adr` and/or `ubiquitous-language` were chosen.*
 
 {If `adr`:}
-- **ADRs** at [`docs/adr/`](docs/adr/) — `NNNN-kebab-title.md`, Nygard template (Status / Context / Decision / Diagram / Consequences; the Diagram a coloured Mermaid system diagram of the change). One ADR per feature, capturing its whole design (a feature's related architectural choices go in a single ADR — not one per task or per choice). Spec: [`adr.md`](skills/squid-scaffold/specs/adr.md).
+- **ADRs** at [`docs/adr/`](docs/adr/) — `NNNN-kebab-title.md`, Nygard template (Status / Context / Decision / Diagram / Consequences; the Diagram a coloured Mermaid system diagram of the change). One ADR per feature, capturing its whole design (a feature's related architectural choices go in a single ADR — not one per task or per choice). Spec: squid `adr`.
 
 {If `ubiquitous-language`:}
-- **Glossary** at [`docs/glossary.md`](docs/glossary.md) — one canonical name per concept, used identically in code / OpenAPI schemas / DB columns / UI; update it in the same PR that introduces or renames a concept. PA grooming and [`/squid-grilling`](skills/squid-grilling/SKILL.md) read it as the tie-breaker. Spec: [`ubiquitous-language.md`](skills/squid-scaffold/specs/ubiquitous-language.md).
+- **Glossary** at [`docs/glossary.md`](docs/glossary.md) — one canonical name per concept, used identically in code / OpenAPI schemas / DB columns / UI; update it in the same PR that introduces or renames a concept. PA grooming and `/squid-grilling` read it as the tie-breaker. Spec: squid `ubiquitous-language`.
 ````

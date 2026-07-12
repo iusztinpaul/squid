@@ -22,7 +22,7 @@ You are the **triage orchestrator** — you may delegate exploration to sub-agen
 
 If empty, ask the user for one before proceeding.
 
-Read [`docs/PROCESS.md`](../../../docs/PROCESS.md) to confirm the active **tracker mode** (`file` or `gh`).
+Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`).
 
 ## When to use
 
@@ -32,8 +32,8 @@ Read [`docs/PROCESS.md`](../../../docs/PROCESS.md) to confirm the active **track
 
 ## When NOT to use
 
-- A feature request — use the `/squid-implement-night` PM grooming flow directly.
-- A refactor with no observable user impact — use [`/squid-refactor`](../squid-refactor/SKILL.md).
+- A feature request — use `/squid-plan` (PA grooming) directly.
+- A refactor with no observable user impact — use `/squid-refactor`.
 - A trivial typo or one-line bug you can fix right now in chat — just fix it.
 - An incident still in progress — stabilise first, triage after.
 
@@ -42,7 +42,7 @@ Read [`docs/PROCESS.md`](../../../docs/PROCESS.md) to confirm the active **track
 Identify what to triage from `$ARGUMENTS`:
 
 1. **File path** → `cat` the report.
-2. **Tracker reference** (`NNN-slug` file mode, `#N` gh mode) → load the existing record (`tracker/NNN-*.todo.md` or `gh issue view N --json number,title,body,labels`).
+2. **Tracker reference** (`NNN-slug` file mode, `#N` gh mode) → load the existing record (`tasks/NNN-*.md` or `gh issue view N --json number,title,body,labels`).
 3. **Free-form text** → use as-is.
 4. **Empty** → ask: "What bug should I triage? (Paste the report, give me a path, or a tracker reference.)"
 
@@ -88,7 +88,7 @@ The reproducer must be **deterministic**. If it's only intermittent, mark it exp
 
 ## Step 4 — Write the groomed bug task
 
-Use this exact template. It mirrors the PM agent's groom output so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
+Use this exact template. It mirrors the PA's groom output so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
 
 ```markdown
 # Bug: {one-line title — observable user-visible symptom}
@@ -145,17 +145,17 @@ Actual: {what does happen — include exact error message, status code, or outpu
 
 ## Step 5 — File the task
 
-Where it lands depends on tracker mode (read from `docs/PROCESS.md`).
+Where it lands depends on tracker mode (read from `AGENTS.md`).
 
 ### File mode
 
-Pick the next sequential ID (`ls tracker/ | grep -oE '^[0-9]+' | sort -n | tail -1`, +1, zero-padded to the project's existing width). Write to:
+Pick the next sequential ID (`ls tasks/ tasks/done/ 2>/dev/null | grep -oE '^[0-9]+' | sort -n | tail -1`, +1, zero-padded to the project's existing width — scanning `tasks/done/` too so a completed task's number isn't reused). Write to:
 
 ```
-tracker/NNN-bug-<slug>.groomed.md
+tasks/NNN-bug-<slug>.md
 ```
 
-`.groomed.md` (not `.todo.md`) signals "PM-ready, can enter the inner loop". Both `/squid-implement-task` and `/squid-implement-night` accept this directly.
+Open the file with YAML frontmatter (`status: pending`, `feature: bug-<slug>`), then the groomed body from Step 4. `status: pending` signals "groomed, can enter the inner loop" — both `/squid-implement-task` and `/squid-implement-night` accept it directly.
 
 ### gh mode
 
@@ -187,7 +187,7 @@ Surface a single decision block to the user:
 {Pick ONE based on severity + scope:}
 
 - **Severity S1 / S2, narrow scope (≤2 files), reproducer is deterministic** → `/squid-implement-task {ref}` — supervise the fix in real time. Fastest path; you watch the diff.
-- **Severity S3 / S4, OR scope spans multiple files / tasks, OR a regression test will need its own design conversation** → `/squid-implement-night {ref}` — full pipeline. PM will decompose into tasks; you only gate the plan and the merge.
+- **Severity S3 / S4, OR scope spans multiple files / tasks, OR a regression test will need its own design conversation** → `/squid-plan {ref}` then `/squid-implement-night` — full pipeline. The PA decomposes into tasks; you only gate the plan and the merge.
 - **Severity S1 production-down** → fix live yourself; this groomed task becomes the postmortem record, not the entry point.
 
 ### Open questions for the human

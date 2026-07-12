@@ -12,9 +12,9 @@ argument-hint: "[scope-path or component name; default = whole repo]"
 
 The team's day-to-day pipeline (`/squid-implement-task`, `/squid-implement-night`) operates at task grain. Long-horizon codebase health — drift, unintended coupling, dead modules, layering violations — accumulates between tasks and never gets addressed unless someone deliberately looks. This skill is that deliberate look.
 
-The output is **not a single PR**. It's a prioritised backlog of refactor proposals, each shaped so [`/squid-refactor`](../squid-refactor/SKILL.md) can pick one up and turn it into a Tasks Plan.
+The output is **not a single PR**. It's a prioritised backlog of refactor proposals, each shaped so `/squid-refactor` can pick one up and turn it into a Tasks Plan.
 
-You are the **auditor** — you delegate exploration to sub-agents, you read [`docs/adr/`](../../../docs/adr/) to avoid re-proposing settled questions, and you produce a written report. You do NOT write code, do NOT start refactors, and do NOT decide priority for the team — you propose, the human prioritises.
+You are the **auditor** — you delegate exploration to sub-agents, you read the target repo's `docs/adr/` to avoid re-proposing settled questions, and you produce a written report. You do NOT write code, do NOT start refactors, and do NOT decide priority for the team — you propose, the human prioritises.
 
 `$ARGUMENTS`:
 
@@ -36,7 +36,7 @@ Smaller scopes produce sharper findings; whole-repo audits produce broader maps 
 
 - During active feature delivery — review when the team has bandwidth to act on findings, not as theatre.
 - On a codebase < 6 months old. There isn't yet enough crystallised pattern to review against.
-- When the team has clear architectural anxieties already named — go straight to [`/squid-refactor`](../squid-refactor/SKILL.md) with the named target.
+- When the team has clear architectural anxieties already named — go straight to `/squid-refactor` with the named target.
 - As a substitute for code review on a specific PR — open or update the PR with `gh` and review it there instead.
 - On infra-only repos (Terraform, CI tooling). The shape doesn't fit; this skill assumes application code with modules, layers, dependencies.
 
@@ -50,17 +50,17 @@ Echo the resolved scope back as a one-line confirmation. Don't block.
 
 ## Step 2 — Read prior decisions
 
-Read [`docs/adr/`](../../../docs/adr/) end-to-end if it exists. Build a mental model of:
+Read the repo's `docs/adr/` end-to-end if it exists. Build a mental model of:
 
 - What decisions are **Accepted** and still in force.
 - What decisions are **Superseded** (and by what).
 - What constraints (technical, business, team-shape) the ADRs cite.
 
-This is the single highest-value step. An architecture review that proposes "split the auth module" when ADR-0005 already explained why it's deliberately combined wastes everyone's time. If ADRs don't exist, note that — recommend [`adr.md`](../squid-scaffold/specs/adr.md) as a prerequisite to capturing this review's outcome.
+This is the single highest-value step. An architecture review that proposes "split the auth module" when ADR-0005 already explained why it's deliberately combined wastes everyone's time. If ADRs don't exist, note that — recommend the `adr` spec (`squid-scaffold/specs/adr.md`) as a prerequisite to capturing this review's outcome.
 
 Also read, if present:
 
-- [`docs/glossary.md`](../squid-scaffold/specs/ubiquitous-language.md) — to know whether the team already names concepts consistently.
+- `docs/glossary.md` (spec: `squid-scaffold/specs/ubiquitous-language.md`) — to know whether the team already names concepts consistently.
 - The root `CLAUDE.md` and any per-component `CLAUDE.md` — for stated rules.
 
 ## Step 3 — Map the current architecture
@@ -132,7 +132,7 @@ Prioritise by `severity / effort` ratio, with confidence as a tiebreaker — a H
 
 Path:
 
-- File mode: `tracker/squid-architecture-review-{YYYY-MM-DD}.md`.
+- File mode: `docs/architecture-review-{YYYY-MM-DD}.md` (a report, not a task — it doesn't enter `tasks/`; each accepted finding becomes a task via `/squid-refactor`).
 - gh mode: a single issue, label `squid-architecture-review`.
 
 Template:
@@ -208,6 +208,6 @@ Single block:
 
 {One of:}
 - "Recommend ADR-{NNNN} to record the resolution of F{X} when its refactor lands."
-- "No ADRs in `docs/adr/` — recommend bootstrapping with [`adr.md`](../squid-scaffold/specs/adr.md) before proceeding so this review's findings stay durable."
+- "No ADRs in `docs/adr/` — recommend bootstrapping with the `adr` spec (`squid-scaffold/specs/adr.md`) before proceeding so this review's findings stay durable."
 ```
 

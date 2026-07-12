@@ -10,7 +10,7 @@ argument-hint: <refactor-goal | path/to/squid-refactor-spec.md | tracker-ref>
 
 # Refactor — plan a no-behaviour-change structural improvement
 
-A refactor is **not** a feature and **not** a bug. Its acceptance criteria are structural ("module X no longer imports module Y", "the public API of `foo()` is unchanged but the implementation is now split across N files") and its safety net is "the test suite is green at every commit." The PM agent's normal feature-grooming flow doesn't fit because there's no user-visible behaviour to acceptance-test.
+A refactor is **not** a feature and **not** a bug. Its acceptance criteria are structural ("module X no longer imports module Y", "the public API of `foo()` is unchanged but the implementation is now split across N files") and its safety net is "the test suite is green at every commit." The Product Architect's normal feature-grooming flow doesn't fit because there's no user-visible behaviour to acceptance-test.
 
 This skill produces a Tasks Plan whose tasks are **commit-grain** (each one keeps `main` shippable) and whose AC speak the refactor's actual concerns: imports, types, signatures, dependency direction, public surface, test coverage. The output feeds `/squid-implement-night` directly.
 
@@ -24,7 +24,7 @@ You are the **planner** — you may delegate exploration but do NOT write code, 
 
 If empty, ask the user for one.
 
-Read [`docs/PROCESS.md`](../../../docs/PROCESS.md) to confirm tracker mode and the canonical lifecycle this plan plugs into.
+Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`) and the pipeline map this plan plugs into.
 
 ## When to use
 
@@ -34,8 +34,8 @@ Read [`docs/PROCESS.md`](../../../docs/PROCESS.md) to confirm tracker mode and t
 
 ## When NOT to use
 
-- A feature with new user-visible behaviour — use `/squid-implement-night`'s built-in PM grooming instead.
-- A bug fix — use [`/squid-triage-issue`](../squid-triage-issue/SKILL.md), then `/squid-implement-task` or `/squid-implement-night`.
+- A feature with new user-visible behaviour — use `/squid-plan` (PA grooming) instead.
+- A bug fix — use `/squid-triage-issue`, then `/squid-implement-task` or `/squid-implement-night`.
 - A one-file rename you can finish in five minutes — just do it; don't ceremony.
 - Refactors where the test suite is too thin to anchor "green at every step." First task in that case is **expand test coverage**, then come back here. The skill will surface this gap in Step 2.
 
@@ -94,7 +94,7 @@ Common refactor shapes and their canonical decomposition:
 
 ## Step 4 — Write the Tasks Plan
 
-Use this template. It mirrors the PM agent's feature-plan output so `/squid-implement-night`'s Step 4 inner loop accepts it without re-grooming.
+Use this template. It mirrors the PA's feature-plan output so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
 
 ```markdown
 # Refactor: {one-line goal}
@@ -138,21 +138,17 @@ If task N goes sideways and the team needs to ship before it's resolved, revert 
 
 ## Notes for the SWE
 
-- This is a refactor — **add no behaviour, fix no bugs**, even if you spot one. File a [`/squid-triage-issue`](../squid-triage-issue/SKILL.md) for any bug found mid-refactor; do not let it ride along.
+- This is a refactor — **add no behaviour, fix no bugs**, even if you spot one. File a `/squid-triage-issue` for any bug found mid-refactor; do not let it ride along.
 - If a task's AC turns out to be wrong (e.g., a hidden import the planner missed), update the plan via the orchestrator before adapting code — drift between plan and reality is the source of "refactor went off the rails" stories.
 ```
 
 ## Step 5 — File the plan
 
-Where it lands depends on tracker mode (per `docs/PROCESS.md`).
+Where it lands depends on tracker mode (per `AGENTS.md`).
 
 ### File mode
 
-```
-tracker/feature-refactor-<slug>-plan.md
-```
-
-Plus one `tracker/NNN-<refactor-slug>-task-K.groomed.md` per task (matches what `/squid-implement-night`'s Step 4 expects to find). Use sequential numbering for the per-task IDs.
+There is no separate plan document — the Tasks Plan *is* the set of task files, same as `/squid-plan`'s output. Write one `tasks/<NNN>-<refactor-slug>-<k>.md` per task (frontmatter `status: pending`, `feature: refactor-<slug>`; pick `NNN` by scanning `tasks/` **and** `tasks/done/`). Each file carries its task's Scope, Files touched, Acceptance criteria, and Out of scope from the template; fold the **hard constraints** into every task's Out of scope, and the **definition-of-done invariants** into the final task's acceptance criteria so the PA acceptance review verifies them.
 
 ### gh mode
 
@@ -174,7 +170,7 @@ Single markdown block:
 
 ### Recommended next step
 
-`/squid-implement-night {plan-ref}` — the inner loop runs each task, the Tester gate enforces "tests green at every step", and the PM acceptance review verifies the structural DoD. The two human gates (plan approval and merge) still apply.
+`/squid-implement-night {plan-ref}` — the inner loop runs each task, the Tester gate enforces "tests green at every step", and the PA acceptance review verifies the structural DoD. The human still gates the merge.
 
 If the refactor is small enough (≤ 2 tasks) and you'd rather supervise:
 
@@ -184,7 +180,7 @@ If the refactor is small enough (≤ 2 tasks) and you'd rather supervise:
 
 - [ ] Test-suite anchor (`make pre-commit && make unit-tests && make integration-tests`) is green on `main` *right now*. Do not start a refactor on a red base.
 - [ ] No in-flight feature branches conflict with the affected files (avoidable merge churn).
-- [ ] If the refactor touches the public API, the deprecation / migration story for downstream callers is captured in the plan or in an ADR ([`adr.md`](../squid-scaffold/specs/adr.md)).
+- [ ] If the refactor touches the public API, the deprecation / migration story for downstream callers is captured in the plan or in an ADR (spec: `squid-scaffold/specs/adr.md`).
 ```
 
 ## Notes on shape
@@ -192,6 +188,6 @@ If the refactor is small enough (≤ 2 tasks) and you'd rather supervise:
 - **Refactor ≠ rewrite.** A rewrite is a different conversation (it's a feature with the user-visible behaviour being "the new system, but the same"). Don't smuggle a rewrite in here.
 - **No new behaviour, ever.** The refactor's whole value proposition is "tests still pass, semantics unchanged." Adding behaviour mid-refactor destroys the anchor and makes rollback uncertain.
 - **Bugs spotted mid-flight get triaged separately.** This is the same hard rule as in the SWE agent's role definition — refactor PRs that "also fix a bug" hide the bug fix in noise and undermine review.
-- **The plan is the contract.** The Tester verifies against it; the PM acceptance review verifies the DoD; the PR reviewer reads it to know what's in scope. Sloppy plans propagate.
+- **The plan is the contract.** The Tester verifies against it; the PA acceptance review verifies the DoD; the PR reviewer reads it to know what's in scope. Sloppy plans propagate.
 - **Coverage gaps get fixed first.** Refactor on weak tests = silent regressions. Step 2's coverage gate is load-bearing — don't skip it because the user is impatient.
 - **3–8 tasks.** Outside that band, redesign — either you're under-decomposing (then per-task PRs become un-reviewable) or you're over-decomposing (then ceremony eats the value).
