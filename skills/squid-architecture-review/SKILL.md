@@ -100,7 +100,7 @@ When agents return, **read the top-3 most-implicated files yourself**. Don't rel
 
 ## Step 4 — Identify smells
 
-Walk these dimensions. For each, form 0 or more findings. Don't manufacture findings to pad the report — empty dimensions are fine and signal health.
+Walk these dimensions. For each, form 0 or more findings. Don't manufacture findings to pad the report — empty dimensions are fine and signal health; say so explicitly in the report ("Layer violations: none observed").
 
 | Dimension | What to look for |
 |---|---|
@@ -126,7 +126,7 @@ For each finding, assign:
 - **Effort:** S (small, ≤ half a day) / M (medium, 1–3 days) / L (large, > 3 days; probably needs to split).
 - **Confidence:** High (you've read the code yourself) / Medium (one sub-agent finding, you spot-checked) / Low (sub-agent finding, you haven't verified).
 
-Prioritise by `severity / effort` ratio, with confidence as a tiebreaker. **Do not propose more than 10 findings.** A 30-finding report gets ignored; a 7-finding report gets acted on. Cluster related findings into one if they share a root cause.
+Prioritise by `severity / effort` ratio, with confidence as a tiebreaker — a High-confidence S2 beats a Low-confidence S1; don't recommend a refactor on a finding you haven't personally read. **Do not propose more than 10 findings.** A 30-finding report gets ignored; a 7-finding report gets acted on. Cluster related findings into one if they share a root cause.
 
 ## Step 6 — Write the report
 
@@ -211,12 +211,3 @@ Single block:
 - "No ADRs in `docs/adr/` — recommend bootstrapping with [`adr.md`](../squid-scaffold/specs/adr.md) before proceeding so this review's findings stay durable."
 ```
 
-## Notes on shape
-
-- **The ADR read is non-negotiable.** Half the findings in a poorly-scoped review are decisions the team already made and rejected. Reading ADRs first is the cheapest way to be useful.
-- **Cap findings at 10.** Past 10, the report becomes a wishlist; the team picks zero. Force prioritisation by enforcing the cap.
-- **Confidence affects priority.** A High-confidence S2 beats a Low-confidence S1 — don't recommend a refactor on a finding you haven't personally read.
-- **Propose, don't prescribe.** This skill outputs *findings with proposed refactors*. The team prioritises. `/squid-refactor` then plans. `/squid-implement-night` then executes. Skipping ahead to "we should do X" pre-commits the team.
-- **Don't re-litigate.** The "Pre-existing decisions" section is a discipline — it prevents the next architecture review (or the next contributor) from undoing things that are intentional.
-- **Empty findings = signal.** If a dimension produced no finding, say so explicitly ("Layer violations: none observed"). It's information.
-- **Pair output with ADR proposals.** Every accepted refactor that lands deserves an ADR if its decision wasn't already governed. Otherwise the next review re-finds it.

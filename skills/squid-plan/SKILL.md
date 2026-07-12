@@ -14,7 +14,7 @@ Anchor a feature in shared understanding and prior decisions, then produce the a
 
 `$ARGUMENTS` is the raw feature spec — free-form text, a path to a spec file, or a tracker reference. If empty, ask the human for one.
 
-You are the **orchestrator** — a MANAGER. You drive the grilling, launch the Product Architect (PA), offer another grilling round and present the final plan, run the single human gate, set up the workspace, write the approved artifacts, and kick off the chosen build. You do NOT groom, write code, or implement anything yourself — and you NEVER start building, or create any task, before the human has seen the final plan and passed the gate.
+You are the **orchestrator** — a MANAGER. You drive the grilling, launch the Product Architect (PA), offer another grilling round and present the final plan, run the single human gate, set up the workspace, write the approved artifacts, and kick off the chosen build. You do NOT groom, write code, or implement anything yourself.
 
 Read `AGENTS.md` first to confirm the active **tracker mode** (`file` → `tasks/<NNN>-<slug>.md` files; `gh` → one GitHub Issue per task).
 
@@ -37,7 +37,7 @@ Before grooming, sharpen the raw spec with the human. **Invoke the `squid-grilli
 
 ## Step 2 — PA grooms → DRAFTS the plan (no writes yet)
 
-Launch ONE Product Architect. It **drafts** everything and hands it back — it writes **nothing** to disk. The PA returns the drafts as its final message; they live only in the orchestrator's context window until Step 5 writes them. The human approves at the gate; the orchestrator writes the approved artifacts into the chosen workspace in Step 5.
+Launch ONE Product Architect. It **drafts** everything and hands it back as its final message — it writes **nothing** to disk; the orchestrator writes the approved artifacts into the chosen workspace in Step 5.
 
 ```
 Agent(
@@ -58,26 +58,26 @@ Agent(
 )
 ```
 
-**Verify before the gate:** the drafts are atomic, ordered by `NNN` in dependency order, and each has acceptance criteria. Re-launch the PA with the gap as feedback if not. Nothing is on disk yet — that is intentional.
+**Verify before the gate:** the drafts are atomic, ordered by `NNN` in dependency order, and each has acceptance criteria. Re-launch the PA with the gap as feedback if not.
 
 ---
 
 ## Step 3 — Offer another grilling round, then output the final plan (Human ↔ /squid-grilling)
 
-The PA has drafted the plan, but **nothing is on disk and no task exists yet**. Before `/squid-plan` moves toward implementation, give the human one explicit chance to sharpen further — then lock and show the final plan.
+Before `/squid-plan` moves toward implementation, give the human one explicit chance to sharpen further — then lock and show the final plan.
 
 Ask once with `AskUserQuestion`: **"Another grilling round to sharpen this, or is the plan final?"** → **More grilling** / **It's final**.
 
 - **More grilling** → re-invoke the `squid-grilling` skill on the points the drafts left open, feed the sharpened spec back to the PA (Step 2), and return here. Repeat until the human picks **It's final**. Keep it to genuinely-open questions — *good:* "should deleting an Order cascade to its line-items?"; *bad:* re-opening a settled choice like "maybe switch datastores after all" (that's a fresh `/squid-plan`, not another round).
 - **It's final** → **output the final plan in full** so the human reads exactly what will be built before anything is written: every task (`NNN — title`, scope, acceptance criteria, out-of-scope), the glossary additions, and the proposed ADR. This is the human's last look before tasks are created — render it complete, not a teaser.
 
-Why this step: catching a wrong-shaped plan on screen costs one more grilling round; catching it after tasks, a branch, and a build already exist costs the whole downstream pipeline. So tasks are created in Step 5, **never** before the human has seen this final plan.
+Why this step: catching a wrong-shaped plan on screen costs one more grilling round; catching it after tasks, a branch, and a build already exist costs the whole downstream pipeline.
 
 ---
 
 ## Step 4 — HUMAN GATE (blocking)
 
-This is the **only** gate, and it is **mandatory** — do not skip it, and do not start writing files, creating branches, or implementing before the human answers. It decides everything that touches the repo. The human has just seen the final plan (Step 3); recap the decision inputs, then ask:
+This is the **only** gate, and it is **mandatory**. It decides everything that touches the repo. Recap the decision inputs, then ask:
 
 ```
 Feature: {title}
@@ -98,7 +98,7 @@ Then ask with `AskUserQuestion`. The decisions come in **two back-to-back asks �
 3. **Create the ADR?** — write the proposed ADR to `docs/adr/`? → **Create** / **Skip**  *(omit this question entirely if no ADR was proposed)*
 4. **Update the glossary?** — apply the {M} drafted term(s) to `docs/glossary.md`? → **Apply** / **Skip**  *(omit this question entirely if the PA drafted no glossary additions)*
 
-- **Cancel** → stop. Nothing has been written or branched — that is the whole point of drafting first. Discard the rest; do not ask Part 2.
+- **Cancel** → stop and discard the drafts; nothing has been written or branched. Do not ask Part 2.
 - **Edit** → ask what to add / remove / reorder / re-split; re-launch the PA (Step 2); loop back to this gate.
 - **Approve** → ask Part 2, then go to Step 5 carrying every answer.
 
@@ -111,7 +111,7 @@ Then ask with `AskUserQuestion`. The decisions come in **two back-to-back asks �
 
 ## Step 5 — Execute the decisions (only after the final plan + Approve)
 
-Reached only after the human saw the final plan (Step 3) and approved at the gate (Step 4). This is where the first task is created — never earlier. Do these in order.
+Reached only after Approve at the gate. Do these in order.
 
 **A. Set up the workspace (Q5).**
 
@@ -153,11 +153,5 @@ Reached only after the human saw the final plan (Step 3) and approved at the gat
 
 ## Notes
 
-- **Grill, groom, re-grill until final, gate last.** The grilling sharpens intent; the PA's grooming turns it into atomic, commit-grain task drafts; Step 3 offers another grilling round and then shows the final plan; the single gate decides everything that touches the repo. Don't skip the grilling — a wrong-shaped plan costs the whole pipeline downstream.
-- **The human sees the final plan before any task exists.** Step 3 renders the full final plan, and tasks are created only in Step 5. *Good:* the human reads every task's scope + acceptance criteria, says "it's final," approves, then files are written. *Bad:* writing `tasks/*.md` (or opening Issues) off the PA's draft before the human has seen the final plan — that creates work the human never signed off on.
-- **Nothing touches the repo before the gate.** The PA only drafts; the orchestrator writes task files, the ADR, the glossary edit, and creates the branch/worktree **after** the final plan is shown and Approve is given. Cancel leaves the repo untouched.
-- **The tasks ARE the plan.** One `tasks/<NNN>-<slug>.md` per atomic task (`status: pending`) — there is no separate plan document. See the [`tracker-workflow`](../squid-scaffold/specs/tracker-workflow.md) spec for the file shape.
-- **One gate, then act — never before.** `/squid-plan` must not start implementing (no `/squid-implement-night`, no `/squid-implement-task`) until the human has answered the gate and chosen a build. Storage, ADR, glossary, workspace, and build are all part of the gate, not assumptions.
-- **One ADR per plan, not per task.** A feature gets at most ONE new ADR capturing its whole design; the tasks it decomposes into stay atomic and each links back to that single ADR. (A follow-up ADR authored mid-pipeline for an unforeseen architectural fork is the rare exception — see [`product-architect`](../../agents/product-architect.md).)
-- **ADRs and glossary additions are human-gated.** The PA *proposes* both; the human decides at the gate (ADR at Q3, glossary at Q4); only the approved docs land under `docs/adr/` and `docs/glossary.md`. The PA authors both files.
-- **Storage is chosen at the gate.** Q2 picks where the tasks live — local `tasks/*.md` or GitHub Issues — defaulting to `AGENTS.md` `TRACKER_MODE`. The choice is this plan's tracker downstream; a deviation from the project default is a one-off for this feature, not an edit to `AGENTS.md`.
+- **Task-file shape:** see the `tracker-workflow` spec (`squid-scaffold/specs/tracker-workflow.md`).
+- **One ADR per plan, not per task.** A feature gets at most ONE new ADR capturing its whole design. The rare exception — a follow-up ADR authored mid-pipeline for an unforeseen architectural fork — lives in the `product-architect` agent contract.

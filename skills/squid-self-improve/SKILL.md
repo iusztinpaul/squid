@@ -118,7 +118,3 @@ End with a brief summary:
 ## Important Principles
 
 - **Persistence is the whole point.** The value of this skill is that lessons survive beyond the current session. If you extract rules but don't write them down, you've wasted the developer's time.
-- **Specificity beats coverage.** Three specific, actionable rules are worth more than ten vague ones.
-- **The developer has final say.** Never persist a rule the developer didn't approve. Never rewrite a rule they already approved into something different.
-- **Validated approaches matter.** Don't only learn from mistakes — also capture what worked well, especially non-obvious approaches that the developer confirmed were correct.
-- **Check before writing.** Always read existing AGENTS.md files and memories before adding to them. Duplication erodes trust in the system.

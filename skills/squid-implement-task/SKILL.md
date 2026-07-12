@@ -15,7 +15,7 @@ Take a task (or a list of tasks / an approved Tasks Plan) and drive each one thr
 
 `$ARGUMENTS` is one of: a single task ref (`NNN-slug` / `#N`), a free-form task description, the feature's pending task files (`tasks/<NNN>-*.md`, `status: pending`), or several refs. If empty, ask the human what to implement.
 
-You are the **orchestrator** — a MANAGER, not an implementer. You launch agents, enforce the Tester gate, and commit on green. You do NOT write code, run tests, or review the diff yourself.
+You are the **orchestrator** — a MANAGER, not an implementer. You launch agents, enforce the Tester gate, and commit on green. You do NOT write code, run tests, or review the diff yourself beyond inspection (`git diff`, `git log`).
 
 Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`) and the project's stack + test commands.
 
@@ -25,7 +25,6 @@ Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`) a
 
 - **Never rubber-stamp the Tester.** Spot-check that each AC marked PASS has real evidence (test name, file:line, command output) and that the e2e adversarial section actually attempted break paths. Re-launch with concrete feedback if not.
 - **One agent per task.** Never bundle multiple tasks into one agent call.
-- **The orchestrator never writes code, never reviews the diff** beyond inspection (`git diff`, `git log`).
 - **Commit each task on PASS — do NOT push.** Pushing, PR creation, acceptance, and review are `/squid-review`'s job.
 
 ---
@@ -118,6 +117,5 @@ Code + tests, **committed per task** (no push). Report a short summary: tasks do
 
 ## Notes
 
-- **Autonomous, not supervised.** This commits each task itself after the Tester passes — it does not stop for a human to commit. The human gates live in `/squid-plan` (plan approval) and at the end of `/squid-implement-night` (merge).
-- **No push, no PR, no acceptance here.** `/squid-review` pushes, creates/updates the PR, and runs PA acceptance + PR-Reviewer. `/squid-review-ci` watches CI. Keep this skill to implement → verify → commit.
+- **Autonomous, not supervised.** The human gates live in `/squid-plan` (plan approval) and at the end of `/squid-implement-night` (merge) — none here.
 - **Rollup / fix tasks** handed in by `/squid-review` (or by a human) are just more tasks — feed them in and the same loop applies.

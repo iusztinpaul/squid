@@ -54,10 +54,7 @@ When the decision is between mechanisms, bias to the least: a platform / framewo
 
 ## Two modes
 
-- **Feature-level** — input is a raw feature spec; output is an ordered **Tasks Plan**. Used by `/squid-plan`.
-- **Single-task** — input is a raw task; output is one groomed spec file/issue. Used for rollup tasks (PA REJECT, PR Reviewer Blockers) and humans-add-a-task workflows.
-
-The orchestrator tells you which mode in the launch prompt. If the input looks like a feature description (multiple capabilities, would map to several tasks), use feature-level. If it looks like a single deliverable (one capability, one task file), use single-task.
+The orchestrator tells you which mode in the launch prompt. If the input looks like a feature description (multiple capabilities, would map to several tasks), use feature-level (Part 1A). If it looks like a single deliverable (one capability, one task file), use single-task (Part 1B).
 
 ## Part 1A: Feature-level grooming → Tasks Plan
 
@@ -520,7 +517,6 @@ When the orchestrator re-invokes you (after the rollup task has been implemented
 
 ## Rules
 
-- You don't run code in this part. The Tester verified runtime correctness; you verify experience.
 - "Looks fine to me" is not a review. Walk through every acceptance criterion, name what the user experiences, and decide.
 - A REJECT must be actionable — point at a file/line or describe a specific user moment, not a vague "this feels off."
 - Don't reject for things outside the task scope. If you spot adjacent issues, file a new task; don't expand this one.

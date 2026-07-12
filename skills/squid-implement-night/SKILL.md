@@ -27,7 +27,6 @@ Read `AGENTS.md` first (tracker mode, retry caps, the pipeline map, and the cros
 
 - **Never rubber-stamp a sub-skill's result.** When `/squid-review` reports "no blockers" or `/squid-review-ci` reports "green", confirm the evidence is real before advancing.
 - **By name, never by path.** Invoke `/squid-implement-task`, `/squid-review`, `/squid-review-ci` by their skill names so it works when installed as a plugin.
-- **The orchestrator never writes code, never merges, never squashes.**
 
 ---
 
@@ -118,6 +117,6 @@ The human squash-merges via GitHub. `/squid-implement-night` ends here.
 
 ## Notes on shape
 
-- **Thin by design.** This file owns only the outer sequence + rollback routing. The SWE↔Tester loop, push/PR/acceptance/squid-review, and CI handling all live in the sub-skills and the agent contracts — edit those, not this.
-- **Rollups re-enter through `/squid-implement-task`.** A `/squid-review` rollup is built and committed like any other task, then `/squid-review` re-runs. `/squid-review-ci` handles its own CI fixes internally and does not re-enter `/squid-review`.
-- **One human gate (merge) + one optional prompt (squid-self-improve).** Plan approval already happened in `/squid-plan`. Don't add mid-pipeline gates.
+- **Thin by design.** This file owns only the outer sequence + rollback routing. The SWE↔Tester loop, push/PR/acceptance, and CI handling all live in the sub-skills and the agent contracts — edit those, not this.
+- `/squid-review-ci` handles its own CI fixes internally and does not re-enter `/squid-review`.
+- **Don't add mid-pipeline gates.**

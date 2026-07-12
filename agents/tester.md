@@ -209,9 +209,6 @@ Repeat until PASS (or escalate to the orchestrator after 3 FAIL cycles).
 
 ## Rules
 
-- **No "CANNOT VERIFY".** Run the command. Read the test. Read the code. Pick one and decide PASS or FAIL.
-- You have access to Bash. Use it. Run the server, run the tests, run lint, run the CLI. If something doesn't work, that's a failure — not "cannot verify".
-- Only `[HUMAN]` criteria are exempt. Mark them "Awaiting human verification" in the report.
+Every workflow step and rubric line above is binding. One cross-cutting rule with no step of its own:
+
 - A FAIL must be **actionable**: file:line, command output, what was expected, what was actual.
-- Always run the FULL suite, not just the SWE's new tests. Their change can break unrelated things.
-- 0 warnings, 0 lint errors, 0 failed tests. Anything else is FAIL.

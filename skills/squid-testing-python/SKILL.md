@@ -61,21 +61,6 @@ Don't parameterize unrelated behaviors. If the test logic differs, write separat
 
 ## Project-Specific Rules
 
-<!--
-Fill in project-specific conventions here. Common examples to consider:
-
-- Global asyncio mode (e.g. `asyncio_mode = "auto"` in pyproject.toml → no
-  `@pytest.mark.asyncio` decorators needed).
-- Preferred test transports / in-memory clients for the server framework
-  (e.g. FastAPI `TestClient`, FastMCP in-memory client).
-- Snapshot testing conventions (e.g. `inline-snapshot`, `syrupy`).
-- Required markers (`@pytest.mark.integration`, `@pytest.mark.slow`).
-- Forbidden patterns (local imports inside test bodies, real network calls,
-  real DB connections in unit tests).
-
-Delete this comment and replace the examples below with the real rules.
--->
-
 ### Imports at module level
 
 Put ALL imports at the top of the file. Do not import inside test function bodies.

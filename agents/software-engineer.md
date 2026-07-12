@@ -308,19 +308,7 @@ When a reviewer leaves comments:
 
 ## Rules
 
-- **Do NOT commit or push until the Tester has approved.** Code stays local until the Tester PASSES; acceptance review happens later in `/squid-review`, on the pushed PR.
-- **Tests first when the contract is decidable.** For new logic and regression-test-for-bug scenarios, write the failing test **before** implementing. Skip the red/green dance for pure refactors, glue code, migrations, and one-off scripts (write the tests where useful, don't ceremonialize). For every bug you hit during implementation, the reproducing test still goes in before the fix.
-- **Never implement directly on `main`, and never create a per-task branch.** If you're already on a feature / worktree branch, stay on it — each task is one commit on that shared branch (the human squash-merges it). Only create a branch (one `feat/{slug}`) when you're standalone on `main`.
-- **Run the feature end-to-end before hand-off.** Unit tests prove correctness; actually invoking the code proves it works. If it fails, fix the runtime behavior — don't just fix the test.
-- Implement **exactly** what the task asks for — apply the least-code ladder (Step 5b). No unrequested abstractions: no one-implementation interface, no factory for one product, no config for a value that never changes.
-- Every task ships tests. All tests must pass before handing off to the Tester.
-- Follow existing patterns. If there's a convention in the codebase, follow it.
-- Always `git pull` before starting work.
-- Never use `git add -A` / `git add .`. Always commit specific files.
-- Every commit must reference a task ID (`Closes #N`, `Refs #N`, or `Closes-task: NNN-...`).
-- Run `make format-fix && make lint-fix` before handing off — never make the Tester deal with lint errors.
-- If the project uses PRs, create and update the PR with `gh` directly (`gh pr create` to open, `gh pr edit` to update).
+Every workflow step above is binding — the steps are the rules. Two cross-cutting ones with no step of their own:
+
 - **CLI-only tooling.** Always access git, datastores, cloud services, and CI through their CLI (`git`, `gh`, `psql`, `aws`, `docker`, etc.). No web UIs. No ad-hoc REST wrappers when a CLI exists. The orchestrator must be able to spot-check what you did by re-running the same command.
-- **A commit-message generator is required when available** — `/caveman-commit` when the caveman plugin is installed, else the `commit-commands` plugin. Don't hand-craft the message when a generator is present.
 - **Never merge.** The human merges.
-- **`docs/adr/` and `docs/glossary.md` are PA territory.** Read them; never write them. If you need a new term or a new architectural decision, that's a fork — stop and escalate per the section above.

@@ -25,7 +25,7 @@ Interactive bootstrap for a new repo (or a new component in an existing one).
 - **`mode=create`** (default) — bootstrap a repo / component. The flow in "## Flow" below.
 - **`mode=evaluate`** — audit an *existing* scaffolded repo against the artifact invariants in [`rules.md`](rules.md) and report drift (no fixes). See "## Evaluate mode".
 
-Every rule both modes honour lives in [`rules.md`](rules.md) — the single source of truth. Do **not** restate any rule in this file.
+Every rule both modes honour lives in [`rules.md`](rules.md) — the single source of truth; `mode=create` follows every `P#` + `I#` while composing, `mode=evaluate` audits the `I#`. Do **not** restate any rule in this file.
 
 ## When to use
 
@@ -114,8 +114,6 @@ Skip any row where the user picked `none` / `other`. `other` is handled at compo
 
 Write the project's root memory file from the canonical template in [`AGENTS_TEMPLATE.md`](AGENTS_TEMPLATE.md) (the template body and section structure). Compose it following the `I#` artifact invariants in [`rules.md`](rules.md) — size, distil-don't-copy, gate-sections-on-presence, group-per-app, fill-placeholders-inline. Read both end-to-end, then emit a tailored `AGENTS.md` at the target project root (or wherever `/squid-scaffold` was invoked).
 
-`AGENTS.md` is the canonical, agent-agnostic memory file — the single source of truth. Alongside it, create `CLAUDE.md` as a **relative symlink** to `AGENTS.md` (`ln -s AGENTS.md CLAUDE.md`) so Claude Code loads the exact same file with zero duplication (see [`rules.md`](rules.md) `I4`).
-
 **Optional — compress with caveman.** If the caveman plugin is installed, offer to run `/caveman-compress AGENTS.md` on the composed file — it rewrites the memory file into caveman-speak (~46% fewer input tokens every session; code, paths, and URLs are byte-preserved). Ask first: the compressed form is terser to read and hand-edit. Skip silently when caveman isn't installed.
 
 ### 4. Create the folder skeleton
@@ -201,10 +199,6 @@ Summarise for the user:
 - File tree created (full list, relative paths).
 - Which specs informed the AGENTS.md (named).
 - **Exact next step** — e.g. `/squid-implement-task "bootstrap packages/backend with a minimal FastAPI app and a /health endpoint"`. The SWE agent will read AGENTS.md and the spec references, and write the first real code.
-
-## Rules
-
-All scaffold rules — create-time process rules (`P#`) and artifact invariants (`I#`) — live in [`rules.md`](rules.md), the single source of truth. While composing in `mode=create`, follow **every** `P#` and `I#`. Do not restate them here.
 
 ## Evaluate mode
 

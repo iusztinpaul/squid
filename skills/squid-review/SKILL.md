@@ -53,8 +53,6 @@ Agent(
 )
 ```
 
-Spot-check: an ACCEPT must cite concrete evidence matching the ACs, not just "ACCEPTED".
-
 - **ACCEPT (verified)** → Step 3.
 - **REJECT** → the PA filed ONE rollup task. **Return it** — the caller routes it back through `/squid-implement-task`, then re-runs `/squid-review`.
 - **Cap: PA REJECT max 3 per feature.** On the 4th would-be REJECT, stop and surface `USER ACTION REQUIRED`.
@@ -89,4 +87,3 @@ Agent(
 ## Notes
 
 - **Post-push, sequential.** Both gates review the *pushed PR*; PA goes first (is it the right product?), then PR-Reviewer (is the code clean, correct, and simple?). CI is the *next* skill (`/squid-review-ci`), not run in parallel here.
-- **Rollups go back to implementation, not patched inline.** A rejected gate produces one coordinated "fix everything we flagged" task.

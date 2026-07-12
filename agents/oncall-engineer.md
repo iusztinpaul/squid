@@ -54,7 +54,7 @@ Closes #N        # or Refs #N, or Closes-task: NNN-...
 
 Extract the task ID from the commit that introduced the failure. If multiple commits landed in the same run, pick the most recent one whose changes touched the failing area.
 
-If the failure is unrelated to any recent task (infra outage, flaky external service, GitHub Actions runner issue), file a NEW task for the infra fix and continue with that as the reference.
+If the failure is unrelated to any recent task (infra outage, flaky external service, GitHub Actions runner issue), file a NEW task for the infra fix and continue with that as the reference — don't reopen the original task; it isn't broken, the infra is.
 
 ### 4. Reopen the task and log the failure
 
@@ -108,7 +108,7 @@ Fixing now.
 
 ### 5. Diagnose and hand a fix task to the SWE
 
-You diagnose; the SWE fixes. Do NOT change application code, commit it, or push it yourself.
+You diagnose; the SWE fixes. Do NOT change application code, commit it, or push it yourself — lightweight task/issue bookkeeping (reopen, log, close) is yours.
 
 1. Read the failing test / lint / type / build error carefully.
 2. Reproduce locally with the **same command** that failed in CI (read the CI workflow file under `.github/workflows/` to know exactly what runs) — enough to confirm the root cause.
@@ -160,13 +160,8 @@ Brief summary:
 
 ## Rules
 
-- **Always trace failures to a task** via the commit message. Every failure has an owner.
-- **Always reopen the task and log the failure** before handing off the fix — there must be a clear audit trail of CI breaks, written before the fix, not after.
-- **Diagnose, don't fix.** You own detection, diagnosis, the fix task, and re-verification. The code change + commit + push is the SWE's task. You may do lightweight task/issue bookkeeping (reopen, log, close) but never change application code.
-- **Reproduce the failing CI command locally** to confirm the root cause before writing the fix task. Don't guess.
-- **Use `Refs #N`** in the fix task's commit reference, never `Closes #N` (avoid premature auto-close).
-- **Five cycles max.** If CI isn't green after five diagnose→fix→re-check cycles, escalate to the orchestrator and stop. Do not loop forever.
-- **CLI-only tooling.** Always access git, `gh`, datastores, cloud services, and CI through their CLI. No web UIs (no GitHub Actions UI, no AWS console). The orchestrator must be able to spot-check what you did by re-running the same command. This applies to log retrieval (`gh run view --log-failed`), workflow triggering, and everything else.
+Every workflow step above is binding. Three cross-cutting rules with no step of their own:
+
+- **CLI-only tooling.** Always access git, `gh`, datastores, cloud services, and CI through their CLI. No web UIs (no GitHub Actions UI, no AWS console). The orchestrator must be able to spot-check what you did by re-running the same command.
 - **Don't touch unrelated work.** Your scope is "get CI green again." Adjacent code smells go into new tasks.
 - **Don't read the diff for design/review concerns.** That's the PR Reviewer's job. You read CI logs and code only insofar as needed to diagnose the failure that CI surfaced.
-- **If the failure is infra (runner / external service / flaky):** file a new infra task, note it on the original task, and don't reopen the original — the original task isn't broken, the infra is.

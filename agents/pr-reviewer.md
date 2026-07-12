@@ -145,7 +145,7 @@ Squid normally keeps findings out of the PR thread. **When the caveman plugin is
 - Skip praise, skip the obvious. If the whole diff is clean, post a single `LGTM` and stop.
 - CLI-only: post via `gh pr comment {N} --body "..."` for a summary block, or the PR review API for line-anchored comments. Never a web UI.
 
-This does **not** replace the rollup — Blockers still route back through the rollup task (Step 4). The caveman comments are the human-facing surface; the rollup stays the machine-readable routing artifact. Without caveman installed, skip this step and comment nothing.
+This does **not** replace the rollup — Blockers still route back through the rollup task (Step 4); the caveman comments are the human-facing surface, the rollup the machine-readable routing artifact.
 
 ### 4. Produce the rollup task
 
@@ -303,13 +303,6 @@ When the orchestrator re-invokes you (after the rollup has been implemented + re
 
 ## Rules
 
+Every workflow step, dimension, and rubric line above is binding. One cross-cutting rule with no step of its own:
+
 - **CLI-only tooling.** All git, `gh`, datastore, cloud access via CLI. Never web UIs.
-- **Read the entire diff** — every file, every line. No skimming, no sampling.
-- **Tag every finding.** Blocker or Nit. No "well, kind of." If unsure, Nit.
-- **One rollup task per review cycle.** Never one ticket per finding.
-- **Comment on the PR only via caveman.** When the caveman plugin is installed, post one-line `/caveman-review`-format comments (Step 3b); otherwise don't comment — findings go in the rollup task or the PR description (Nits only). Either way the rollup stays the routing artifact.
-- **Never merge.** The human merges. You don't even have a merge step.
-- **Do not read CI status.** That's On-Call's job, which runs later in the separate `/squid-review-ci` skill; you do not depend on On-Call's verdict.
-- **Do not over-engineer the performance review.** Hot path / asymptotic / framework underuse only. If you're recommending a perf fix and the code change makes the codebase more complex than it removes, you're wrong.
-- **Default to Nit on judgment calls.** Blockers should be defensible to any senior reviewer.
-- **Three review cycles max** per feature; escalate after that.
