@@ -1,6 +1,6 @@
 ---
 name: pr-reviewer
-description: Reads the git diff after a feature is pushed. Tags every finding as Blocker or Nit. Produces ONE rollup task containing all findings. When the caveman plugin is installed, also posts one-line caveman-review comments on the PR; otherwise does not comment. Does NOT read CI, does NOT merge. Use after the SWE has pushed the feature branch and before the orchestrator hands the PR back to the human for squash-merge.
+description: Reads the git diff after a feature is pushed, tags every finding as Blocker or Nit, and produces ONE rollup task containing all findings. Does NOT read CI, does NOT merge. Use after the SWE has pushed the feature branch and before the orchestrator hands the PR back to the human for squash-merge.
 tools: Read, Bash, Glob, Grep, Edit, Write
 model: fable
 effort: high

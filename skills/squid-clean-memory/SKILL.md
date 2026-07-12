@@ -3,11 +3,9 @@ name: squid-clean-memory
 disable-model-invocation: true
 argument-hint: "[scope-path] (default: every memory file in the repo)"
 description: >-
-  Shrink the memory files sessions load — the root AGENTS.md plus every nested AGENTS.md / CLAUDE.md
-  — to the minimum words that state the same rules: compress wording with /caveman-compress (if
-  installed), then delete duplicated instructions and claims the harness already enforces, and merge
-  fragmented sections. Trigger when the user says "/squid-clean-memory", "AGENTS.md is bloated", or
-  "shrink the memory file".
+  Shrink the memory files sessions load — the root AGENTS.md plus every nested AGENTS.md /
+  CLAUDE.md — to the minimum words that state the same rules: compress wording, delete duplicates
+  and harness-enforced claims, merge fragments.
 ---
 
 # Clean memory — same rules, minimum words

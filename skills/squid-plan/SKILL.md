@@ -1,6 +1,9 @@
 ---
 name: squid-plan
-description: Turn a raw feature spec into an approved Tasks Plan — one markdown file per atomic task under `tasks/` (or one GitHub Issue per task) — plus an optional ADR, glossary additions, branch, and worktree. Grills the human to sharpen the spec, has the Product Architect groom it into draft tasks (reading docs/glossary, proposing an ADR, using context7), offers another grilling round and shows the final plan before any task is created, then runs ONE human gate that decides everything touching the repo — approve the tasks and where to store them (local files vs GitHub Issues), create the ADR, apply the glossary additions, new worktree vs current tree, and which build to run (/squid-implement-night, an /squid-implement-task loop, or stop). Trigger when the user wants to plan a feature before building, or says "/squid-plan".
+description: >-
+  Turn a raw feature spec into an approved Tasks Plan — grill the spec, have the Product Architect
+  groom draft tasks (+ optional ADR and glossary additions), then run ONE human gate that decides
+  everything touching the repo: tasks + storage, ADR, glossary, worktree, and which build to run.
 disable-model-invocation: true
 argument-hint: <feature-spec | path/to/spec.md | tracker-ref>
 ---

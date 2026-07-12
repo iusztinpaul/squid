@@ -4,8 +4,7 @@ disable-model-invocation: true
 argument-hint: "[scope-path] (default: whole repo)"
 description: >-
   Strip redundancy from prose — docs, READMEs, code comments, docstrings — keeping behaviour
-  identical. Trigger when the user says "/squid-clean-docs", "clean up the docs", or "these
-  comments are noise".
+  identical.
 ---
 
 # Clean docs — remove words, keep behaviour

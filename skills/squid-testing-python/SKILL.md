@@ -1,7 +1,6 @@
 ---
 name: squid-testing-python
-description: Write and evaluate effective Python tests using pytest. Use when writing tests, reviewing test code, debugging test failures, or improving test coverage. Covers test design, fixtures, parameterization, mocking, and async testing.
-disable-model-invocation: true
+description: Write and evaluate effective Python tests using pytest. Use when writing tests, reviewing test code, debugging test failures, or improving test coverage.
 ---
 
 # Writing Effective Python Tests

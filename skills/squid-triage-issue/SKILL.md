@@ -1,6 +1,9 @@
 ---
 name: squid-triage-issue
-description: Bug intake — takes a free-form bug report (or a tracker / GitHub issue reference), localises the suspected code, captures a deterministic reproducer, and emits a groomed bug task with a regression-test acceptance criterion. Hands off cleanly to /squid-implement-task for supervised single-bug fixes or to /squid-implement-night when the fix needs the full PM/Tester/PR-Reviewer pipeline. Trigger when the user reports a bug, says "/squid-triage-issue", asks "investigate this bug", "diagnose X", or pastes a stack trace / customer report.
+description: >-
+  Bug intake — localise the suspected code, capture a deterministic reproducer, and emit a groomed
+  bug task with a regression-test acceptance criterion, ready for /squid-implement-task or the
+  full pipeline.
 disable-model-invocation: true
 argument-hint: <bug-description | path/to/report.md | #issue-or-NNN-slug>
 ---

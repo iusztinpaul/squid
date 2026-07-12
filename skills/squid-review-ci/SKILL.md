@@ -1,7 +1,9 @@
 ---
 name: squid-review-ci
 description: >-
-  After a feature PR is pushed and review-clean, the On-Call engineer watches CI; on failure it diagnoses and hands a fix task to the SWE, then re-checks — up to 5 cycles. On green, the PR is validated and ready to merge. Output: a CI-validated feature PR. Trigger after /squid-review passes, or say "/squid-review-ci".
+  Drive CI green on a pushed, review-clean feature PR — On-Call diagnoses failures and hands fix
+  tasks to the SWE. Output: a CI-validated feature PR. Trigger after /squid-review passes, or when
+  the user says "/squid-review-ci".
 disable-model-invocation: false
 argument-hint: <PR-number | branch>
 ---

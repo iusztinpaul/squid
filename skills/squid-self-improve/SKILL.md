@@ -1,6 +1,10 @@
 ---
 name: squid-self-improve
-description: Analyze developer corrections from the current coding session and persist lessons learned as rules in AGENTS.md files or memory. Use this skill at the end of a coding session, after the developer has reviewed and corrected your work, when the developer says "squid-self-improve", "learn from this session", "what did you learn", "update your rules", "remember this for next time", or any time the developer wants to capture feedback from corrections they made. Also trigger when the developer explicitly asks you to reflect on mistakes or extract patterns from their edits.
+description: >-
+  Analyze developer corrections from the current coding session and persist lessons learned as
+  rules in AGENTS.md files or memory. Use at the end of a session after the developer corrected
+  your work, when they say "squid-self-improve", ask to capture what was learned, or ask you to
+  reflect on mistakes and extract patterns from their edits.
 ---
 
 # Self-Improvement from Developer Feedback
