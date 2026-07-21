@@ -10,7 +10,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-2.1%2B-blue)](https://claude.com/claude-code)
 [![Plugin version](https://img.shields.io/github/v/tag/iusztinpaul/squid?label=version)](https://github.com/iusztinpaul/squid/tags)
 
-Claude Code writes code fast. It's worse at writing the code *your team* would actually ship — code that follows your conventions, has tests you trust, and survives review.
+Claude Code writes code fast. It's worse at writing the code _your team_ would actually ship — code that follows your conventions, has tests you trust, and survives review.
 
 **Squid is a [Claude Code](https://claude.com/claude-code) plugin that turns a feature spec into a reviewed PR through a 5-agent pipeline — PA → SWE → Tester → PR Reviewer → On-Call — with exactly two human gates: plan approval and final merge.** No file templates, no render step: just markdown specs and agent contracts, and every file in your project gets written by an agent that reads them.
 
@@ -42,12 +42,12 @@ Branch + worktree, grooming, the per-task implement/verify loop, push, diff revi
 
 ## Who this is for
 
-- **Yes:** solo devs and small teams shipping Python backends, TypeScript frontends, or Go TUIs who want Claude Code to *consistently* hit your team's bar without re-explaining conventions every session.
+- **Yes:** solo devs and small teams shipping Python backends, TypeScript frontends, or Go TUIs who want Claude Code to _consistently_ hit your team's bar without re-explaining conventions every session.
 - **Maybe not:** teams with an established in-house agent pipeline they don't want to displace, or stacks Squid doesn't cover yet (Rust, Java, mobile — [PRs welcome](#contributing)).
 
 ## [Learn How to Build Agentic Coding Frameworks From Scratch](https://decodingai.com)
 
-  ▎ Join 40k+ engineers subscribed to [the Decoding AI Magazine](https://decodingai.com) — and learn to build agentic coding frameworks like Squid from scratch.
+> Join 40k+ engineers subscribed to [the Decoding AI Magazine](https://www.decodingai.com/) to learn to build agentic coding frameworks like Squid from scratch.
 
 ![Decoding AI Magazine](./assets/decodingai.jpg)
 
@@ -158,27 +158,27 @@ Installed via `npx skills` instead? Remove those with `npx skills remove <name>`
 
 ## Skills & commands
 
-| Surface | What it does |
-|---|---|
-| `/squid-scaffold` | Interactive bootstrap. Asks what you're building (backend / frontend / TUI / mix), reads the relevant specs, writes a tailored `AGENTS.md`, and lays down an empty folder skeleton. Run `/squid-plan` next to start building. |
-| `/squid-plan <feature-spec>` | Plan a feature: grill the spec, PA grooms an approved Tasks Plan (+ optional ADR), create the branch + worktree. Start here. |
-| `/squid-implement-night <plan>` | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR. |
-| `/squid-implement-task` · `/squid-review` · `/squid-review-ci` | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation. |
-| `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` · `/squid-clean-docs` · `/squid-clean-memory` · `/squid-clean-harness` · `/squid-write-skill` | Standalone helpers (not wired into the main pipeline). |
-| `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer` | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. See [Which model runs which agent](#which-model-runs-which-agent). |
-| `squid-testing-python`, `squid-grilling`, `squid-self-improve` | Support skills the pipelines and agents lean on. |
+| Surface                                                                                                                                                                | What it does                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/squid-scaffold`                                                                                                                                                      | Interactive bootstrap. Asks what you're building (backend / frontend / TUI / mix), reads the relevant specs, writes a tailored `AGENTS.md`, and lays down an empty folder skeleton. Run `/squid-plan` next to start building. |
+| `/squid-plan <feature-spec>`                                                                                                                                           | Plan a feature: grill the spec, PA grooms an approved Tasks Plan (+ optional ADR), create the branch + worktree. Start here.                                                                                                  |
+| `/squid-implement-night <plan>`                                                                                                                                        | End-to-end single-feature pipeline (the diagram above) — builds the approved plan to a validated PR.                                                                                                                          |
+| `/squid-implement-task` · `/squid-review` · `/squid-review-ci`                                                                                                         | Granular pipeline stages, runnable standalone: build tasks · push + acceptance + diff review · CI validation.                                                                                                                 |
+| `/squid-refactor` · `/squid-triage-issue` · `/squid-architecture-review` · `/squid-clean-docs` · `/squid-clean-memory` · `/squid-clean-harness` · `/squid-write-skill` | Standalone helpers (not wired into the main pipeline).                                                                                                                                                                        |
+| `product-architect`, `software-engineer`, `tester`, `pr-reviewer`, `oncall-engineer`                                                                                   | Sub-agents invoked by the pipelines; also usable directly via the `Agent` tool. See [Which model runs which agent](#which-model-runs-which-agent).                                                                            |
+| `squid-testing-python`, `squid-grilling`, `squid-self-improve`                                                                                                         | Support skills the pipelines and agents lean on.                                                                                                                                                                              |
 
 ### Which model runs which agent
 
 Squid pins a model per agent, following Anthropic's [advisor pattern](https://x.com/ClaudeDevs/status/2074606058128224365) — reasoning-heavy roles get the strongest model, and the token-hungry executor roles run one tier down, where most of the spend lands.
 
-| Agent | Model | Effort | Why |
-|---|---|---|---|
-| `product-architect` | `fable` | `high` | Grooms the Tasks Plan and does acceptance review. Pure planning + judgment, and it runs **once per feature** — highest leverage, bounded cost. |
-| `pr-reviewer` | `fable` | `high` | Reads one diff and tags Blocker/Nit. Review is judgment, not generation. |
-| `software-engineer` | `opus` | `high` | Writes all the code, across every task and every retry — the single biggest token sink in the pipeline. |
-| `tester` | `sonnet` | `high` | Full suite + adversarial e2e. High tool-call volume, and verifying is easier than generating. |
-| `oncall-engineer` | `sonnet` | `high` | Greps CI logs, root-causes, hands a fix task to the SWE. Never writes app code. |
+| Agent               | Model    | Effort | Why                                                                                                                                            |
+| ------------------- | -------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `product-architect` | `fable`  | `high` | Grooms the Tasks Plan and does acceptance review. Pure planning + judgment, and it runs **once per feature** — highest leverage, bounded cost. |
+| `pr-reviewer`       | `fable`  | `high` | Reads one diff and tags Blocker/Nit. Review is judgment, not generation.                                                                       |
+| `software-engineer` | `opus`   | `high` | Writes all the code, across every task and every retry — the single biggest token sink in the pipeline.                                        |
+| `tester`            | `sonnet` | `high` | Full suite + adversarial e2e. High tool-call volume, and verifying is easier than generating.                                                  |
+| `oncall-engineer`   | `sonnet` | `high` | Greps CI logs, root-causes, hands a fix task to the SWE. Never writes app code.                                                                |
 
 Two things worth knowing:
 
