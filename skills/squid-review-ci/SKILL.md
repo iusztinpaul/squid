@@ -19,19 +19,19 @@ Read `AGENTS.md` first.
 
 ---
 
-## The On-Call → SWE → re-check loop (max 5)
+## The On-Call → SWE → re-check loop
 
 ### Watch CI (On-Call)
 
 ```
 Agent(
   subagent_type="squid:oncall-engineer",
-  prompt="""Watch CI for the latest push on feat/{slug} (PR #{N}). {Working directory: {path}.} Read AGENTS.md first. Follow your role definition. CI/CD only — do not review the diff. If green, report success. If red, pull the failing logs (`gh run view --log-failed`), identify the failing job/step, trace it to the responsible task from the commit messages, and hand back a concrete FIX TASK (root cause + the exact failing command + affected files). Do NOT fix the code yourself — that's the SWE's job."""
+  prompt="""Watch CI for the latest push on feat/{slug} (PR #{N}). {Working directory: {path}.} Read AGENTS.md first. Follow your role definition. CI/CD only — do not review the diff. Report green, or hand back a concrete FIX TASK (root cause + the exact failing command + affected files)."""
 )
 ```
 
 - **Green** → done. The PR is validated and ready to merge.
-- **Red (infra / flake)** → On-Call files a NEW infra task and reports it; surface to the human — do not burn fix attempts on infra.
+- **Red (infra / flake)** → On-Call files a NEW infra task and reports it; surface to the human — it does not count against the cap.
 - **Red (real failure)** → On-Call hands back a fix task → go to "SWE fixes".
 
 ### SWE fixes
@@ -39,7 +39,7 @@ Agent(
 ```
 Agent(
   subagent_type="squid:software-engineer",
-  prompt="""CI failed on PR #{N}. {Working directory: {path}.} Fix task from On-Call: {root cause + failing command + files}. Reproduce locally with the same command CI ran, fix the root cause (not the symptom; fix the bug, not the test), re-run the local suite, commit with `Refs #N` (the original task is already closed) via the commit-message generator (`/caveman-commit` if the caveman plugin is installed, else the `commit-commands` plugin), and push."""
+  prompt="""CI failed on PR #{N}. {Working directory: {path}.} Fix task from On-Call: {root cause + failing command + files}. Reproduce locally with the same command CI ran, fix the root cause (not the symptom; fix the bug, not the test), re-run the local suite, commit per your Commit section (`Refs #N` — the original task is already closed), and push."""
 )
 ```
 
@@ -53,12 +53,4 @@ If CI is still red after 5 On-Call→SWE→re-check cycles, stop, surface `USER 
 
 ## Output
 
-A CI-validated, ready-to-merge feature PR. Hand back to `/squid-implement-night` (which runs the squid-self-improve gate + final hand-off), or — if run standalone — report that CI is green and the PR is ready.
-
----
-
-## Notes
-
-- **On-Call diagnoses; the SWE fixes.** On-Call owns pipeline health and traces failures to their root cause; the actual code fix is a task for the SWE (the team's role split).
-- **Self-improve is NOT here.** It runs in `/squid-implement-night`'s tail after this skill returns. Running `/squid-review-ci` standalone just validates CI.
-- **Infra failures don't count** against the 5-cycle cap — file a separate infra task and surface it.
+A CI-validated, ready-to-merge feature PR. Hand back to `/squid-implement-night`, or — if run standalone — report that CI is green and the PR is ready.

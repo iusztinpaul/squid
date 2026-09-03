@@ -1,8 +1,8 @@
 # AGENTS.md template
 
-`/squid-scaffold` distils this into the project's root `AGENTS.md` — the agent-agnostic memory file every coding agent reads, and the single source of truth. Scaffold also symlinks `CLAUDE.md` to `AGENTS.md` so Claude Code (and any `CLAUDE.md`-only harness) loads the same content — see [`rules.md`](rules.md) `I4`.
+`/squid-scaffold` distils this into the project's root `AGENTS.md` — the agent-agnostic memory file every coding agent reads (`CLAUDE.md` is a symlink to it, `I4`).
 
-This file is the **template body only**. The constraints on composing it — flat scope-based section order (`I5`), size ≤ 250 lines (`I2`), distil-don't-copy (`I3`), gate-sections-on-presence (`I6`), group-Key-Components-per-app (`I7`), fill-placeholders-inline (`I8`) — live in [`rules.md`](rules.md), the single source of truth. Read those `I#` invariants, then fill in the template below.
+This file is the **template body only**; the composing constraints (`I2`, `I3`, `I5`–`I8`) live in [`rules.md`](rules.md). Read them, then fill in the template below.
 
 ## Template
 

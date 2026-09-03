@@ -6,23 +6,3 @@ description: OpenAPI 3.1 contract-first workflow — `shared/openapi/api.yaml` a
 # OpenAPI 3.1 contracts
 
 > **Stub — not yet written.**
-
-## When to use
-
-TODO
-
-## When NOT to use
-
-TODO
-
-## Decision tree
-
-TODO
-
-## Index of supporting files
-
-_(None yet — stub.)_
-
-## Canonical principles
-
-TODO

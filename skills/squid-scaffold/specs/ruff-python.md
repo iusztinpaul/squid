@@ -36,16 +36,7 @@ They're separate passes with separate rules — don't blur them in your head or 
 
 ### 2. Fix before check
 
-During an inner dev loop, run the `--fix` / writing variants first so auto-fixable issues don't surface as false errors:
-
-```bash
-uv run ruff format                # writes
-uv run ruff check --fix           # writes
-uv run ruff format --check        # asserts (no write)
-uv run ruff check                 # asserts (no write)
-```
-
-CI runs only the asserting variants — drift is a failure, not something CI should silently paper over. See [`makefile-delegator`](makefile-delegator.md#9-fix-before-check-ordering-manual-loop) for how this wires into `make`.
+During an inner dev loop, run the `--fix` / writing variants first so auto-fixable issues don't surface as false errors. CI runs only the asserting variants — drift is a failure, not something CI should silently paper over. See [`makefile-delegator`](makefile-delegator.md#9-fix-before-check-ordering-manual-loop) for how this wires into `make`.
 
 ### 3. Canonical `[tool.ruff]` block
 
@@ -83,6 +74,7 @@ indent-style = "space"
 - **`target-version` must match `requires-python`** in `[project]`; otherwise ruff's `UP` rules will suggest syntax the runtime can't parse.
 - **`select` is an allow-list, not a deny-list.** Adding a rule family is a deliberate choice; review it together, don't cargo-cult.
 - **`extend-exclude`** — generated files (OpenAPI clients, DB migrations) should never be lint-gated.
+- **Never wholesale `ignore = ["E", "W", "F"]`** to quiet a noisy codebase — it masks real bugs. Narrow the rules you actually want to keep; fix the rest.
 
 ### 4. Format rules are not opinionated — accept the defaults
 
@@ -95,12 +87,3 @@ If `[tool.ruff.lint]` grows past ~30 lines, it's doing too much. Prune:
 - Remove `ignore` entries once the codebase is clean.
 - Remove `per-file-ignores` that no longer match any file.
 - Prefer `# noqa: RULE  # reason` with a rationale on the one offending line over a project-wide ignore.
-
-## Anti-patterns
-
-- **Running black alongside ruff.** They'll fight on edge cases. Pick one — ruff is the team default.
-- **Wholesale `ignore = ["E", "W", "F"]` to quiet a noisy codebase.** Mask real bugs. Narrow the rules you actually want to keep; fix the rest.
-- **`select = ["ALL"]`.** ruff has hundreds of rules. Opt in deliberately. `ALL` produces noise that buries signal.
-- **Hand-tuning the formatter** (custom quote rules, disabling string normalisation). You lose the benefit of a standard formatter. Accept defaults.
-- **Stale `per-file-ignores`** that outlive the files they pointed at. Lint your lint config periodically.
-- **Running `ruff check` without `--fix` during local dev.** Slower inner loop; auto-fixable issues show up as errors you then fix by hand. Fix before check.

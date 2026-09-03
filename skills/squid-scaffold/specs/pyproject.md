@@ -20,39 +20,9 @@ Opinionated `pyproject.toml` structure for Python packages. Pairs with [`uv-pyth
 - conda-forge recipes — those have their own metadata convention.
 - Non-Python projects.
 
-## Canonical skeleton
+## Canonical opinions
 
-See the [canonical `pyproject.toml`](#canonical-pyprojecttoml-python-backend) below for a full reference file. Headline structure:
-
-```toml
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
-name = "..."
-version = "0.1.0"
-description = "..."
-requires-python = ">=3.12"
-dependencies = [...]
-
-[project.scripts]     # if the package exposes CLIs
-my-cli = "my_pkg.cli:main"
-
-[dependency-groups]   # PEP 735 — for dev/test/lint deps
-dev = [...]
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/my_pkg"]
-
-[tool.ruff]
-# line-length, target-version, lint rules — see ruff-python skill
-
-[tool.pytest.ini_options]
-# testpaths, asyncio_mode, filterwarnings — see below
-```
-
-## Canonical opinions (headline)
+Reference file: [canonical `pyproject.toml`](#canonical-pyprojecttoml-python-backend) below. Section by section:
 
 ### `[build-system]`
 
@@ -68,40 +38,15 @@ packages = ["src/my_pkg"]
 
 ### `[project.scripts]` / entry points
 
-Expose CLIs as entry points so `uv run <cli-name>` works without specifying the module:
-
-```toml
-[project.scripts]
-my-cli = "my_pkg.cli:main"
-```
-
-After `uv sync`, users run `uv run my-cli --help`. See [`cli-tool-python`](cli-tool-python.md) for the CLI conventions themselves.
+Expose CLIs as entry points (`my-cli = "my_pkg.cli:main"`) so `uv run <cli-name>` works without specifying the module. After `uv sync`, users run `uv run my-cli --help`. See [`cli-tool-python`](cli-tool-python.md) for the CLI conventions themselves.
 
 ### `[dependency-groups]` (PEP 735)
 
-**Use these for dev/test/lint deps.** Do **not** use `[project.optional-dependencies]` for them — that's for downstream consumers.
-
-```toml
-[dependency-groups]
-dev = [
-    "pytest>=8",
-    "pytest-asyncio",
-    "pytest-mock",
-    "ruff>=0.15",
-    "pre-commit",
-]
-```
-
-Additional groups (`docs`, `type`, etc.) are fine — install per-group via `uv sync --group docs`.
+**Use these for dev/test/lint deps.** Do **not** use `[project.optional-dependencies]` for them — that's a consumer-facing install surface (`pip install my-pkg[extras]`), not a dev convenience. Group contents: [`uv-python`](uv-python.md). Additional groups (`docs`, `type`, etc.) are fine — install per-group via `uv sync --group docs`.
 
 ### `[tool.hatch.build.targets.wheel]`
 
-```toml
-[tool.hatch.build.targets.wheel]
-packages = ["src/my_pkg"]
-```
-
-Declares the src/ layout to hatchling. Non-negotiable when your source is under `src/` (which it should be — see [`python-backend/layout`](python-backend.md)).
+`packages = ["src/my_pkg"]` declares the src/ layout to hatchling. Non-negotiable when your source is under `src/` (which it should be — see [`python-backend`](python-backend.md)).
 
 ### `[tool.ruff]`
 
@@ -109,29 +54,15 @@ Full config in [`ruff-python`](ruff-python.md). Headline: `target-version` pinne
 
 ### `[tool.pytest.ini_options]`
 
-Opinionated, non-negotiable:
-
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests/unit", "tests/integration"]
-python_files = "test_*.py"
-python_functions = "test_*"
-addopts = "-ra --strict-markers"
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
-pythonpath = ["src"]
-filterwarnings = ["error"]
-```
-
-Rationale:
+Opinionated, non-negotiable (block in the canonical file):
 
 - **`testpaths`** — pytest doesn't crawl the whole repo looking for tests.
 - **`-ra`** — show summary of all non-passing outcomes at the end; fast feedback.
 - **`--strict-markers`** — unknown `@pytest.mark.foo` becomes an error, not a silent no-op.
 - **`asyncio_mode = "auto"`** — `async def test_*` functions run automatically; no decorator needed.
 - **`asyncio_default_fixture_loop_scope = "function"`** — each test gets its own event loop; avoids cross-test pollution. Override per-fixture when you want a session loop.
-- **`pythonpath = ["src"]`** — imports resolve against `src/` without requiring an editable install first.
-- **`filterwarnings = ["error"]`** — warnings promote to errors. Curate exceptions explicitly; don't silence wholesale.
+- **`pythonpath = ["src"]`** — imports resolve against `src/` without requiring an editable install first; without it pytest can't import `my_pkg` until `uv sync` has run.
+- **`filterwarnings = ["error"]`** — warnings promote to errors. Curate exceptions explicitly, each with a `TODO:` and a target date; don't silence wholesale.
 
 ## Environment-specific dependency gating
 
@@ -217,28 +148,7 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/my_pkg"]
 
-## ----- ruff -----
-
-[tool.ruff]
-target-version = "py312"
-line-length = 100
-extend-exclude = ["tests/fixtures"]
-
-[tool.ruff.lint]
-select = [
-    "E", "F", "W",   # pycodestyle + pyflakes basics
-    "I",             # isort
-    "B",             # flake8-bugbear
-    "UP",            # pyupgrade
-    "SIM",           # flake8-simplify
-    "RUF",           # ruff-specific
-]
-ignore = [
-    # curate as needed
-]
-
-[tool.ruff.format]
-quote-style = "double"
+## ----- ruff: paste the [tool.ruff] blocks from ruff-python.md; target-version matches requires-python -----
 
 ## ----- pytest -----
 
@@ -269,8 +179,5 @@ filterwarnings = ["error"]
 
 ### Pitfalls to avoid
 
-- **Don't put dev tools in `[project.optional-dependencies]`.** Use `[dependency-groups]` (PEP 735). Optional-deps are a consumer-facing install surface (`pip install my-pkg[extras]`), not a dev convenience.
-- **Don't omit `pythonpath = ["src"]`** in the pytest config when using src-layout. Without it, pytest can't import `my_pkg` unless you've run `pip install -e .` or `uv sync` first.
-- **Don't ship `filterwarnings = ["error"]` and a pile of hand-curated ignores with no dates.** Every ignore should have a `TODO:` and a target date to revisit.
 - **Don't set `version = "0.0.0"`.** Start at `0.1.0` — 0.0.x reads as "not started" on PyPI and in dependency resolvers.
 - **Don't duplicate ruff / pytest config in separate files** (`ruff.toml`, `pytest.ini`) when you already have `pyproject.toml`. One config surface.

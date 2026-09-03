@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — the agent taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
 
-**Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); look them up there for the full meaning.
+**Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); when a term's one-line gloss here is not enough, read it there.
 
 ## Invocation
 

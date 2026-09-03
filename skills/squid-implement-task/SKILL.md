@@ -9,15 +9,13 @@ argument-hint: <task-ref | "task description" | plan-ref | list of task-refs>
 
 # Implement Task — inner SWE↔Tester loop (1 or N tasks)
 
-Take a task (or a list of tasks / an approved Tasks Plan) and drive each one through the inner **SWE → Tester** loop, committing each task once it passes. This is the implementation core that `/squid-implement-night` runs; you can also run it standalone, on demand.
+Take a task (or a list of tasks / an approved Tasks Plan) and drive each one through the inner **SWE → Tester** loop, committing each task once it passes. Runs in whatever working tree it's invoked in — the feature worktree when `/squid-implement-night` invokes it (pass `Working directory: {path}` to every agent), your current branch when standalone. No worktrees are created here (that's `/squid-plan`'s job) and no human gates run here (those live in `/squid-plan` and at the end of `/squid-implement-night`).
 
 `$ARGUMENTS` is one of: a single task ref (`NNN-slug` / `#N`), a free-form task description, the feature's pending task files (`tasks/<NNN>-*.md`, `status: pending`), or several refs. If empty, ask the human what to implement.
 
 You are the **orchestrator** — a MANAGER, not an implementer. You launch agents, enforce the Tester gate, and commit on green. You do NOT write code, run tests, or review the diff yourself beyond inspection (`git diff`, `git log`).
 
 Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`) and the project's stack + test commands.
-
-**Where this runs:** in whatever working tree it's invoked in. When `/squid-implement-night` invokes it, it runs in the feature worktree `/squid-plan` created (the orchestrator passes `Working directory: {path}` to every agent). Standalone, it runs on your current branch. **It does NOT create branches or worktrees** — that's `/squid-plan`'s job.
 
 **Critical rules:**
 
@@ -52,7 +50,6 @@ Agent(
   prompt="""Implement task {ID}. Read AGENTS.md first. Follow your role definition.
   {Working directory: {path}  — include this line only when orchestrated by /squid-implement-night.}
   Stay on the current feature branch — do NOT create a per-task branch (no `feat/{ID}-…`); if you are on `main`, create ONE `feat/{slug}` branch first per your Branch section. Each task is one commit on that shared feature branch.
-  In file mode, set this task's `tasks/<NNN>-<slug>.md` frontmatter `status: in-progress` before you start.
   Write code AND tests. Run the project's format-fix + lint-fix + pre-commit + unit-tests until clean.
   DO NOT commit yet — the Tester goes first. Append a SWE log entry (or include it in your final message for ephemeral tasks)."""
 )
@@ -66,14 +63,11 @@ Agent(
   prompt="""QA task {ID}. Read AGENTS.md first. Follow your role definition — your headline duty is the e2e adversarial pass.
   {Working directory: {path}.}
   SWE summary: {hand-off message}.
-  Run pre-commit + unit-tests + integration-tests, then the e2e adversarial pass (happy path + 2–3 realistic break paths).
   Verify every acceptance criterion with evidence. Append a Tester log entry. Verdict: PASS or FAIL."""
 )
 ```
 
 ### 2c. Handle the verdict — `Fails?`
-
-Spot-check the report before accepting it.
 
 - **FAIL** (or a rubber-stamped PASS) → relay concrete feedback to the SWE and re-run 2b on the same task:
   ```
@@ -91,19 +85,15 @@ Spot-check the report before accepting it.
 ```
 Agent(
   subagent_type="squid:software-engineer",
-  prompt="""Tester PASSED task {ID}. {Working directory: {path}.} Commit JUST this task per your role definition —
-  use the commit-message generator (`/caveman-commit` if the caveman plugin is installed, else the `commit-commands` plugin), specific files only (never `git add -A`). Conventional Commits subject
-  (`feat:` / `fix:` / `refactor:` / …). Message ends with `Closes #N` (gh mode) or `Closes-task: NNN-slug` (file mode).
-  DO NOT push."""
+  prompt="""Tester PASSED task {ID}. {Working directory: {path}.} Commit JUST this task per your Commit section
+  (generator, specific files, task reference, file-mode `status: done` + `git mv` to tasks/done/). DO NOT push."""
 )
 ```
 
-In file mode, the SWE also sets the task's frontmatter `status: done` and `git mv`s the file from `tasks/` into `tasks/done/` as part of that commit.
-
 ### 2e. `Finished tasks?`
 
-- **More tasks remain** → next task (back to 2a). The Tester FAIL counter resets.
-- **All tasks done** → STOP. Output: code + tests, one commit per task on the current branch.
+- **More tasks remain** → next task (back to 2a).
+- **All tasks done** → STOP; see Output.
 
 ---
 
@@ -115,5 +105,4 @@ Code + tests, **committed per task** (no push). Report a short summary: tasks do
 
 ## Notes
 
-- **Autonomous, not supervised.** The human gates live in `/squid-plan` (plan approval) and at the end of `/squid-implement-night` (merge) — none here.
 - **Rollup / fix tasks** handed in by `/squid-review` (or by a human) are just more tasks — feed them in and the same loop applies.

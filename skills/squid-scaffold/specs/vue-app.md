@@ -6,23 +6,3 @@ description: Vue SPA conventions — Vite bundler, file structure, Composition A
 # Vue app
 
 > **Stub — not yet written.** This skill will encode Vue opinions, building on `typescript-frontend` for the package skeleton.
-
-## When to use
-
-TODO
-
-## When NOT to use
-
-TODO
-
-## Decision tree
-
-TODO
-
-## Index of supporting files
-
-_(None yet — stub.)_
-
-## Canonical principles
-
-TODO

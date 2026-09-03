@@ -18,7 +18,7 @@ Opinionated `uv` usage. uv is the only supported package/project manager in this
 
 - Projects already standardised on pip / poetry / conda — the cost of the switch needs its own decision.
 - Non-Python ecosystems.
-- Global Python version management — that's `uv python install`, covered but rarely needed per-project.
+- Global Python version management — `uv python install`, rarely needed per-project.
 
 ## Canonical commands
 
@@ -26,11 +26,11 @@ Opinionated `uv` usage. uv is the only supported package/project manager in this
 
 | Command | When |
 |---|---|
-| `uv sync` | **Install/refresh** the venv from `pyproject.toml` + `uv.lock`. Run on checkout, after pulling changes that touched deps, and after `uv add/remove`. |
+| `uv sync` | **Install/refresh** the venv from `pyproject.toml` + `uv.lock`. Run on checkout, after pulling changes that touched deps, after `uv add/remove`, and from `make install`. |
 | `uv add <pkg>` | Add a runtime dependency. Edits `pyproject.toml` under `[project.dependencies]`, updates `uv.lock`, and syncs the venv. |
-| `uv add --group dev <pkg>` | Add a dev/test dependency under `[dependency-groups].dev` (PEP 735). **Do not** use `[project.optional-dependencies]` — groups are the modern replacement. |
+| `uv add --group dev <pkg>` | Add a dev/test dependency under `[dependency-groups].dev` (PEP 735 — see below). |
 | `uv remove <pkg>` | Inverse of `uv add`. |
-| `uv lock` | Regenerate `uv.lock` without syncing. Usually you don't need this explicitly — `uv add/remove/sync` locks for you. |
+| `uv lock` | Regenerate `uv.lock` without syncing (`uv add/remove/sync` already lock). |
 | `uv build` | Build wheel + sdist into `dist/`. Backend is whatever `[build-system]` declares (`hatchling` in our template). |
 | `uv publish --token $UV_PUBLISH_TOKEN` | Publish `dist/*` to PyPI. CI-only — never locally. |
 
@@ -105,16 +105,6 @@ uv add --group dev pytest ruff pre-commit
 uv sync
 ```
 
-**Run the full dev loop:**
-
-```bash
-uv sync                           # ensure venv matches lockfile
-uv run ruff format
-uv run ruff check
-uv run pytest -q
-uv build                          # if publishing
-```
-
 **Clean a stale venv:**
 
 ```bash
@@ -131,8 +121,4 @@ uvx openapi-spec-validator api.yaml
 ## Anti-patterns
 
 - **`pip install` inside a uv project.** Breaks lockfile discipline. Use `uv add` or `uv pip install` (if you really must) — never plain `pip`.
-- **Activating the venv (`source .venv/bin/activate`).** Works, but `uv run` is less error-prone — no state in your shell.
 - **Committing `.venv/`.** Never. It's a build artifact, gitignored.
-- **Using `[project.optional-dependencies]` for dev tools.** That's for downstream consumers. Use `[dependency-groups]`.
-- **Forgetting to `uv sync` after pulling a `pyproject.toml` change.** The venv silently lags. Tests fail mysteriously. `uv sync` as part of your `make install`.
-- **Mixing `uv` and `poetry` in the same repo.** Pick one per project. The tools don't share lockfile formats; keeping both is a recipe for drift.

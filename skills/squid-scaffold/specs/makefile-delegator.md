@@ -23,20 +23,7 @@ Opinionated root-level `Makefile` pattern for polyglot monorepos. The root never
 
 ### 1. Delegate, never reimplement
 
-The root Makefile calls per-component Makefiles with `$(MAKE) -C packages/<c> <target>`. It **never** contains a per-component `uv sync` or `npm install` or `go mod tidy` directly.
-
-```makefile
-install: install-backend install-frontend-web install-frontend-tui
-
-install-backend:
-	$(MAKE) -C packages/backend install
-
-install-frontend-web:
-	$(MAKE) -C packages/frontend-web install
-
-install-frontend-tui:
-	$(MAKE) -C packages/frontend-tui install
-```
+The root Makefile calls per-component Makefiles with `$(MAKE) -C packages/<c> <target>` (e.g. `install-backend: $(MAKE) -C packages/backend install`). It **never** contains a per-component `uv sync` or `npm install` or `go mod tidy` directly.
 
 ### 2. `$(MAKE)`, never literal `make`
 
@@ -48,16 +35,6 @@ Every verb has two forms:
 
 - **Aggregate:** `make <verb>` — runs the verb across every enabled component.
 - **Per-component:** `make <verb>-<component>` — runs the verb on just that component.
-
-```makefile
-test: test-backend test-frontend-web test-frontend-tui
-test-backend:
-	$(MAKE) -C packages/backend test
-test-frontend-web:
-	$(MAKE) -C packages/frontend-web test
-test-frontend-tui:
-	$(MAKE) -C packages/frontend-tui test
-```
 
 This gives users a fast single-component inner loop (`make test-backend`) and a pre-PR aggregate (`make test`).
 
@@ -97,36 +74,15 @@ See the [canonical root Makefile](#canonical-root-makefile-polyglot-monorepo) be
 
 ### 5. `help` is a first-class target
 
-`make help` (and `make` with no args) prints the target list grouped by concern. Don't rely on `make -pn` — write the help text yourself so it's curated.
-
-```makefile
-.DEFAULT_GOAL := help
-
-help: ## Show this help
-	@awk 'BEGIN { FS = ":.*?## " } /^[a-zA-Z_\/-]+:.*?## / { printf "  %-30s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-```
-
-The `## comment` convention lets every target self-document. New targets should include one.
+`make help` (and `make` with no args — `.DEFAULT_GOAL := help`) prints the target list grouped by concern. Don't rely on `make -pn` — write the help text yourself so it's curated. The `## comment` convention (see the `help` recipe in the canonical file) lets every target self-document; new targets should include one.
 
 ### 6. `.PHONY` discipline
 
 Every target that isn't a file goes in `.PHONY`. Miss a target and `make` will treat it as a file-existence check, leading to confusing "nothing to do" behaviours when the working tree happens to contain a matching name.
 
-```makefile
-.PHONY: help install test test-backend test-frontend-web ...
-```
-
 ### 7. Component gating (conditional targets)
 
-When a component is not present in the tree, its targets shouldn't be emitted — otherwise `make test-frontend-tui` against a backend-only repo surfaces a confusing error. Gate with a file existence check or (better) generate the Makefile from the component set at scaffold time.
-
-In a live repo the cheap check is:
-
-```makefile
-HAS_BACKEND := $(shell test -d packages/backend && echo yes)
-
-test: $(if $(HAS_BACKEND),test-backend)
-```
+When a component is not present in the tree, its targets shouldn't be emitted — otherwise `make test-frontend-tui` against a backend-only repo surfaces a confusing error. Gate with a file existence check (`HAS_<C> := $(shell test -d packages/<c> && echo yes)`, then `$(if $(HAS_<C>),<verb>-<c>)` — as in the canonical file) or (better) generate the Makefile from the component set at scaffold time.
 
 ### 8. Cross-cutting targets
 
@@ -153,10 +109,7 @@ The `pre-commit` and `ci` targets run the non-fix variants only — correct for 
 
 ## Anti-patterns
 
-- **Literal `make` calls** (`cd packages/backend && make test`). Loses `$(MAKE)` propagation. Use `$(MAKE) -C ...`.
 - **`cd` in a recipe.** Each recipe line is a new shell; `cd` in one line doesn't affect the next. Use `-C` for directories or join with `&&` on one line.
-- **Reimplementing component logic at root.** `install-backend: cd packages/backend && uv sync` duplicates what `packages/backend/Makefile` already does. Delegate instead.
-- **Missing `.PHONY`.** Leads to mysteries when a target name matches a file.
 - **`@echo` spam that drowns the error output.** Keep recipe output terse; let the tool itself print what matters.
 - **Hard-coded component list.** When adding a new component means editing 15 places in the Makefile, the design is wrong. Either generate the Makefile from the component set, or use a variable list.
 
@@ -328,52 +281,11 @@ publish: build
 
 #### `packages/frontend-web/Makefile` (TypeScript)
 
-```makefile
-.PHONY: install test dev lint-check lint-fix format-check format-fix pre-commit build
-
-install:
-	npm ci
-test:
-	npm run test
-dev:
-	npm run dev
-lint-check:
-	npm run lint
-lint-fix:
-	npm run lint:fix
-format-check:
-	npm run format:check
-format-fix:
-	npm run format
-pre-commit: format-check lint-check test
-build:
-	npm run build
-```
+Each verb runs the matching npm script (`install` → `npm ci`, `lint-fix` → `npm run lint:fix`, …); `pre-commit: format-check lint-check test`. Script names: [`typescript-frontend`](typescript-frontend.md) → package.json scripts.
 
 #### `packages/frontend-tui/Makefile` (Go)
 
-```makefile
-PROJECT_SLUG := my-tui
-
-.PHONY: install test run lint-check lint-fix format-check format-fix pre-commit build
-
-install:
-	go mod tidy
-test:
-	go test ./...
-run:
-	go run ./cmd/$(PROJECT_SLUG)
-lint-check:
-	go vet ./...
-lint-fix: lint-check
-format-check:
-	@test -z "$$(gofmt -l .)" || (gofmt -l . && exit 1)
-format-fix:
-	gofmt -w .
-pre-commit: format-check lint-check test
-build:
-	go build -o bin/$(PROJECT_SLUG) ./cmd/$(PROJECT_SLUG)
-```
+Target → command table in [`go-tui`](go-tui.md) → Makefile targets; `pre-commit: format-check lint-check test`.
 
 #### `packages/shared/Makefile` (OpenAPI codegen)
 

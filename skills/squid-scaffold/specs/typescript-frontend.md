@@ -35,31 +35,13 @@ Every variant uses the same `typescript-frontend` foundation below; the framewor
 - **Node 20+** minimum. Default to the latest LTS available to the team (22 LTS is current).
 - **Package manager:** `npm`. Lockfile is `package-lock.json`. We don't use pnpm / yarn by default — pick one per team, not per project.
 - **Bundler + dev server:** Vite. Never webpack, never create-react-app.
-- **Testing:** Vitest (not Jest). jsdom environment for DOM tests.
+- **Testing:** Vitest (not Jest — it shares Vite's config). jsdom environment for DOM tests (`environment: 'jsdom'` in `vite.config.ts`).
 - **Linter:** ESLint 9 (flat config). **Formatter:** Prettier 3. Both are non-optional.
-- **TS strictness:** `strict: true`, plus `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`, `isolatedModules`. These are not negotiable.
+- **TS strictness:** the `tsconfig.json` non-negotiables (below).
 
 ### package.json scripts (contract with root Makefile delegator)
 
-Every frontend package exposes the same script names so the monorepo Makefile can wire targets uniformly:
-
-```jsonc
-{
-  "scripts": {
-    "dev":          "vite",
-    "build":        "tsc -b && vite build",   // vue uses `vue-tsc -b`; svelte uses `svelte-check && vite build`
-    "preview":      "vite preview",
-    "test":         "vitest run",
-    "test:watch":   "vitest",
-    "lint":         "eslint src",
-    "lint:fix":     "eslint src --fix",
-    "format":       "prettier --write .",
-    "format:check": "prettier --check ."
-  }
-}
-```
-
-See [`makefile-delegator`](makefile-delegator.md) for how the root Makefile consumes these.
+Every frontend package exposes the same script names (`dev`, `build`, `preview`, `test`, `test:watch`, `lint`, `lint:fix`, `format`, `format:check` — see `package.json` below) so the component Makefile can map each verb to the matching script (`pre-commit` = `format-check lint-check test`) and the root delegator ([`makefile-delegator`](makefile-delegator.md)) wires targets uniformly.
 
 ### Layout
 
@@ -98,8 +80,6 @@ Module conventions:
 
 ### Testing discipline
 
-- **Vitest**, not Jest. Keeps the bundler stack consistent (Vitest shares Vite's config).
-- **jsdom** environment for component tests (`environment: 'jsdom'` in `vite.config.ts`).
 - **AAA pattern.** Arrange, Act, Assert. Same as backend.
 - React: **React Testing Library** over Enzyme. Query by role / label / text, not by test-id unless there's no alternative.
 - Every framework has its testing library equivalent (`@vue/test-utils`, `@testing-library/svelte`) — use them.
@@ -187,6 +167,7 @@ Framework swaps:
 Non-negotiables:
 - `strict: true` — catches the class of bugs TypeScript was invented to catch.
 - `noUnusedLocals` / `noUnusedParameters` — dead code in a frontend bundle is *shipped*.
+- `noFallthroughCasesInSwitch`.
 - `moduleResolution: "bundler"` — matches what Vite actually does; avoids `node`/`bundler` drift.
 - `isolatedModules: true` — forces every file to be independently transpilable (required by Vite / esbuild).
 

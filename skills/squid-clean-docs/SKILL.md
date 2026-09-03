@@ -13,14 +13,7 @@ You are the **cleaner**. You delete redundant prose — markdown docs, code comm
 **not** touch executable code. Zero behaviour diff is the contract — if a deletion could alter runtime,
 it is out of scope.
 
-Output is a **plan table**, approved by the user, then applied as one commit per category.
-
 `$ARGUMENTS` is an optional scope path (`docs/`, `src/ingest/`). Empty means the whole repo.
-
-## When to use
-
-- Cluttered docs, READMEs, comments, or docstrings.
-- Before a release, to shrink the surface a reader must hold in their head.
 
 ## When NOT to use — never touch these without explicit opt-in
 
@@ -38,12 +31,10 @@ Output is a **plan table**, approved by the user, then applied as one commit per
 State the default exclusion list above, then ask (one round, `AskUserQuestion`): **what else is off-limits?**
 Do not scan until answered.
 
-## Step 2 — Scan
+## Step 2 — Apply the keep/delete test
 
-Read every candidate file in scope. Classify each deletion against Step 3's test. Never delete on a
-filename or a skim — a comment can only be judged next to the line it sits on.
-
-## Step 3 — Apply the keep/delete test
+Read every candidate file whole — never delete on a filename or a skim; a comment can only be judged
+next to the line it sits on.
 
 **A comment or docstring survives only if it states something the code cannot.** A constraint, a
 non-obvious _why_, a limit, a workaround and its issue link. If it narrates _what_ the next line does,
@@ -62,22 +53,22 @@ install steps loses them and links instead.
 
 **Tasks/templates:** collapse repeated task files into one template plus the deltas; keep the template.
 
-## Step 4 — Plan of attack (the output artifact)
+## Step 3 — Plan of attack (the output artifact)
 
 Print one table in chat. Do not write it to disk unless the user asks.
 
-| File                  | What goes                                     | Rule (Step 3)     | ~Lines |
+| File                  | What goes                                     | Rule (Step 2)     | ~Lines |
 | --------------------- | --------------------------------------------- | ----------------- | ------ |
 | `src/ingest/chunk.py` | 4 narrating comments, 1 signature docstring   | restates code     | −12    |
 | `README.md`           | install section duplicating `CONTRIBUTING.md` | one home per idea | −18    |
 
 Stop and wait for explicit approval. Do not edit before it.
 
-## Step 5 — Execute
+## Step 4 — Execute
 
 Apply the approved plan. Commit one category at a time (`comments`, `docs`) so any revert is surgical.
 
-## Step 6 — Verify
+## Step 5 — Verify
 
 Behaviour must be provably unchanged before hand-off:
 
@@ -89,7 +80,7 @@ Behaviour must be provably unchanged before hand-off:
 
 Anything red: revert that commit, do not "fix forward".
 
-## Step 7 — Hand-off
+## Step 6 — Hand-off
 
 Report lines removed per category and the verify result. If the README was reorganised, say what moved
 where.
@@ -97,6 +88,5 @@ where.
 ## Notes on shape
 
 - **Removing beats rewriting.** Prefer deleting a paragraph to shortening it.
-- **One home per idea.** Duplication is the target; cross-reference, never transclude.
-- **Complements `/caveman-compress`** (if the caveman plugin is installed), which compresses a single
-  memory file's _wording_. This skill decides what should exist at all. Run this first, compress after.
+- If the caveman plugin is installed, run this first and `/caveman-compress` after — this decides what
+  exists, that compresses wording.

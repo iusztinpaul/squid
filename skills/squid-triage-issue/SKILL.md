@@ -24,12 +24,6 @@ If empty, ask the user for one before proceeding.
 
 Read `AGENTS.md` first to confirm the active **tracker mode** (`file` or `gh`).
 
-## When to use
-
-- A bug needs to land in the team's pipeline but the description isn't yet groomed (no reproducer, no expected/actual, no AC).
-- A flaky test surfaces and you need to capture it as a fixable task before it gets ignored.
-- A customer report or postmortem item needs to become a task.
-
 ## When NOT to use
 
 - A feature request — use `/squid-plan` (PA grooming) directly.
@@ -50,27 +44,20 @@ Echo the resolved report back to the user in one paragraph as confirmation. Don'
 
 ## Step 2 — Localise
 
-Spawn ONE Explore agent (or general-purpose if the report is vague enough that exploration needs interview-style breadth) to:
-
-- Identify the modules/files most likely involved, ranked by confidence.
-- Find existing tests that exercise the affected behaviour.
-- Note nearby code that has changed recently (`git log --since='4 weeks ago' -- <file>`) — recent changes are correlated with regressions.
-- Surface any related closed issues / PRs (`gh search issues "<keyword>" --state closed`).
-
-Prompt sketch (adapt as needed):
+Spawn ONE Explore agent (or general-purpose if the report is vague enough that exploration needs interview-style breadth). Prompt sketch (adapt as needed):
 
 ```
 Agent(
   subagent_type="Explore",
   prompt="""Bug report: {one-paragraph summary}.
 
-  Find: (1) the module(s) most likely responsible — rank top-3 with file:line and a one-sentence reason; (2) existing tests covering this behaviour, by file:line; (3) recent commits (last 4 weeks) touching the implicated files; (4) related closed PRs / issues.
+  Find: (1) the module(s) most likely responsible — rank top-3 with file:line and a one-sentence reason; (2) existing tests covering this behaviour, by file:line; (3) recent commits touching the implicated files (`git log --since='4 weeks ago' -- <file>`) — recent changes correlate with regressions; (4) related closed PRs / issues (`gh search issues "<keyword>" --state closed`).
 
   Be specific. Report back as four bulleted lists. Do NOT propose fixes."""
 )
 ```
 
-Read the top-3 candidate file(s) yourself (cheap) before moving on — you want firsthand familiarity, not just the agent's summary.
+Read the top-3 candidate file(s) yourself (cheap) before moving on — you want firsthand familiarity, not just the agent's summary. If localisation surfaces other bugs, file each as its own triage task — one bug per task.
 
 ## Step 3 — Build the reproducer
 
@@ -84,7 +71,7 @@ Try, in this order:
    - What's the smallest path to observing it (URL, command, test invocation)?
 3. **Synthesise from code** — if the user can't repro and the code makes the failure mode obvious, draft the reproducer as a failing test case (described in prose; you don't write it).
 
-The reproducer must be **deterministic**. If it's only intermittent, mark it explicitly as `flaky-repro` and capture the conditions correlating with reproduction (load, state, time-of-day) — flakies need a different fix posture.
+The reproducer must be **deterministic**. If it's only intermittent, mark it explicitly as `flaky-repro` and capture the conditions correlating with reproduction (load, state, time-of-day) — the AC then becomes "instrument so we can capture it next time," not "fix the bug." Be explicit about the difference.
 
 ## Step 4 — Write the groomed bug task
 
@@ -149,13 +136,13 @@ Where it lands depends on tracker mode (read from `AGENTS.md`).
 
 ### File mode
 
-Pick the next sequential ID (`ls tasks/ tasks/done/ 2>/dev/null | grep -oE '^[0-9]+' | sort -n | tail -1`, +1, zero-padded to the project's existing width — scanning `tasks/done/` too so a completed task's number isn't reused). Write to:
+Allocate `NNN` per `squid-scaffold/specs/tracker-workflow.md`. Write to:
 
 ```
 tasks/NNN-bug-<slug>.md
 ```
 
-Open the file with YAML frontmatter (`status: pending`, `feature: bug-<slug>`), then the groomed body from Step 4. `status: pending` signals "groomed, can enter the inner loop" — both `/squid-implement-task` and `/squid-implement-night` accept it directly.
+Open the file with YAML frontmatter (`status: pending`, `feature: bug-<slug>`), then the groomed body from Step 4.
 
 ### gh mode
 
@@ -195,12 +182,4 @@ Surface a single decision block to the user:
 - {if any — list them. Otherwise omit this section.}
 ```
 
-Hand control back. Do NOT auto-invoke `/squid-implement-task` or `/squid-implement-night` — the user picks.
-
-## Notes on shape
-
-- **Hypotheses, not fixes.** Triage names suspects; the SWE confirms. Skipping ahead to "the fix is X" pre-commits the team to one branch of the search tree before the test suite has had a chance to argue.
-- **Regression test is non-negotiable.** Every triaged bug ships with a test that didn't exist before. This is the single highest-ROI invariant in the whole pipeline — it's why bugs don't return.
-- **Don't expand scope.** If you find three other related issues during localisation, file them as separate triage tasks (one bug per task). The "Out of scope" section in the groomed file exists to keep the SWE honest about this too.
-- **Flaky-repro tasks need a posture, not a fix.** When you can't reproduce, the task changes shape — the AC becomes "instrument so we can capture it next time," not "fix the bug." Be explicit about the difference.
-- **Triage is a research output, not a code output.** The user must approve the groomed task before any agent touches code. This skill stops at filing.
+Hand control back. Do NOT auto-invoke `/squid-implement-task` or `/squid-implement-night` — the user approves the groomed task first; this skill stops at filing.

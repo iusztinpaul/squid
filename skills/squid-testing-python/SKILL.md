@@ -5,10 +5,6 @@ description: Write and evaluate effective Python tests using pytest. Use when wr
 
 # Writing Effective Python Tests
 
-## Core Principles
-
-Every test should be **atomic**, **self-contained**, and test **single functionality**. A test that tests multiple things is harder to debug and maintain.
-
 ## Test Structure
 
 ### Mirror the module layout
@@ -55,9 +51,7 @@ def test_uppercase_conversion(input, expected):
     assert input.upper() == expected
 ```
 
-### Use separate tests for different functionality
-
-Don't parameterize unrelated behaviors. If the test logic differs, write separate tests.
+Don't parameterize unrelated behaviors — if the test logic differs, write separate tests.
 
 ## Project-Specific Rules
 
@@ -175,40 +169,6 @@ def test_update():
 def test_delete():
 ```
 
-## Error Testing
-
-```python
-import pytest
-
-def test_raises_on_invalid_input():
-    with pytest.raises(ValueError, match="must be positive"):
-        calculate(-1)
-
-async def test_async_raises():
-    with pytest.raises(ConnectionError):
-        await connect_to_invalid_host()
-```
-
 ## Running Tests
 
-```bash
-uv run pytest -n auto              # Run all tests in parallel
-uv run pytest -n auto -x           # Stop on first failure
-uv run pytest path/to/test.py      # Run specific file
-uv run pytest -k "test_name"       # Run tests matching pattern
-uv run pytest -m "not integration" # Exclude integration tests
-```
-
-Prefer project Make targets when available: `make unit-tests`, `make integration-tests`, `make tests`.
-
-## Checklist
-
-Before submitting tests:
-- [ ] Each test tests one thing
-- [ ] Imports at module level
-- [ ] Descriptive test names
-- [ ] Async decorators consistent with project's asyncio mode
-- [ ] Parameterization for variations of same behavior
-- [ ] Separate tests for different behaviors
-- [ ] No unit tests against infrastructure components (those go to integration tests)
-- [ ] 0 warnings when running the test suite
+Prefer project Make targets when available: `make unit-tests`, `make integration-tests`, `make tests`. Otherwise `uv run pytest -n auto` (parallel). The suite must finish with 0 warnings.

@@ -20,32 +20,7 @@ Opinionated layout for a monorepo holding a Python backend + TypeScript web fron
 
 ## Canonical layout
 
-See the [annotated tree](#monorepo--annotated-tree) below. Headline:
-
-```
-<repo-root>/
-├── Makefile                     # root delegator — see makefile-delegator
-├── docker-compose.yml           # optional; one service per runtime component
-├── .github/workflows/           # umbrella + per-component CI — see github-actions-monorepo
-├── .pre-commit-config.yaml
-├── .env.example                 # cross-cutting secrets (DB URL, LLM keys)
-├── AGENTS.md                    # repo-level brief for agents — the single source of truth
-├── CLAUDE.md -> AGENTS.md       # symlink so Claude Code loads the same file (see rules.md I4)
-├── README.md                    # user-facing
-├── .agents/
-│   └── skills/                  # project-local skills — the source of truth (empty until you add one)
-├── .claude/
-│   └── skills -> ../.agents/skills   # symlink so Claude Code discovers them (see rules.md I12)
-├── docs/
-│   ├── adr/                     # Architecture Decision Records (if chosen)
-│   └── glossary.md              # ubiquitous-language glossary (if chosen)
-├── tasks/                       # file-based task state — one file per task; done/ archives completed (see tracker-workflow)
-└── packages/
-    ├── backend/                 # Python service — has its own AGENTS.md (+ CLAUDE.md symlink)
-    ├── frontend-web/            # TypeScript SPA (React / Vue / Svelte / vanilla)
-    ├── frontend-tui/            # Go terminal UI (bubbletea / tview)
-    └── shared/                  # OpenAPI 3.1 spec + codegen (only when backend + ≥1 frontend)
-```
+Root = orchestration files; `packages/{backend,frontend-web,frontend-tui,shared}/` = components. Full [annotated tree](#monorepo--annotated-tree) below.
 
 ## Invariants
 
@@ -88,7 +63,7 @@ Root-level files are infrastructure / coordination:
 
 - `Makefile` — delegator (see [`makefile-delegator`](makefile-delegator.md)).
 - `docker-compose.yml` — local dev stack.
-- `.github/workflows/` — CI (see [`github-actions-monorepo`](github-actions.md)).
+- `.github/workflows/` — CI (see [`github-actions`](github-actions.md)).
 - `.pre-commit-config.yaml` — git hooks.
 - `.env.example` — *cross-cutting* env vars (DB URL, LLM API keys). Component-local env vars live in `packages/<c>/.env.example`.
 - `AGENTS.md` — repo-level brief, the single source of truth; `CLAUDE.md` — a symlink to it (`I4`). `README.md` — user-facing docs.
@@ -104,7 +79,7 @@ Every component exposes the same verbs (see [`makefile-delegator`](makefile-dele
 
 - Frontend web imports the generated TS client from `packages/frontend-web/src/api/` (generated from `shared/openapi/api.yaml`).
 - Frontend TUI imports the generated Go client from `packages/frontend-tui/internal/api/client.go`.
-- Backend can import from `shared` at build time (generated Python client), but never imports from `frontend-*` — backends don't depend on frontends.
+- Backend can import from `shared` at build time (generated Python client at `packages/backend/src/<pkg>/generated_client/`, if it consumes its own spec), but never imports from `frontend-*` — backends don't depend on frontends.
 
 **Rule:** a component never directly imports another component's source. All cross-component contracts are code-generated from `shared/`.
 
@@ -116,9 +91,9 @@ Each `packages/<c>/` has its own `AGENTS.md` describing that component's scope, 
 
 1. **Pick the name.** Language-and-role specific (`worker-python`, `mobile-rn`, `infra-terraform`).
 2. **Create `packages/<name>/`** with the standard skeleton for that language (see the relevant `python-backend` / `typescript-frontend` / `go-tui` skill).
-3. **Wire the Makefile.** Add per-component and aggregate targets in the root Makefile (see [`makefile-delegator`](makefile-delegator.md)).
-4. **Wire CI.** Add a per-component workflow dispatched from `ci.yml` via `dorny/paths-filter` (see [`github-actions-monorepo`](github-actions.md)).
-5. **Wire docker-compose** if the component has a runtime.
+3. **Wire the Makefile.** Add per-component and aggregate targets in the root Makefile.
+4. **Wire CI.** Add a per-component workflow dispatched from `ci.yml` via `dorny/paths-filter` (see [`github-actions`](github-actions.md)).
+5. **Wire docker-compose** if the component has a runtime — it then also gets a `Dockerfile` + `.dockerignore`.
 6. **Write `packages/<name>/AGENTS.md`** and symlink `CLAUDE.md` to it (`ln -s AGENTS.md CLAUDE.md`).
 7. **Update root `AGENTS.md`** to list the new component.
 
@@ -252,11 +227,3 @@ Full canonical tree for a `backend` + `frontend-web` + `frontend-tui` + `shared`
             └── api.yaml                  # OpenAPI 3.1 — single source of truth.
 ```
 
-### Key invariants (enforce via review)
-
-- Every `packages/<c>/` has `Makefile`, `AGENTS.md` (with a `CLAUDE.md` symlink), `.env.example`.
-- Every runtime component has `Dockerfile` + `.dockerignore` when the monorepo uses Docker.
-- `packages/shared/` exists iff there is at least one backend ↔ frontend contract to share.
-- Generated code locations: `packages/frontend-web/src/api/` (TypeScript), `packages/frontend-tui/internal/api/client.go` (Go), `packages/backend/src/<pkg>/generated_client/` (Python, if backend consumes its own spec).
-- Root-level `.env.example` lists cross-cutting secrets; component-level `.env.example` lists component-local settings. The union is what a developer needs to run everything locally.
-- No source code lives at repo root. Scripts are under `packages/<c>/scripts/` or at root if truly cross-cutting (`scripts/bootstrap.sh`).

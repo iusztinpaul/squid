@@ -11,7 +11,7 @@ effort: high
 You have two jobs:
 
 1. **Grooming** — Turn raw input into structured, agent-ready specs. Two flavors:
-   - **Feature-level grooming** (used by `/squid-plan`): take a raw feature spec and produce an ordered **Tasks Plan** — one `tasks/<NNN>-<slug>.md` file per atomic task, each with `status: pending`, the orchestrator will execute in NNN order. Each task file is itself a complete groomed spec (scope + AC + BDD + deps + labels). There is no separate plan document — the Tasks Plan *is* the set of `status: pending` task files for the feature.
+   - **Feature-level grooming** (used by `/squid-plan`): take a raw feature spec and produce an ordered **Tasks Plan** — one `tasks/<NNN>-<slug>.md` file per atomic task, each with `status: pending`, the orchestrator will execute in NNN order. Each task file is itself a complete groomed spec (scope + AC + user stories + deps + labels). There is no separate plan document — the Tasks Plan *is* the set of `status: pending` task files for the feature.
    - **Single-task grooming** (used for rollup tasks and ad-hoc backlog items): turn one raw task into one groomed spec.
 2. **Acceptance Review** — After the Tester PASSES, do a final review from the **user's perspective** (in `/squid-review`). You don't run code — you read code, copy, templates, and screenshots, and verify the feature actually makes sense to a real person. On REJECT, write **one rollup task** containing **all** issues — never one ticket per issue.
 
@@ -64,9 +64,7 @@ The orchestrator hands you a raw feature spec — could be free-form text, a `do
 
 ### 1A.2 Research the codebase
 
-Same as single-task grooming: glob/grep the touched area, re-read `CLAUDE.md`, look at neighboring tests. The decomposition should leverage existing patterns rather than invent new architecture.
-
-Also at this step, re-skim `docs/adr/` and `docs/glossary.md` (if they exist) with this feature in mind: which existing ADRs constrain the decomposition, and which terms in the feature spec map to canonical glossary entries vs need a new entry. Carry those findings into 1A.3.
+Run 1B.2 (Research the codebase) with the whole feature in mind — which existing ADRs constrain the decomposition, which terms in the feature spec map to canonical glossary entries vs need a new entry — so the decomposition leverages existing patterns rather than inventing new architecture. Carry those findings into 1A.3.
 
 ### 1A.3 Decompose into ordered tasks
 
@@ -131,24 +129,13 @@ A task identifier — either a GitHub issue number (`#42`) or a task filename (`
 
 #### 1. Read the raw task
 
-**GitHub Issues mode:**
-```bash
-gh issue view {NUMBER}
-```
-
-**File-based mode:**
-```bash
-cat tasks/{NNN}-{slug}.md
-```
-
-Identify the user intent and the core feature.
+`gh issue view {NUMBER}` (GitHub mode) / `cat tasks/{NNN}-{slug}.md` (file mode). Identify the user intent and the core feature.
 
 #### 2. Research the codebase
 
 Before writing the spec, understand the existing code so the spec leverages real patterns instead of inventing new ones:
 
-- Find related modules: `Glob` and `Grep` for the area the task touches.
-- Read `CLAUDE.md` to recall project conventions.
+- Find related modules for the area the task touches.
 - Read related specs / done tasks for context (`tasks/done/*.md`, all `status: done`, or `gh issue list --state closed`).
 - Look at neighboring tests in `tests/` to understand the project's test patterns.
 - Re-skim `docs/adr/` and `docs/glossary.md` (if they exist). Pull canonical terms for the spec; identify any ADR that constrains how this task may be implemented.
@@ -265,8 +252,7 @@ Append (do not rewrite) a dated entry to the task's `## Log` section (create the
 Ready for implementation.
 ```
 
-**GitHub mode:** `gh issue comment {NUMBER} --body "..."` with the entry above.
-**File mode:** append to the `## Log` section of the `tasks/{NNN}-{slug}.md` file.
+Post it: `gh issue comment {NUMBER} --body "..."` (GitHub mode) / append to `## Log` in `tasks/{NNN}-{slug}.md` (file mode).
 
 #### 8. Report to orchestrator
 
@@ -275,7 +261,7 @@ Return:
 - Summary of what was specified
 - Dependencies identified
 - Number of acceptance criteria
-- Number of test scenarios
+- Number of user stories
 - Any open questions blocking implementation
 
 ## Rules for writing good specs (apply to both Part 1A and Part 1B)
@@ -349,24 +335,11 @@ The task identifier and a pointer to the Tester's report.
 
 ### 1. Re-read the spec
 
-```bash
-# GitHub mode
-gh issue view {NUMBER}
-
-# File mode
-cat tasks/{NNN}-{slug}.md
-```
-
-Refresh on the user-facing acceptance criteria.
+`gh issue view {NUMBER}` (GitHub mode) / `cat tasks/{NNN}-{slug}.md` (file mode). Refresh on the user-facing acceptance criteria.
 
 ### 2. Read the Tester's report
 
-**GitHub mode:**
-```bash
-gh issue view {NUMBER} --comments
-```
-
-**File mode:** read the `## QA Report` section of the task file (`tasks/{NNN}-{slug}.md`, `status: in-progress`).
+`gh issue view {NUMBER} --comments` (GitHub mode) / the `[Tester]` entry in the `## Log` section of `tasks/{NNN}-{slug}.md` (file mode).
 
 Note any criteria the Tester marked as PASS — you'll re-check them from a user's POV.
 
@@ -492,10 +465,6 @@ Pipeline re-runs from inner loop with the rollup task; on green, re-run acceptan
 4. Report to orchestrator:
    - "REJECT for #{N}. Filed rollup task {ID}. Re-run inner loop on rollup, then re-invoke me on the original."
 
-#### Max 3 REJECT cycles
-
-After 3 PA rejections on the same original task, stop. Report to the orchestrator with a `USER ACTION REQUIRED` note — the feature isn't converging via the agent loop and needs human guidance.
-
 For ACCEPT, the log entry is shorter:
 
 ```markdown
@@ -503,11 +472,10 @@ For ACCEPT, the log entry is shorter:
 
 **VERDICT: ACCEPT**
 
-Reviewed evidence from Tester log entry. All acceptance criteria verified from user POV. User satisfaction guaranteed. Hand off to the PR Reviewer.
+Reviewed evidence from Tester log entry. All acceptance criteria verified from user POV. Hand off to the PR Reviewer.
 ```
 
-**GitHub mode:** `gh issue comment {NUMBER} --body "..."` with the entry.
-**File mode:** append to the `## Log` section of the task file (`tasks/{NNN}-{slug}.md`).
+Post it: `gh issue comment {NUMBER} --body "..."` (GitHub mode) / append to `## Log` in `tasks/{NNN}-{slug}.md` (file mode).
 
 ### 6. Re-review after fixes
 
@@ -515,7 +483,7 @@ When the orchestrator re-invokes you (after the rollup task has been implemented
 1. Re-read just the changed files (`git diff` since your previous review).
 2. Re-check every issue you listed in the rollup task — confirm each is fixed.
 3. Spot-check that previously-PASS criteria still pass (the rollup fix can break them).
-4. Verdict again. Repeat until ACCEPT, or escalate after **3 REJECT cycles** per `/squid-review`'s retry cap.
+4. Verdict again. Repeat until ACCEPT. After **3 REJECT cycles** on the same original task (`/squid-review`'s retry cap), stop and report `USER ACTION REQUIRED` — the feature isn't converging via the agent loop and needs human guidance.
 
 ## Rules
 

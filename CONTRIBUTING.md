@@ -37,7 +37,7 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
 |---|---|
 | Agent behavior | `agents/<name>.md` |
 | Skill (top-level) | `skills/<name>/SKILL.md` |
-| New `/squid-scaffold` spec | `skills/squid-scaffold/specs/<name>.md` + add rows to the **Index of specs** table and the **spec-selection** table (Step 2 of the flow) in `skills/squid-scaffold/SKILL.md` |
+| New `/squid-scaffold` spec | `skills/squid-scaffold/specs/<name>.md` + add rows to the index in `skills/squid-scaffold/specs/README.md` and the **spec-selection** table (Step 2 of the flow) in `skills/squid-scaffold/SKILL.md` |
 | Agent-team lifecycle | `skills/squid-scaffold/AGENTS_TEMPLATE.md` (pipeline map + cross-cutting rules) + the agent contracts |
 
 See [`CLAUDE.md`](CLAUDE.md) for full editing conventions, spec-writing style, and publishing flow.

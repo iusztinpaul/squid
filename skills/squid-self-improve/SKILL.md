@@ -48,30 +48,9 @@ For each correction (or group of related corrections), distill a concrete, actio
 
 For confirmed/validated approaches, frame the rule positively: "Continue using X pattern when Y" with a note that this was validated by the developer.
 
-## Step 3: Present Rules for Approval
+## Step 3: Check for Contradictions
 
-Show the developer all extracted rules in a numbered list. For each rule, include:
-
-1. **The rule** — the concrete instruction
-2. **Why** — the developer's reasoning (or your best understanding of it)
-3. **Evidence** — brief reference to when this came up in the session
-4. **Where to persist** — your recommendation for where this rule should live:
-   - `AGENTS.md` (project root) — project-wide conventions, architecture decisions, coding standards
-   - `AGENTS.md` (local, in a subdirectory) — module-specific conventions
-   - `feedback memory` — personal preferences about collaboration style
-   - `project memory` — project context, goals, constraints, deadlines
-5. **Conflicts** — any existing rules this might contradict (see Step 4)
-
-Ask the developer to:
-- Approve, edit, or reject each rule
-- Confirm or change the persistence location
-- Resolve any conflicts you flagged
-
-Do NOT persist anything without explicit approval.
-
-## Step 4: Check for Contradictions
-
-Before presenting rules, scan for conflicts:
+Scan for conflicts:
 
 1. **Read all AGENTS.md files** in the project (root and any subdirectories)
 2. **Read the memory index** at `~/.claude/projects/*/memory/MEMORY.md` and any referenced memory files that seem related
@@ -85,12 +64,30 @@ If a new rule contradicts an existing one:
 If a new rule duplicates an existing one:
 - Skip it and note: "Already captured in `AGENTS.md:line N`"
 
+## Step 4: Present Rules for Approval
+
+Show the developer all extracted rules in a numbered list. For each rule, include:
+
+1. **The rule** — the concrete instruction
+2. **Why** — the developer's reasoning (or your best understanding of it)
+3. **Evidence** — brief reference to when this came up in the session
+4. **Where to persist** — your recommendation for where this rule should live:
+   - `AGENTS.md` (project root) — project-wide conventions, architecture decisions, coding standards
+   - `AGENTS.md` (local, in a subdirectory) — module-specific conventions
+   - `feedback memory` — personal preferences about collaboration style
+   - `project memory` — project context, goals, constraints, deadlines
+5. **Conflicts** — any existing rules this might contradict (from Step 3)
+
+Ask the developer to:
+- Approve, edit, or reject each rule
+- Confirm or change the persistence location
+- Resolve any conflicts you flagged
+
 ## Step 5: Persist Approved Rules
 
 For each approved rule, persist it to the agreed location:
 
 ### AGENTS.md updates
-- Read the target AGENTS.md file first
 - Find the most appropriate section for the rule (or suggest creating a new section if none fits)
 - Add the rule concisely — AGENTS.md should stay scannable, not become a novel
 - Use the existing formatting style of the file
@@ -113,7 +110,3 @@ End with a brief summary:
 - How many were persisted (and where)
 - How many were skipped or already existed
 - Any conflicts that were resolved
-
-## Important Principles
-
-- **Persistence is the whole point.** The value of this skill is that lessons survive beyond the current session. If you extract rules but don't write them down, you've wasted the developer's time.

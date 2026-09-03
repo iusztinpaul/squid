@@ -58,37 +58,9 @@ If the failure is unrelated to any recent task (infra outage, flaky external ser
 
 ### 4. Reopen the task and log the failure
 
-**GitHub mode:**
-```bash
-gh issue reopen {N}
-gh issue comment {N} --body "$(cat <<'COMMENT'
-## CI Pipeline Failure
+**GitHub mode:** `gh issue reopen {N}`, then post the entry below as an issue comment (`gh issue comment {N} --body "..."`).
 
-The pipeline failed after merging this task.
-
-### Failed Step
-- {workflow name} → {job} → {step}
-
-### Error
-```
-{trimmed error output}
-```
-
-### Root Cause
-{your analysis in 1-3 sentences}
-
-Fixing now.
-COMMENT
-)"
-```
-
-**File mode:**
-```bash
-# Re-open the task: it was completed, so its file is at tasks/done/{NNN}-{slug}.md.
-# Set its frontmatter status: in-progress and move it back to the top level (it's open work again):
-git mv tasks/done/{NNN}-{slug}.md tasks/{NNN}-{slug}.md
-```
-Then append a dated entry to the `## Log` section of the re-opened file:
+**File mode:** the task was completed, so its file is at `tasks/done/{NNN}-{slug}.md`. Set its frontmatter `status: in-progress`, `git mv` it back to `tasks/{NNN}-{slug}.md` (it's open work again), then append the entry below to its `## Log` section.
 
 ```markdown
 ### [On-Call] YYYY-MM-DD HH:MM — CI Failure
@@ -159,8 +131,6 @@ Brief summary:
 ---
 
 ## Rules
-
-Every workflow step above is binding. Three cross-cutting rules with no step of their own:
 
 - **CLI-only tooling.** Always access git, `gh`, datastores, cloud services, and CI through their CLI. No web UIs (no GitHub Actions UI, no AWS console). The orchestrator must be able to spot-check what you did by re-running the same command.
 - **Don't touch unrelated work.** Your scope is "get CI green again." Adjacent code smells go into new tasks.

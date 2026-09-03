@@ -10,9 +10,9 @@ argument-hint: <feature-spec | path/to/spec.md | tracker-ref>
 
 # Plan — feature spec → per-task files (+ optional ADR, + worktree)
 
-Anchor a feature in shared understanding and prior decisions, then produce the artifact `/squid-implement-night` consumes: an **approved Tasks Plan — one `tasks/<NNN>-<slug>.md` file per atomic task** — plus an optional ADR, with a feature branch created and the build optionally kicked off. **Nothing touches the repo until the human gate.**
+Anchor a feature in shared understanding and prior decisions, then produce the artifact `/squid-implement-night` consumes. **Nothing touches the repo until the human gate.**
 
-`$ARGUMENTS` is the raw feature spec — free-form text, a path to a spec file, or a tracker reference. If empty, ask the human for one.
+`$ARGUMENTS` is the raw feature spec — free-form text, a path to a spec file, or a tracker reference.
 
 You are the **orchestrator** — a MANAGER. You drive the grilling, launch the Product Architect (PA), offer another grilling round and present the final plan, run the single human gate, set up the workspace, write the approved artifacts, and kick off the chosen build. You do NOT groom, write code, or implement anything yourself.
 
@@ -45,12 +45,9 @@ Agent(
   prompt="""Feature-level grooming. Read AGENTS.md first. Follow your feature-grooming role.
   Feature (grilled): {grilled spec from Step 1}.
   Decompose into atomic, independently-shippable tasks, numbered (NNN) in dependency order. For EACH task, draft the
-  FULL tasks/<NNN>-<slug>.md content: frontmatter `id`, `feature: {slug}`, `status: pending`, then Scope, Acceptance
-  Criteria, Out of scope, and an empty `## Log` section.
-  Also draft: (a) any new docs/glossary.md terms, and (b) IF the feature warrants non-obvious architectural decisions, a
-  SINGLE proposed ADR for the WHOLE feature (Nygard template: Status / Context / Decision / Diagram / Consequences,
-  the Diagram a coloured Mermaid system diagram of the design) — ONE ADR that captures the entire design, never one ADR
-  per task; its Decision section records every related choice.
+  FULL tasks/<NNN>-<slug>.md content (`feature: {slug}`, `status: pending`) per the tracker-workflow spec.
+  Also draft: (a) any new docs/glossary.md terms, and (b) IF the feature warrants non-obvious architectural decisions,
+  ONE proposed ADR for the WHOLE feature per your ADR rule.
   DO NOT WRITE ANYTHING TO DISK — hand everything back as drafts; the human approves and the orchestrator writes them.
   Use the context7 plugin for authoritative library/API usage wherever the feature touches an external framework.
   Return: (1) the ordered task files with their full content, (2) the glossary additions (or 'none'), (3) the proposed
@@ -111,7 +108,7 @@ Then ask with `AskUserQuestion`. The decisions come in **two back-to-back asks �
 
 ## Step 5 — Execute the decisions (only after the final plan + Approve)
 
-Reached only after Approve at the gate. Do these in order.
+Do these in order.
 
 **A. Set up the workspace (Q5).**
 
@@ -140,7 +137,7 @@ Reached only after Approve at the gate. Do these in order.
 **C. Kick off the build (Q6).**
 
 - **`/squid-implement-night`** → invoke `/squid-implement-night` with: feature `{slug}`, `Working directory: $WORKTREE_PATH`.
-- **`/squid-implement-task` loop** → invoke `/squid-implement-task` with: the feature's pending tasks (`tasks/<NNN>-*.md`, `status: pending`), `Working directory: $WORKTREE_PATH`. (It loops SWE → Tester → commit per task; no `/squid-review` or `/squid-review-ci`.)
+- **`/squid-implement-task` loop** → invoke `/squid-implement-task` with: the feature's pending tasks (`tasks/<NNN>-*.md`, `status: pending`), `Working directory: $WORKTREE_PATH`.
 - **Stop after planning** → hand off and stop:
   ```
   Plan approved. {N} tasks in tasks/ (status: pending) on `feat/{slug}` ({worktree at $WORKTREE_PATH | current working tree}).
@@ -153,5 +150,4 @@ Reached only after Approve at the gate. Do these in order.
 
 ## Notes
 
-- **Task-file shape:** see the `tracker-workflow` spec (`squid-scaffold/specs/tracker-workflow.md`).
-- **One ADR per plan, not per task.** A feature gets at most ONE new ADR capturing its whole design. The rare exception — a follow-up ADR authored mid-pipeline for an unforeseen architectural fork — lives in the `product-architect` agent contract.
+- **Task-file shape:** see the `tracker-workflow` spec (`squid-scaffold/specs/tracker-workflow.md`); ADR rules live in the `product-architect` agent contract.

@@ -41,8 +41,6 @@ Project-side hooks fire on the developer's machine **and** in CI when the same h
 
 ### What runs in `pre-commit` vs `pre-push`
 
-The split exists because **fast checks belong on every commit**, **slow checks belong before the network round-trip to origin**.
-
 | Stage | What runs | Why |
 |---|---|---|
 | `pre-commit` | format check, lint check, **only on changed files**, max ~5s | Cheap; runs constantly. If it's slow, devs disable it. |
@@ -53,7 +51,7 @@ The split exists because **fast checks belong on every commit**, **slow checks b
 
 ### Scope hooks to changed files
 
-`lint-staged` (TS) / `pre-commit` with `pass_filenames: true` / `lefthook` with `{staged_files}` — all support file-scoping. Use it. A 30-second `eslint .` pre-commit on a large repo trains people to bypass; a 1-second `eslint $(staged-ts)` does not.
+`lint-staged` (TS) / `pre-commit` with `pass_filenames: true` / `lefthook` with `{staged_files}` — all support file-scoping. Use it.
 
 ### Escape-hatch policy
 
@@ -71,7 +69,7 @@ A Claude Code `PreToolUse` hook in `.claude/settings.json` blocks agents from `g
 - `lefthook`: `lefthook.yml` at the root.
 - `husky`: `.husky/` directory at the root + `lint-staged` config in `package.json`.
 
-For monorepos: hooks invoke per-component fixers via the root `Makefile` (`make format-check-<component>`, `make lint-check-<component>`). Don't write hook configs that duplicate Makefile logic — call into it.
+For monorepos: hooks call root `Makefile` targets (`make format-check-<component>`, `make lint-check-<component>`), never duplicate Makefile logic — see [`makefile-delegator`](makefile-delegator.md#9-fix-before-check-ordering-manual-loop) for the check/fix split.
 
 ## Canonical configs (sketches)
 
@@ -150,8 +148,6 @@ Bootstrap: `npm i -D husky lint-staged && npx husky init`.
 
 ## Anti-patterns
 
-- **Running the full test suite in `pre-commit`.** Anything > 5s makes `--no-verify` standard. Move it to `pre-push` or CI.
 - **Hooks that auto-fix without telling you.** `lint-staged` re-stages files it modified; that's fine. But a hook that silently rewrites code and lets the commit succeed produces commits with diffs the dev didn't review. Prefer `--check` modes that block; let the dev re-run the fixer explicitly.
 - **Different hook frameworks per component in one monorepo.** Pick one. The friction of "which hook runner is this folder using" exceeds whatever per-language gain you got.
-- **Skipping the install step in `make install`.** If hooks aren't installed, they don't run. New contributors must hit them on day one.
 - **Mixing project-side hooks with Claude Code agent guardrails.** Different layers, different concerns. Don't put `git push --force` blocking in `pre-push` (it would also fire for legitimate force-pushes by humans on feature branches); use a Claude Code `PreToolUse` hook in `.claude/settings.json` instead.

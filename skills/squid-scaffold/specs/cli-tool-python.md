@@ -41,21 +41,7 @@ Users install the package and get `my-tool` on their PATH. `uv run my-tool` work
 
 ### 2. `init_logger()` at module level, before any project import
 
-Same rule as [`python-backend`](python-backend.md#logging-first-init_logger-at-module-level):
-
-```python
-## src/my_pkg/cli.py
-from my_pkg.logging import init_logger
-
-init_logger()                                  # before any project / framework import
-
-import click                                   # noqa: E402
-from my_pkg.commands import run_validation    # noqa: E402
-
-@click.group()
-def cli() -> None:
-    """my-tool — short one-liner that renders as --help."""
-```
+Same rule as [`python-backend`](python-backend.md#logging-first-init_logger-at-module-level) — in `src/my_pkg/cli.py`, call `init_logger()` before `import click` and before any project import (`# noqa: E402` on the imports below it). The group's docstring is the one-liner that renders as `--help`.
 
 ### 3. One command = one Click function = one project function
 
@@ -73,7 +59,7 @@ def validate(path: Path, strict: bool) -> None:
         raise click.exceptions.Exit(code=1)
 ```
 
-Unit tests target `run_validation`. The Click wrapper gets one integration smoke test via `click.testing.CliRunner`.
+Unit tests target `run_validation`. The Click wrapper gets one integration smoke test via `click.testing.CliRunner`. Keep the surface flat — `my-tool foo bar baz qux` means the groups are too granular.
 
 ### 4. Exit codes are explicit
 
@@ -88,19 +74,7 @@ Always `raise click.exceptions.Exit(code=N)` — never `sys.exit(N)` — so Clic
 
 ### 5. Config via the project's settings module, not Click env-var magic
 
-Click offers `envvar=` and `auto_envvar_prefix`. Don't use them in this project. Env-var-driven config goes through [`python-backend`](python-backend.md#config-via-pydantic-settings)'s `config/settings.py` (pydantic-settings). Single source of truth for env vars; the CLI reads from `settings`.
-
-```python
-from my_pkg.config import settings
-
-@cli.command()
-@click.option("--timeout", type=int, default=None)
-def fetch(timeout: int | None) -> None:
-    effective_timeout = timeout if timeout is not None else settings.default_timeout
-    ...
-```
-
-CLI flags override settings when explicitly passed. Settings own the env-var surface and `.env.example` documents it.
+Click offers `envvar=` and `auto_envvar_prefix`. Don't use them in this project. Env-var-driven config goes through [`python-backend`](python-backend.md#config-via-pydantic-settings)'s `config/settings.py` (pydantic-settings). Single source of truth for env vars; the CLI reads from `settings`. CLI flags override settings when explicitly passed. Settings own the env-var surface and `.env.example` documents it.
 
 ### 6. `--help` is a first-class API
 
@@ -129,12 +103,3 @@ def test_validate_rejects_bad_config(tmp_path):
 ```
 
 One `CliRunner` smoke test per command confirms the wiring. Real behavioural assertions target the underlying function (`run_validation`) — faster, clearer failures.
-
-## Anti-patterns
-
-- **Entry point via `python -m`.** Forces users to know the package path and disables shell completion. Always `[project.scripts]`.
-- **Using Click's `envvar=` / `auto_envvar_prefix`.** Splits env-var config across two places (Click decorators + `settings.py`). Centralise in `settings.py`.
-- **`print()` instead of `click.echo`.** Bypasses Click's stream handling and breaks `CliRunner` tests.
-- **Deeply nested command groups for their own sake.** `my-tool foo bar baz qux` usually means the surface is too granular. Flatten.
-- **Business logic inside the Click function body.** Pulls test assertions through `CliRunner`, which adds friction and hides coverage gaps.
-- **`sys.exit(1)` instead of `raise click.exceptions.Exit(1)`.** Skips Click's cleanup; leaks resources in long-running groups.

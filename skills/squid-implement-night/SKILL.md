@@ -9,7 +9,7 @@ argument-hint: <plan-ref | feature-slug>
 
 # Implement Night — end-to-end feature pipeline (thin orchestrator)
 
-Build an **already-approved** feature plan all the way to a validated, ready-to-merge PR. This skill is a thin orchestrator: the real work lives in the sub-skills it invokes **by name** — `/squid-implement-task`, `/squid-review`, `/squid-review-ci` — plus the agents those skills launch.
+Build an **already-approved** feature plan all the way to a validated, ready-to-merge PR. This skill is a thin orchestrator: the real work lives in the sub-skills it invokes — `/squid-implement-task`, `/squid-review`, `/squid-review-ci` — plus the agents those skills launch.
 
 `$ARGUMENTS` is the approved Tasks Plan reference (path or feature slug) produced by `/squid-plan`. If empty, ask the human which plan to build (and remind them to run `/squid-plan` first if none exists).
 
@@ -43,13 +43,11 @@ Confirm that working tree exists and contains pending task files (`tasks/<NNN>-*
 
 ## Step 1 — Build the whole plan
 
-Invoke `/squid-implement-task` **once with the feature's pending tasks**. It loops over every task — SWE → Tester (FAIL max 5/task) → commit on PASS (flipping each task's `status` pending → in-progress → done) → next. (Do NOT loop here yourself; the per-task iteration lives inside `/squid-implement-task`.)
+Invoke `/squid-implement-task` **once with the feature's pending tasks**. It loops over every task — SWE → Tester → commit on PASS → next. (Do NOT loop here yourself; the per-task iteration lives inside `/squid-implement-task`.)
 
 ```
 invoke /squid-implement-task with: the feature's pending tasks (tasks/<NNN>-*.md, status: pending), Working directory: {WORKTREE_PATH}
 ```
-
-If `/squid-implement-task` hits its Tester FAIL cap on a task, it stops with `USER ACTION REQUIRED` — propagate that and stop.
 
 ---
 
@@ -63,7 +61,6 @@ invoke /squid-review with: feature {title}, Working directory: {WORKTREE_PATH}
 
 - **Returns "clean" (no blockers)** → proceed to Step 3.
 - **Returns a rollup task** (PA REJECT or PR-Reviewer Blockers) → invoke `/squid-implement-task` on that one rollup task (it builds + commits the fix), then **re-invoke `/squid-review`**. Repeat.
-- The PA REJECT (3) and PR-Reviewer (3) caps live inside `/squid-review`; if it surfaces `USER ACTION REQUIRED`, stop.
 
 ---
 
@@ -73,10 +70,9 @@ invoke /squid-review with: feature {title}, Working directory: {WORKTREE_PATH}
 invoke /squid-review-ci with: PR #{N}, Working directory: {WORKTREE_PATH}
 ```
 
-`/squid-review-ci` watches CI and drives it green (On-Call diagnoses → SWE fixes → re-check, max 5, self-contained).
+`/squid-review-ci` watches CI and drives it green (On-Call diagnoses → SWE fixes → re-check).
 
 - **CI green** → the PR is validated and ready to merge. Proceed to the tail.
-- **`USER ACTION REQUIRED`** (cap hit) → stop.
 
 ---
 
@@ -100,7 +96,7 @@ Then report the final summary:
 ## /squid-implement-night complete — {Feature title}
 
 **PR:** {URL} (validated; ready to squash-merge)
-**Branch:** feat/{slug} ({N} per-task commits — GitHub squashes on merge)
+**Branch:** feat/{slug} ({N} per-task commits)
 **Worktree:** {WORKTREE_PATH}
 
 **Tasks delivered ({N}):** {table — Tester / PA accept / PR-Reviewer / CI}
@@ -110,12 +106,11 @@ Then report the final summary:
 Next: review the PR, then GitHub's **Squash and merge**. Remove the worktree with `git worktree remove {WORKTREE_PATH}` after merge.
 ```
 
-The human squash-merges via GitHub. `/squid-implement-night` ends here.
+`/squid-implement-night` ends here.
 
 ---
 
 ## Notes on shape
 
-- **Thin by design.** This file owns only the outer sequence + rollback routing. The SWE↔Tester loop, push/PR/acceptance, and CI handling all live in the sub-skills and the agent contracts — edit those, not this.
 - `/squid-review-ci` handles its own CI fixes internally and does not re-enter `/squid-review`.
 - **Don't add mid-pipeline gates.**

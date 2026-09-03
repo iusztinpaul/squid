@@ -13,15 +13,8 @@ You are the **cleaner**. You shrink the skills and resources a harness loads; yo
 what they make the agent do. Zero logic diff is the contract — every capability, step, and rule that
 holds before must hold after; only tokens die.
 
-Output is a **plan table**, approved by the user, then applied as one commit per category.
-
 `$ARGUMENTS` is an optional `.agents/` path (e.g. `~/Vaults/Second-Brain/.agents`). Empty means the
 repo's `./.agents`.
-
-## When to use
-
-- The harness has **sedimented** — stale layers of guidance, verbose prompts, dead helpers.
-- Sessions burn tokens on skill descriptions and bodies that say little per word.
 
 ## When NOT to use — out of scope, no exceptions
 
@@ -49,20 +42,19 @@ Two questions per skill:
 - **Description** — must match what the body does. Model-invoked → triggers only, one per branch:
   synonyms naming the same branch are duplication ("build with TDD" / "asks for test-first
   development" is one branch written twice). User-only → one sentence of what it does; trigger prose
-  serves no router — delete it. A user-only skill with fifteen lines of "use for X, Y, Z" pays those
-  tokens for nobody.
+  serves no router — delete it.
 
 Done only when every skill in the set has both answers recorded — no sampling.
 
 ## Step 3 — Apply the keep/delete test
 
 **An instruction survives only if deleting it would change what the agent does.** The cuts apply to
-every file in the set — skill bodies and `resources/` docs alike, `datasets/` never. Five cuts:
+every file in the set — skill bodies and `resources/` docs alike. Five cuts:
 
 **Duplicates** — the same rule twice in one skill, repeated across skills, or restating a
 `resources/` doc the skill already points at (a skill body repeating `glossary.md` definitions) —
 the resource is the home, the skill keeps the pointer. Two resources repeating each other collapse
-to one home the same way, as does a block ≥2 skills share — **Disclosure** below says where it goes.
+to one home the same way.
 
 **Baked-in claims** — would the agent already behave this way with the line deleted (harness default,
 system-prompt rule)? Dead weight. "Read the file before editing it" dies; "write posts in the voice
@@ -72,7 +64,7 @@ ones. Test sentence by sentence; a failing sentence dies whole — never trim wo
 
 **Verbose logic** — the exact same logic in the minimum words: collapse restatements, prefer a table
 row to a paragraph, caveman-terse wording. Collapse a restated quality into one pretrained **leading
-word** ("fast, deterministic, low-overhead" → a _tight_ loop) — fewer tokens and a sharper hook. If
+word** ("fast, deterministic, low-overhead" → a _tight_ loop). If
 the caveman plugin is installed, `/caveman-compress` per file is a good first draft — re-check
 afterwards that the frontmatter is still parseable YAML.
 
@@ -83,10 +75,9 @@ the point the agent needs it.
 read it. Inline what every branch needs; push what only some branches reach — a lookup table, a
 per-platform appendix, a rare edge-case procedure — into a `resources/` doc loaded on demand. Same
 home for a block ≥2 skills share. Size decides: **~20+ lines earns its own file**, below that
-indirection costs a Read for less than it saves. Per-invocation tokens fall even when total words
-don't. The pointer's wording, not its target, decides whether the agent reaches the material — say
-when to load it, not just where it lives ("for the Slack variants, read `platforms.md`", not "see
-`platforms.md`"). Theory: `/squid-write-skill`.
+indirection costs a Read for less than it saves. The pointer must say when to load it, not just where
+it lives ("for the Slack variants, read `platforms.md`", not "see `platforms.md`"). Theory:
+`/squid-write-skill`.
 
 Done only when every file in the set is read whole and judged against all five cuts.
 
@@ -145,10 +136,3 @@ Anything off: revert that commit (or restore the snapshot), do not "fix forward"
 Report `wc -w` before → after per file, what moved into `resources/`, and every flagged dangling
 item. Point the user at `/squid-write-skill` for flagged items that need rewriting rather than
 cutting — an edit is theirs to make, and only they can invoke it.
-
-## Notes on shape
-
-- **Fewer tokens, never fewer capabilities.** If a cut loses logic, it is an edit — out of scope.
-- **One home per idea.** Shared blocks live in `resources/`; skills reference, never transclude.
-- **Datasets are cargo.** `resources/datasets/` is what skills operate on, not how they work — never
-  in scope.

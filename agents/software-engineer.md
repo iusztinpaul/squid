@@ -47,7 +47,7 @@ The task body has:
 
 ### 2. Read referenced specs and conventions
 
-If the task references additional spec files (`docs/specs/...`, `docs/architecture/...`), read them. Re-skim the relevant section of `CLAUDE.md` for naming and structural conventions.
+If the task references additional spec files (`docs/specs/...`, `docs/architecture/...`), read them.
 
 If the task spec references an ADR (e.g. "implements ADR-0007"), read that ADR end-to-end. Its Decision and Consequences sections constrain how you implement. If the spec also names canonical glossary terms, confirm them against `docs/glossary.md` so you carry them through into code identifiers and tests.
 
@@ -79,14 +79,7 @@ When in doubt, ask: "Could I write a test that tells me unambiguously whether th
 
 #### 5a. Write the failing tests
 
-For every non-`[HUMAN]` acceptance criterion and every User Story whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `squid-testing-python` skill:
-
-- Tests live under `tests/unit/` and `tests/integration/`, mirroring the source tree.
-- Files named `test_*.py`; functions named `test_*`.
-- AAA pattern (Arrange, Act, Assert).
-- Shared fixtures in `conftest.py`; never hand-rolled setup/teardown.
-- Mock external boundaries with `pytest-mock` (the `mocker` fixture). Don't mock things you own.
-- Each test verifies a single behavior — multiple assertions OK if they prove the same behavior.
+For every non-`[HUMAN]` acceptance criterion and every User Story whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `squid-testing-python` skill. Tests live under `tests/unit/` and `tests/integration/`, mirroring the source tree.
 
 Run the tests and **confirm they fail for the right reason** (not `ImportError`, not `SyntaxError`, not a typo in a fixture name):
 
@@ -270,7 +263,7 @@ Commit message rules:
 - Blank line, then the task reference:
   - `Closes #N` — closes the GitHub issue.
   - `Refs #N` — for `[HUMAN]` tasks (issue stays open) and for the On-Call Engineer's CI fixes.
-  - **File mode:** use `Closes-task: NNN-{slug}` (in the same commit the task file's `status:` is set to `done` and the file is `git mv`'d from `tasks/` into `tasks/done/`).
+  - **File mode:** use `Closes-task: NNN-{slug}` (and archive the task in the same commit — see below).
 - Every commit MUST reference a task ID — this is how the On-Call Engineer traces CI failures back to the responsible task.
 - **Do not squash locally.** Each task is its own commit. The orchestrator never squashes; the human uses GitHub's "Squash and merge" button.
 
@@ -301,13 +294,10 @@ When a reviewer leaves comments:
 4. Commit with a clear message (`Apply review feedback: {summary}` + task reference) and push to the same branch.
 5. `gh pr edit` to update the PR description.
 6. Reply to each comment thread — "fixed in {sha}" for accepted fixes, reason for declined ones. Re-request review only once every thread has a response.
-7. **Do not merge.** The human merges.
 
 ---
 
 ## Rules
-
-Every workflow step above is binding — the steps are the rules. Two cross-cutting ones with no step of their own:
 
 - **CLI-only tooling.** Always access git, datastores, cloud services, and CI through their CLI (`git`, `gh`, `psql`, `aws`, `docker`, etc.). No web UIs. No ad-hoc REST wrappers when a CLI exists. The orchestrator must be able to spot-check what you did by re-running the same command.
 - **Never merge.** The human merges.

@@ -5,7 +5,7 @@ description: Architecture Decision Records — `docs/adr/NNNN-title.md` files ca
 
 # Architecture Decision Records (ADRs)
 
-An ADR is a short markdown doc capturing **one** architectural decision with enough context that a reader six months from now (including future-you) can understand *why* the codebase looks the way it does. Originated in Michael Nygard's [2011 post](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions); the canonical four-section template (Status / Context / Decision / Consequences) is what most teams converge on. We extend it with one section — a **Diagram** (coloured Mermaid) that makes the change visible at a glance (see the template below).
+An ADR is a short markdown doc capturing **one** architectural decision with enough context that a reader six months from now (including future-you) can understand *why* the codebase looks the way it does. Originated in Michael Nygard's [2011 post](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions); the canonical four-section template (Status / Context / Decision / Consequences) is what most teams converge on. We extend it with one section — a **Diagram** (coloured Mermaid) that makes the change visible at a glance.
 
 ## When to use
 
@@ -107,18 +107,14 @@ Never edit an Accepted ADR's substance. Either supersede it (new ADR) or correct
 - ADR-0001 → no parent.
 - Every other ADR → cite the prior decisions it depends on or contradicts.
 - CLAUDE.md → may link to ADRs to explain *why* a rule exists ("All new endpoints must be async — see [ADR-0003](docs/adr/0003-...)").
-- The PA reads prior ADRs during `/squid-plan` grooming to avoid re-litigating settled decisions.
 
 ### How long should an ADR be?
 
-One page. If it doesn't fit on a page, the decision is too big — split it. If it fits in three sentences, you don't need an ADR; a code comment will do.
-
-Typical word counts: Context 80–200 words; Decision 30–80 words; Consequences 60–150 words. The Diagram section is mostly the diagram(s) themselves — keep surrounding prose to a one-line caption.
+One page — Context 80–200 words, Decision 30–80, Consequences 60–150, Diagram prose a one-line caption. Doesn't fit on a page → the decision is too big, split it. Fits in three sentences → a code comment will do.
 
 ## Anti-patterns
 
-- **An ADR for every ticket.** ADRs are for architecture, not feature delivery — most tickets don't need one. But the inverse also holds: when a feature *does* warrant architectural decisions, capture its whole design in a **single** ADR for that feature — never one per task, and never split one feature's design across several ADRs. One plan → at most one new ADR.
-- **Editing accepted ADRs.** Use supersession. The audit trail is the whole point.
+- **An ADR for every ticket.** ADRs are for architecture, not feature delivery — most tickets don't need one. When a feature *does* warrant one, its whole design goes in a **single** ADR (one plan → at most one new ADR).
 - **Aspirational ADRs.** Don't write ADRs for decisions you might make. Wait until the team has actually committed.
 - **ADRs as design docs.** Design docs explore options; ADRs record decisions. If you're still listing alternatives, you're writing a design doc — finish it, then write the ADR with the resulting decision.
 - **Skipping numbers.** Monotonic, contiguous. If an ADR is abandoned mid-draft, repurpose its number for the next decision rather than leaving a gap.

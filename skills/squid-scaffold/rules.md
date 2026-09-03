@@ -10,8 +10,8 @@ Two classes of rule:
 ## Process rules (create-time)
 
 ### P1 — Never author application source
-Emit only structural / configuration files, with `AGENT: fill in` placeholders where real content is owed. No `main.py`, `App.tsx`, `cmd/<slug>/main.go`, API handlers, or business logic.
-*Why:* source is the SWE agent's job under `/squid-implement-task`; scaffolding it pre-commits design decisions the team hasn't made. (Observable form: [`I1`](#i1--no-application-source-in-the-skeleton).)
+Create-time form of [`I1`](#i1--no-application-source-in-the-skeleton): emit only structural / configuration files, with `AGENT: fill in` placeholders where real content is owed.
+*Why:* source is the SWE agent's job under `/squid-implement-task`; scaffolding it pre-commits design decisions the team hasn't made.
 
 ### P2 — Stop and ask on conflicting choices
 If the user's answers conflict (e.g. `cli-tool-python` *and* `fastapi-service` for one backend), ask which one before composing.

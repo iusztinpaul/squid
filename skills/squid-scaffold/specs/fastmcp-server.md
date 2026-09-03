@@ -29,25 +29,14 @@ Opinionated FastMCP server structure. Builds on [`python-backend`](python-backen
 
 ### 1. One entry point, `scripts/serve_mcp.py`
 
-```python
-## scripts/serve_mcp.py
-from my_service.logging import init_logger
-
-init_logger()                                    # module-level, before any project import
-
-from my_service.mcp_server import mcp           # noqa: E402
-
-if __name__ == "__main__":
-    mcp.run()                                    # stdio by default
-```
-
-Same rule as [`python-backend`](python-backend.md): `init_logger()` at module level, before FastMCP or any project import. FastMCP logs on import; if the logger isn't set up first, those lines bypass your formatter.
+`init_logger()` at module level first — same rule as [`python-backend`](python-backend.md#logging-first-init_logger-at-module-level); FastMCP logs on import, so those lines bypass your formatter otherwise — then `from my_service.mcp_server import mcp` and `mcp.run()` (stdio by default).
 
 ### 2. Tool naming: `verb_noun`, snake_case
 
 - `search_documents`, not `documentsSearch` / `DocumentSearch` / `doSearch`.
 - The LLM picks tools by name and docstring. Both are part of the API surface — treat them like function signatures.
 - One verb per tool. If you reach for `update_or_create_user`, split it.
+- Name the capability, not the wiring: `search_documents`, not `call_search_service`.
 
 ### 3. Pydantic for every tool argument and return
 
@@ -137,13 +126,4 @@ Tool modules import `mcp` from `mcp_server` and register via `@mcp.tool()` at im
 
 - **Unit-test the tool body directly** (`await search_documents(SearchArgs(query="x"))`). No FastMCP runtime needed; mirrors the pattern in [`squid-testing-python`](../../squid-testing-python/SKILL.md).
 - **Integration-test the full session** via FastMCP's test client (`async with Client(mcp) as client: ...`).
-- Don't unit-test the FastMCP framework itself — infrastructure belongs in integration tests only (see [`python-backend`](python-backend.md#testing-discipline-reminder)).
-
-## Anti-patterns
-
-- **Tool names that describe implementation instead of behaviour.** `call_search_service` describes wiring; `search_documents` describes the capability.
-- **Bare `dict` / `Any` arguments.** Defeats schema generation; LLM loses structural guidance.
-- **Silent success on partial failure.** A tool that returns `[]` when a backend is down looks like "no results" to the LLM. Return a structured error instead.
-- **Opening a new DB connection per tool call.** Use `lifespan`; FastMCP runs one process.
-- **Logging via `print`.** Same rule as [`python-backend`](python-backend.md) — use the project logger.
-- **Registering tools inside functions the runtime never calls.** `@mcp.tool()` must execute at import time; otherwise the tool silently disappears from the schema.
+- Don't unit-test FastMCP itself — see [`python-backend`](python-backend.md#testing-discipline-reminder).

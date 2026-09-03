@@ -5,7 +5,7 @@ description: How to structure a Python 3.12+ backend package — layout, uv, ruf
 
 # Python backend
 
-Opinionated starter for Python 3.12+ backends (HTTP services, ML pipelines, CLIs, libraries). This is the top-level index for Python work; framework-specific skills (`fastapi-service`, `fastmcp-server`, `cli-tool-python`) build on top of it.
+Opinionated starter for Python 3.12+ backends (HTTP services, ML pipelines, CLIs, libraries).
 
 Every rule here is enforceable by the `tester` agent — when the code violates a non-negotiable, that's a FAIL.
 
@@ -42,35 +42,11 @@ Every rule here is enforceable by the `tester` agent — when the code violates 
 
 ### Layout
 
-These realise a **loose clean architecture**: infrastructure / serving / app / domain logic stay decoupled, but pragmatically — actionability over layer dogma. See [module layout](#python-backend--module-layout) below for the full tree, rationale, and anti-patterns. Headlines:
-
-- Source under `src/<package_name>/`; **never** at the project root.
-- Tests under `tests/{unit,integration}/` mirroring `src/` 1:1.
-- Shared domain data structures (ODM / Pydantic models, enums): `entities/`.
-- Narrow, module-local types: `<module>/types.py`.
-- Domain code organised **flat by actionable concern** (e.g. `ingestion/`, `serving/`), not by dogmatic clean-architecture layers.
-- Infrastructure dependencies unlikely to change (the chosen DB, orchestrator, observability tool) are **not** abstracted — no premature interfaces.
-- Operator-facing entry points (one-off scripts, backfills, repro commands) under `scripts/`.
+A **loose clean architecture**: infrastructure / serving / app / domain logic stay decoupled, but pragmatically — actionability over layer dogma. Tree, rationale, anti-patterns: [module layout](#python-backend--module-layout) below.
 
 ### Discipline (non-negotiable)
 
-See [discipline](#python-backend--discipline) below for rationale and concrete examples. Rules:
-
-- **Datetimes are timezone-aware, UTC by default.** Reject naive `datetime` objects at every system boundary. Type them explicitly.
-- **Type-annotate everything** — parameters, return types (including `-> None`), class attributes, module-level variables where inference is non-obvious.
-- **Model data with Pydantic.** Every data structure that carries domain meaning — entities, DTOs, API/event payloads, config — is a `pydantic.BaseModel` (v2), or a Pydantic-based ODM `Document` for persisted entities. Not a `@dataclass`, `TypedDict`, or `NamedTuple` — reach for those only when a protocol or library contract forces it. Pydantic validates and coerces at every boundary; the alternatives silently accept garbage.
-- **Logging first.** Any entry-point module (CLI, script, server main) calls `init_logger()` at module level before any logic. `print()` is banned in library code — always the project logger.
-- **Pipelines are idempotent, retryable, and checkpointed.** If a run is killed halfway, re-running it is either a no-op or resumes from the last checkpoint.
-- **Async for I/O, sync for CPU.** Mix only where a profile justifies it.
-
-### Testing (headline; see [`squid-testing-python`](../../squid-testing-python/SKILL.md) for depth)
-
-- `tests/` mirrors `src/` 1:1.
-- Files `test_*.py`, functions `test_*`.
-- AAA pattern. Shared fixtures in `conftest.py`. Mocking via `pytest-mock` (`mocker`) — never hand-rolled.
-- `@pytest.mark.parametrize` for table-driven tests.
-- **Zero warnings.** `filterwarnings = ["error"]` in pytest config promotes them to errors; curate ignores, don't silence wholesale.
-- **Do NOT unit-test infrastructure components** (orchestrator adapters, model-serving runtime, observability client). Those belong in integration tests.
+Six rules, each with rationale and good-vs-bad examples under [discipline](#python-backend--discipline) below: tz-aware UTC datetimes · annotate everything · Pydantic for domain data · `init_logger()` first in every entry point · idempotent, retryable, checkpointed pipelines · async for I/O, sync for CPU. Testing rules close that section.
 
 
 ## Python backend — module layout
@@ -118,7 +94,7 @@ packages/<name>/                # or repo root for a single-package project
 - **`tests/` mirrors `src/` 1:1.** Easy to find tests for any module — `src/foo/bar.py` → `tests/unit/<pkg>/foo/test_bar.py`.
 - **`entities/` vs per-module `types.py`.** `entities/` holds types that cross module boundaries (ODM models, shared enums). Per-module `types.py` holds narrow types used only within that module and its downstream callers. A type that only `foo/` uses goes in `foo/types.py`. If `bar/` ever needs it, move it to `entities/`.
 - **Flat domain structure, not layered clean-architecture.** Don't mandate `services/` / `repositories/` / `use_cases/` / `adapters/` unless the domain actually needs them. Actionability beats dogma — a `users/` module that contains `users/store.py`, `users/api.py`, `users/types.py` is fine; forcing it into 4 layers is overhead.
-- **Infrastructure is not abstracted.** The chosen DB, orchestrator, and observability tool are stable dependencies. Wrapping them behind interfaces "for swappability" is premature. Import them directly. Swap them by search-and-replace when the time comes.
+- **Infrastructure is not abstracted.** See [Infrastructure is imported, not abstracted](#infrastructure-is-imported-not-abstracted).
 - **`scripts/` for operator entry points.** Anything a human or a cron job invokes directly — not library code. Every file in `scripts/` calls `init_logger()` at module level before any logic.
 - **`.env.example` is the config surface.** Every secret or runtime knob the service reads from the environment is listed here with a safe dummy value. `config/settings.py` reads them via `pydantic-settings`.
 
@@ -132,8 +108,6 @@ packages/<name>/                # or repo root for a single-package project
 - **Shell scripts under `scripts/`.** Python packages are for Python. Shell helpers go under `bin/` at the repo root or in the Makefile directly.
 
 ## Python backend — discipline
-
-The rules in the top-level SKILL.md, with rationale and concrete good-vs-bad examples. Every rule is enforceable by the `tester` agent.
 
 ### Datetimes are timezone-aware (UTC by default)
 
@@ -159,7 +133,7 @@ def created_before(ts: datetime) -> bool:
     return ts < datetime.now(UTC)
 ```
 
-At every system boundary (HTTP request parsing, DB read, file import) either coerce to UTC or reject. Pydantic: use `datetime` with `AwareDatetime` or a validator that asserts `.tzinfo is not None`.
+At every system boundary (HTTP request parsing, DB read, file import) either coerce to UTC or reject; type datetimes explicitly. Pydantic: use `datetime` with `AwareDatetime` or a validator that asserts `.tzinfo is not None`.
 
 ### Type-annotate everything
 
@@ -167,7 +141,7 @@ Annotations are cheap and they're the first line of defence the Tester reads. `r
 
 - Annotate **every** parameter and return type, including `-> None`.
 - Use PEP 585 built-ins (`list[int]`, `dict[str, Foo]`). Don't import `typing.List` / `typing.Dict`.
-- Class attributes that aren't inferred from `__init__` get annotated at class level.
+- Class attributes that aren't inferred from `__init__`, and module-level variables where inference is non-obvious, get annotated.
 - Avoid `Any` unless you're at an external boundary you don't own. If you reach for `Any`, ask whether a `Protocol` (structural typing) or a narrow `TypedDict` (an external dict shape you don't own) would work — but model your *own* domain data with Pydantic (below), never `TypedDict`.
 
 **Bad**
@@ -186,7 +160,7 @@ def load(path: Path, *, strict: bool = True) -> Config:
 
 ### Model data with Pydantic (not dataclasses / TypedDicts)
 
-Domain data is modelled with `pydantic.BaseModel` (v2) — entities in `entities/`, request/response and event payloads, anything that crosses a process or I/O boundary. A `BaseModel` validates and coerces at construction, (de)serialises to/from JSON, and emits a JSON schema; a `@dataclass` or `TypedDict` does none of that and lets malformed data flow downstream until it crashes somewhere unrelated.
+Domain data is modelled with `pydantic.BaseModel` (v2) — entities in `entities/` (a Pydantic-based ODM `Document` for persisted ones), request/response and event payloads, config, anything that crosses a process or I/O boundary. A `BaseModel` validates and coerces at construction, (de)serialises to/from JSON, and emits a JSON schema; a `@dataclass` or `TypedDict` does none of that and lets malformed data flow downstream until it crashes somewhere unrelated.
 
 Escape hatch — use `@dataclass` / `TypedDict` / `NamedTuple` **only** when a protocol or library contract forces it: a `TypedDict` shape a third-party SDK's signature requires, a frozen `@dataclass` an external framework instantiates for you, or a hot-loop value object where you've *profiled* Pydantic's overhead and it actually matters. Leave a one-line comment naming the constraint.
 
@@ -274,7 +248,7 @@ Orchestrator-specific CLI usage (deployment names, worker config, UI endpoints) 
 
 - I/O-bound code (HTTP, DB, queue, file) → `async def` + `await`. Use `asyncio.gather` for concurrency; avoid `asyncio.run_in_executor` unless wrapping sync libs.
 - CPU-bound code (parsing, numerics, transformation) → plain `def`. Reaching for `async` here adds overhead for no benefit.
-- Mixed workloads → split the module. Don't `await` around blocking code — it blocks the loop.
+- Mixed workloads → split the module; mix only where a profile justifies it. Don't `await` around blocking code — it blocks the loop.
 - Don't use `asyncio` for simple scripts where a blocking requests call would do. Async is a cost; it pays off only when concurrency matters.
 
 ### Config via pydantic-settings
@@ -307,7 +281,8 @@ This is not anti-abstraction — it's anti-premature abstraction. If a real swap
 
 ### Testing discipline (reminder)
 
-- **Unit tests never touch infrastructure.** No real DB, no real network, no real clock. Use `mocker`.
+- `tests/` mirrors `src/` 1:1; files `test_*.py`, functions `test_*`.
+- **Unit tests never touch infrastructure** (no real DB, network, clock, orchestrator adapter, model-serving runtime, observability client). Use `mocker`.
 - **Integration tests do touch infrastructure** — real Postgres / Mongo / Redis via testcontainers or a dev-compose stack. Keep them under `tests/integration/`, run separately from unit tests.
-- **Zero warnings.** If a test emits a `DeprecationWarning`, fix it or add a narrow `filterwarnings` ignore with a `TODO:` and a date.
-- See [`squid-testing-python`](../../squid-testing-python/SKILL.md) for depth.
+- **Zero warnings.** `filterwarnings = ["error"]` in pytest config promotes them to errors; if a test emits a `DeprecationWarning`, fix it or add a narrow ignore with a `TODO:` and a date — never silence wholesale.
+- AAA, `conftest.py` fixtures, `pytest-mock`, `parametrize`: [`squid-testing-python`](../../squid-testing-python/SKILL.md).

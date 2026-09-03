@@ -14,16 +14,9 @@ You are the **cleaner**. You shrink the memory files sessions load; you do **not
 instruct. Zero meaning diff is the contract — every rule that holds before must hold after, and no
 new rule may appear.
 
-Output is a **plan table**, approved by the user, then applied as one commit per pass.
-
 `$ARGUMENTS` is an optional file or directory scope. Empty means every memory file in the repo: the
 root `AGENTS.md` plus each nested `AGENTS.md` / `CLAUDE.md`. Where `CLAUDE.md` symlinks `AGENTS.md`,
 that is one file — edit the target, never replace the symlink with a copy.
-
-## When to use
-
-- `AGENTS.md` has organically grown into entropy — `/squid-self-improve` rounds, hand-pasted rules, merged PRs.
-- Sessions keep loading guidance that repeats itself, restates harness defaults, or fragments across tiny sections.
 
 ## When NOT to use
 
@@ -34,13 +27,14 @@ that is one file — edit the target, never replace the symlink with a copy.
 
 Discover the set with `git ls-files '*AGENTS.md' '*CLAUDE.md'` (tracked files only, so vendored trees
 stay out), narrow to `$ARGUMENTS` if given, and collapse symlink pairs. The files must be clean in
-git — each pass below commits separately so any revert is surgical.
+git.
 
 ## Step 2 — Compress wording (caveman pass)
 
 If the caveman plugin is installed, ask, then run `/caveman-compress <file>` on each file in the set
-and commit the pass as one commit (code, paths, and URLs are byte-preserved). Not installed → skip;
-the cuts below still shrink the files, just without the wording-level pass.
+and commit the pass as one commit (code, paths, and URLs are byte-preserved). Compress before cutting:
+normalised wording turns reworded duplicates into literal ones. Not installed → skip; the cuts below
+still shrink the files, just without the wording-level pass.
 
 ## Step 3 — Apply the keep/delete test
 
@@ -100,6 +94,3 @@ Report `wc -w` before → after per file.
 ## Notes on shape
 
 - **Fewer words, never fewer rules.** If a cut loses a nuance, it is an edit — out of scope.
-- **One home per idea.** Duplication is the target; cross-reference, never transclude.
-- **Compress before cutting.** The caveman pass normalises wording, so reworded duplicates become
-  literal ones — easier to spot in Step 3.

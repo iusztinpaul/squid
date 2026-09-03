@@ -5,7 +5,7 @@ description: Glossary discipline borrowed from Domain-Driven Design — one cano
 
 # Ubiquitous language
 
-A glossary file at `docs/glossary.md` listing every domain concept the team has agreed on, with one canonical name and a one-sentence definition. The full DDD methodology is much larger; this spec borrows only the **glossary discipline**, which is the cheap, load-bearing part: every domain concept has *one* name, and code / tests / docs / specs / Slack all use it.
+A glossary at `docs/glossary.md`: every domain concept has *one* canonical name and a one-sentence definition, and code / tests / docs / specs / Slack all use it. That glossary discipline is the cheap, load-bearing part of DDD; the rest of the methodology is out of scope.
 
 ## When to use
 
@@ -62,29 +62,19 @@ Three columns:
 - A team conversation reveals two people are using one word for different things → add the term and the distinction to the Notes column.
 - A term is renamed during a refactor → update the glossary in the renaming commit, not after.
 
-The glossary going stale is the failure mode. Treat it as a code artefact: it lives in the repo, it ships in PRs, it gets reviewed.
+The glossary going stale is the failure mode — a stale glossary confidently asserts the wrong vocabulary. Treat it as a code artefact: it lives in the repo, it ships in PRs, it gets reviewed.
 
-### How PA grooming and `/squid-grilling` use it
+### Tie-breaker
 
-- **PA grooming** (in `/squid-plan`) — the PA reads the glossary before decomposing a feature, and uses canonical terms in every task spec. A task whose AC says "the Item enters the cart" when the glossary says "OrderLine" is wrong-shaped on its face.
-- [`/squid-grilling`](../../squid-grilling/SKILL.md) — when a spec uses a non-canonical term, grilling flags it as a question: "Spec says 'Purchase'; glossary says 'Order' — same thing? If yes, we'll use 'Order' in the resolved spec."
-
-The glossary is the tie-breaker when specs and code disagree.
+The glossary wins when specs and code disagree: PA grooming (`/squid-plan`) writes every task spec in canonical terms, and [`/squid-grilling`](../../squid-grilling/SKILL.md) flags a non-canonical term in a spec as a question ("Spec says 'Purchase'; glossary says 'Order' — same thing?").
 
 ### Boundaries and contexts
 
-If the project has truly distinct sub-domains (e.g., a billing context and a fulfilment context that share concepts but mean different things by them), DDD calls these **bounded contexts**. The cheap version of this discipline:
-
-- Use a section heading per context: `## Billing context`, `## Fulfilment context`.
-- A term appearing in both contexts gets one row per context, with the same name only if the meaning is genuinely the same. Otherwise rename one.
-- Cross-context translation (when data crosses the boundary) gets its own row in a `## Mapping` section.
-
-Most projects don't need this. Don't reach for it until the team has actually been confused by a shared term.
+Only once the team has actually been confused by a term that means different things in two sub-domains (DDD's **bounded contexts**): one `## <Name> context` section per context; a term in both contexts gets one row per context, same name only if the meaning is genuinely the same; cross-context translation gets a row in a `## Mapping` section.
 
 ## Anti-patterns
 
 - **Synonyms in the glossary.** "Order, also called Purchase or Transaction" is the bug, not the cure. Pick one; rename the others in code.
-- **Glossary written once and never updated.** A stale glossary is worse than no glossary — it confidently asserts the wrong vocabulary.
 - **Glossary as documentation.** It's not docs; it's a vocabulary. Definitions are one sentence, not paragraphs. If you want extended explanation, link from the glossary entry to a doc page.
 - **Database column names that don't match the glossary.** When the glossary says "Order" but the table is `tx_records`, the next engineer to join the team will lose half a day. Rename the column (refactor task) or document the deviation explicitly in the glossary's Notes column with a reason.
 - **Per-team glossaries that disagree.** One canonical glossary per project, one canonical term per concept. Multiple glossaries → multiple languages → the discipline is dead.

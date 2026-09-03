@@ -22,16 +22,6 @@ You are the **auditor** — you delegate exploration to sub-agents, you read the
 - A path (`packages/backend/`) → audit only that subtree.
 - A component name (`backend`, `frontend-web`) → audit only that component.
 
-Smaller scopes produce sharper findings; whole-repo audits produce broader maps but blunter recommendations.
-
-## When to use
-
-- The team hasn't done a structural review in 6+ months.
-- A major version bump is imminent and you want to clear debt before locking in compatibility.
-- A new contributor surfaces "why is X like this?" questions that nobody can answer cleanly.
-- A bug was caused by hidden coupling and you suspect more like it exist.
-- After a successful `/squid-refactor` lands and you want to find the next one.
-
 ## When NOT to use
 
 - During active feature delivery — review when the team has bandwidth to act on findings, not as theatre.
@@ -56,7 +46,7 @@ Read the repo's `docs/adr/` end-to-end if it exists. Build a mental model of:
 - What decisions are **Superseded** (and by what).
 - What constraints (technical, business, team-shape) the ADRs cite.
 
-This is the single highest-value step. An architecture review that proposes "split the auth module" when ADR-0005 already explained why it's deliberately combined wastes everyone's time. If ADRs don't exist, note that — recommend the `adr` spec (`squid-scaffold/specs/adr.md`) as a prerequisite to capturing this review's outcome.
+Never re-propose what an ADR already settled. If ADRs don't exist, the hand-off's ADR action (Step 7) says so.
 
 Also read, if present:
 
@@ -126,7 +116,7 @@ For each finding, assign:
 - **Effort:** S (small, ≤ half a day) / M (medium, 1–3 days) / L (large, > 3 days; probably needs to split).
 - **Confidence:** High (you've read the code yourself) / Medium (one sub-agent finding, you spot-checked) / Low (sub-agent finding, you haven't verified).
 
-Prioritise by `severity / effort` ratio, with confidence as a tiebreaker — a High-confidence S2 beats a Low-confidence S1; don't recommend a refactor on a finding you haven't personally read. **Do not propose more than 10 findings.** A 30-finding report gets ignored; a 7-finding report gets acted on. Cluster related findings into one if they share a root cause.
+Prioritise by `severity / effort` ratio, with confidence as a tiebreaker — a High-confidence S2 beats a Low-confidence S1; don't recommend a refactor on a finding you haven't personally read. **Do not propose more than 10 findings.** Cluster related findings into one if they share a root cause.
 
 ## Step 6 — Write the report
 
@@ -182,7 +172,7 @@ Template:
 2. F{next} — {why}
 ...
 
-Each finding above can be picked up by `/squid-refactor F{N}` (paste the finding's body into the refactor goal). Don't tackle all of them at once — pick the top 1–3 and run them through the pipeline first.
+Pick up a finding with `/squid-refactor F{N}`; run the top 1–3 first, not all at once.
 ```
 
 ## Step 7 — Hand off

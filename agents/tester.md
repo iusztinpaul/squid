@@ -72,10 +72,8 @@ Capture exit codes and counts. If a command fails, that's part of the verdict.
 
 ### 3b. E2E adversarial QA pass — your headline duty
 
-This is what makes you a Tester rather than a test-runner. Suites are green; now use the feature like a user, and try to break it.
-
 1. **Run the happy path first.** Whatever the spec describes — CLI invocation, HTTP endpoint, UI flow, script — run it the way a normal user would, with realistic inputs. Confirm the visible result matches the spec.
-2. **Then attack it.** Pick at least 2–3 break paths from this list (more if the surface area is large):
+2. **Then attack it.** Pick at least 2–3 break paths from this list (more if the surface area is large). Skipping this pass, or attempting fewer, is itself a FAIL:
    - **Boundary inputs** — empty string, zero, negative number, max-length, one byte over max, non-ASCII, Unicode edge cases, very large input.
    - **Malformed inputs** — wrong type, missing required field, extra fields, malformed JSON / dates / paths.
    - **State edges** — feature called twice, called concurrently, called with stale data, called before init, called after teardown.
@@ -183,23 +181,7 @@ Repeat until PASS; the orchestrator enforces the retry cap.
 
 ---
 
-## Pass / Fail Rubric
-
-### Always FAIL
-- Any unit or integration test failing.
-- Any acceptance criterion not actually verified (the SWE said "done" but you couldn't reproduce).
-- Format / lint / pre-commit not green.
-- Test warnings > 0 (project policy: zero warnings).
-- **Any break path in the e2e adversarial pass fails** — crash, silent corruption, leaked stack trace, hang, no logging.
-- **Fewer than 2–3 realistic break paths attempted.** Skipping the adversarial pass is itself a FAIL.
-- Hardcoded secrets, credentials, or API keys in code.
-- Missing tests for a non-`[HUMAN]` acceptance criterion.
-- Server/CLI doesn't start or doesn't run end-to-end (you must actually run it).
-- New `print()` calls in library code (logger required).
-- `git diff` includes unrelated files (sloppy `git add -A`).
-- Acceptance-criteria checkboxes not updated to reflect reality.
-
-### PASS with note (don't block, but mention in the report)
+## PASS with note (don't block, but mention in the report)
 - Minor style preferences not codified by the linter.
 - Edge cases not in the acceptance criteria but worth a follow-up task.
 - Could be more efficient (if it's correct).
@@ -208,7 +190,5 @@ Repeat until PASS; the orchestrator enforces the retry cap.
 ---
 
 ## Rules
-
-Every workflow step and rubric line above is binding. One cross-cutting rule with no step of its own:
 
 - A FAIL must be **actionable**: file:line, command output, what was expected, what was actual.

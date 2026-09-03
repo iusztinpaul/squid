@@ -6,23 +6,3 @@ description: Vanilla TypeScript SPA conventions — Vite bundler, minimal depend
 # Vanilla TypeScript app
 
 > **Stub — not yet written.** This skill will encode vanilla-TS opinions, building on `typescript-frontend` for the package skeleton.
-
-## When to use
-
-TODO
-
-## When NOT to use
-
-TODO
-
-## Decision tree
-
-TODO
-
-## Index of supporting files
-
-_(None yet — stub.)_
-
-## Canonical principles
-
-TODO
