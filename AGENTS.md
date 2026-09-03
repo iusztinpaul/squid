@@ -4,7 +4,7 @@ This repo **is** a Claude Code plugin. The contract layer is markdown — agents
 
 Consumers install it two ways:
 
-1. `/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul` — global, all Claude Code sessions. The repo is a one-plugin marketplace (`.claude-plugin/marketplace.json`) named `iusztinpaul` (the GitHub account) cataloguing the `squid` plugin (the repo). The plugin's `source` is fixed to `github:iusztinpaul/squid`, so the install always fetches from GitHub even when the marketplace itself was added from a local path — relative-path plugin sources aren't supported on Claude Code v2.1.x when the marketplace lives on the local filesystem.
+1. `/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul` — global, all Claude Code sessions. The repo is a one-plugin marketplace (`.claude-plugin/marketplace.json`) named `iusztinpaul` (the GitHub account) cataloguing the `squid` plugin (the repo). The plugin's `source` is `./` — the plugin *is* the marketplace repo, so Claude Code resolves it from the marketplace checkout instead of re-cloning. Same shape as caveman, ponytail, and the official marketplace.
 2. `claude --plugin-dir /path/to/squid` — for plugin-development sessions only; loads the plugin from the working tree without registering or installing anything.
 
 Either way they get an opinionated agent team plus a `/squid-scaffold` flow that bootstraps new repos from a light spec library.
@@ -76,7 +76,7 @@ Squid integrates with [caveman](https://github.com/JuliusBrussee/caveman) as an 
 ## Testing the plugin
 
 - **Local Claude Code install (uncommitted):** `claude --plugin-dir /path/to/squid` — install path 2 above.
-- **Local Claude Code install (committed):** in a scratch session, `/plugin marketplace add /path/to/squid && /plugin install squid@iusztinpaul` — fetches from GitHub (see install path 1), so push first.
+- **Local Claude Code install (committed):** in a scratch session, `/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul` — resolves through the GitHub marketplace, so push first. Adding the marketplace from a local path is a different code path: `source: "./"` then resolves to that directory, not to GitHub.
 - **Validate frontmatter:** `python3 scripts/check-frontmatter.py` (needs `pyyaml`). This is the guard — it parses every `agents/*.md` and `skills/*/SKILL.md`, and rejects unparseable YAML, a `name:` that disagrees with its filename, a missing `description:`, a non-string `argument-hint:`, and any `model:`/`effort:` value that isn't real. CI runs it on every push touching `agents/` or `skills/` (`.github/workflows/frontmatter.yml`).
 - **Validate manifest:** `claude plugin validate .` only reads `.claude-plugin/marketplace.json`, never `agents/` or `skills/`, and checks field *types* but not *values* — `model: not-a-real-model` and `effort: banana` both pass. Prefer `scripts/check-frontmatter.py`.
 - **Test `/squid-scaffold`:** run it in an empty directory and confirm it produces a sensible `AGENTS.md` (with `CLAUDE.md` symlinked to it, plus a `.agents/skills/` dir and a `.claude/skills → .agents/skills` symlink) and skeleton tree without writing any application source.
