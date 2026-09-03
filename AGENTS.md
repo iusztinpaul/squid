@@ -42,7 +42,6 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 │   ├── squid-review-ci/               # /squid-review-ci — On-Call drives CI green
 │   ├── squid-grilling/                # /squid-grilling — stress-test a plan (used inside /squid-plan; adapted from mattpocock/skills, MIT)
 │   ├── squid-testing-python/          # test-writing conventions
-│   ├── squid-self-improve/            # end-of-session corrections capture (human-gated by /squid-implement-night)
 │   ├── squid-refactor/                # /squid-refactor — standalone refactor planner (not wired into the pipeline)
 │   ├── squid-triage-issue/            # /squid-triage-issue — standalone bug intake (not wired into the pipeline)
 │   ├── squid-architecture-review/     # /squid-architecture-review — standalone audit (not wired into the pipeline)

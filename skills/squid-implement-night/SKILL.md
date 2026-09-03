@@ -20,7 +20,7 @@ Read `AGENTS.md` first (tracker mode, the pipeline map, and the cross-cutting ru
 **Input:** an approved Tasks Plan + the feature branch/worktree `/squid-plan` created.
 **Output:** a CI-validated feature PR, ready for the human to squash-merge.
 
-**The pipeline blocks on the human only at the very end** (squash-merge), plus the one optional squid-self-improve prompt. (Plan approval already happened in `/squid-plan`.) Everything between is automated; failures route back into `/squid-implement-task` as rollup tasks rather than stopping the pipeline. **Caps stop the pipeline:** Tester FAIL 5/task, PA REJECT 3, PR-Reviewer 3, On-Call 5 — when a cap fires, surface `USER ACTION REQUIRED` and stop.
+**The pipeline blocks on the human only at the very end** (squash-merge). (Plan approval already happened in `/squid-plan`.) Everything between is automated; failures route back into `/squid-implement-task` as rollup tasks rather than stopping the pipeline. **Caps stop the pipeline:** Tester FAIL 5/task, PA REJECT 3, PR-Reviewer 3, On-Call 5 — when a cap fires, surface `USER ACTION REQUIRED` and stop.
 
 **Critical rules:**
 
@@ -76,21 +76,11 @@ invoke /squid-review-ci with: PR #{N}, Working directory: {WORKTREE_PATH}
 
 ---
 
-## Tail — squid-self-improve (human-gated) + hand-off
+## Tail — hand-off
 
 The validated PR is ready. The orchestrator does NOT squash — per-task commits stay on the branch; the human uses GitHub's "Squash and merge".
 
-Prompt the human:
-
-```
-Feature {title} is validated and ready to squash-merge: {PR URL}
-Optional: run squid-self-improve to capture corrections from this run into AGENTS.md? (y/N)
-```
-
-- **N (default)** → skip to the final summary.
-- **y** → **invoke the `squid-self-improve` skill** on this run; it proposes AGENTS.md updates the human reviews/accepts. When it returns, continue.
-
-Then report the final summary:
+Report the final summary:
 
 ```markdown
 ## /squid-implement-night complete — {Feature title}
@@ -101,7 +91,6 @@ Then report the final summary:
 
 **Tasks delivered ({N}):** {table — Tester / PA accept / PR-Reviewer / CI}
 **Rollup tasks ({M}):** {list, or "none"}
-**Self-Improve:** {ran / skipped}
 
 Next: review the PR, then GitHub's **Squash and merge**. Remove the worktree with `git worktree remove {WORKTREE_PATH}` after merge.
 ```
