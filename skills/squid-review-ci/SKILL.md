@@ -2,9 +2,7 @@
 name: squid-review-ci
 description: >-
   Drive CI green on a pushed, review-clean feature PR — On-Call diagnoses failures and hands fix
-  tasks to the SWE. Output: a CI-validated feature PR. Trigger after /squid-review passes, or when
-  the user says "/squid-review-ci".
-disable-model-invocation: false
+  tasks to the SWE. Output: a CI-validated feature PR. Trigger after /squid-review passes.
 argument-hint: <PR-number | branch>
 ---
 

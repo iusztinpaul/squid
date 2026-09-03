@@ -3,9 +3,7 @@ name: squid-review
 description: >-
   Push the committed feature branch, create or update its PR, then run Product Architect
   acceptance and PR-Reviewer on it. Output: a clean PR with no blockers, or ONE rollup task.
-  Trigger after a feature's tasks are implemented and committed, or when the user says
-  "/squid-review".
-disable-model-invocation: false
+  Trigger after a feature's tasks are implemented and committed.
 argument-hint: <feature-title | plan-ref>
 ---
 

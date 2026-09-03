@@ -3,8 +3,7 @@ name: squid-self-improve
 description: >-
   Analyze developer corrections from the current coding session and persist lessons learned as
   rules in AGENTS.md files or memory. Use at the end of a session after the developer corrected
-  your work, when they say "squid-self-improve", ask to capture what was learned, or ask you to
-  reflect on mistakes and extract patterns from their edits.
+  your work, or when they ask to capture what was learned.
 ---
 
 # Self-Improvement from Developer Feedback

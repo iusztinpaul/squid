@@ -3,8 +3,7 @@ name: squid-implement-night
 description: >-
   Run the full agent-team pipeline end-to-end for one feature whose Tasks Plan is already approved
   by /squid-plan, handing the human a validated, ready-to-squash-merge PR. Trigger after
-  /squid-plan, or when the user says "/squid-implement-night".
-disable-model-invocation: false
+  /squid-plan.
 argument-hint: <plan-ref | feature-slug>
 ---
 

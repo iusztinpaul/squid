@@ -1,6 +1,6 @@
 ---
 name: pr-reviewer
-description: Reads the git diff after a feature is pushed, tags every finding as Blocker or Nit, and produces ONE rollup task containing all findings. Does NOT read CI, does NOT merge. Use after the SWE has pushed the feature branch and before the orchestrator hands the PR back to the human for squash-merge.
+description: Reviews the pushed feature diff, tags every finding Blocker or Nit, and files ONE rollup task. Does NOT read CI, does NOT merge.
 tools: Read, Bash, Glob, Grep, Edit, Write
 model: fable
 effort: high

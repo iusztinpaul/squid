@@ -2,10 +2,8 @@
 name: squid-implement-task
 description: >-
   Implement one task — or a whole list / an approved Tasks Plan — via the inner SWE↔Tester loop,
-  committing each task on PASS. Use when one or more GROOMED tasks are ready to build, or the user
-  says "/squid-implement-task". To plan a feature first use /squid-plan; for the full end-to-end
-  pipeline use /squid-implement-night.
-disable-model-invocation: false
+  committing each task on PASS. Use when one or more GROOMED tasks are ready to build. To plan a
+  feature first use /squid-plan; for the full end-to-end pipeline use /squid-implement-night.
 argument-hint: <task-ref | "task description" | plan-ref | list of task-refs>
 ---
 

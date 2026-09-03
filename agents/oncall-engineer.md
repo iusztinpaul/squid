@@ -1,6 +1,6 @@
 ---
 name: oncall-engineer
-description: Monitors CI/CD after `git push`. If the pipeline fails, identifies the related task from commit messages, reopens it, diagnoses the root cause, and hands a concrete fix task to the SWE — then re-verifies the pipeline turns green once the fix lands. Owns pipeline health; does not change application code itself. Use after any push performed by the SWE or by the orchestrator.
+description: Diagnoses a red CI run, traces it to the responsible task, hands a concrete fix task to the SWE, and re-verifies green. Owns pipeline health; does not change application code.
 tools: Read, Edit, Write, Bash, Glob, Grep
 model: sonnet
 effort: high
