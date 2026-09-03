@@ -24,18 +24,10 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 │   ├── plugin.json                    # Claude Code plugin manifest (name, version, description)
 │   └── marketplace.json               # one-plugin marketplace catalog so `/plugin install squid@iusztinpaul` works
 ├── agents/                            # five sub-agents
-│   ├── product-architect.md
-│   ├── software-engineer.md
-│   ├── tester.md
-│   ├── pr-reviewer.md
-│   └── oncall-engineer.md
 ├── skills/
 │   ├── squid-scaffold/                # /squid-scaffold — bootstrap a new repo (create) or audit drift (evaluate)
-│   │   ├── SKILL.md
 │   │   ├── evaluate.md                # mode=evaluate flow (E1–E4), loaded on demand
-│   │   ├── rules.md                   # single source of truth for scaffold rules (create + evaluate)
-│   │   ├── AGENTS_TEMPLATE.md         # template body /squid-scaffold distils into each project's AGENTS.md
-│   │   └── specs/                     # reference specs read by scaffold (index in specs/README.md)
+│   │   └── AGENTS_TEMPLATE.md         # template body /squid-scaffold distils into each project's AGENTS.md
 │   ├── squid-plan/                    # /squid-plan — feature spec → approved Tasks Plan (+ worktree)
 │   ├── squid-implement-task/          # /squid-implement-task — autonomous task loop (SWE↔Tester, commit each)
 │   ├── squid-implement-night/         # /squid-implement-night — end-to-end pipeline (thin orchestrator)
@@ -51,10 +43,7 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 │   ├── squid-clean-memory/            # /squid-clean-memory — memory-file shrink: compress, dedupe, merge
 │   ├── squid-clean-harness/           # /squid-clean-harness — .agents shrink: skills + resources, same logic fewer tokens
 │   └── squid-write-skill/             # /squid-write-skill — skill-authoring reference (vendored from mattpocock/skills, MIT)
-├── LICENSE
-├── README.md                          # user-facing (install + what's inside)
-├── AGENTS.md                          # (this file; CLAUDE.md symlinks to it)
-└── .gitignore
+└── README.md                          # user-facing (install + what's inside)
 ```
 
 The directory layout is what Claude Code's plugin loader expects natively: `agents/` and `skills/` at the plugin root. No custom path overrides in `plugin.json` — the loader scans those defaults.
