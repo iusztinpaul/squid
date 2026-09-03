@@ -1,20 +1,8 @@
 #!/usr/bin/env bash
 # Release the squid plugin: bump .claude-plugin/plugin.json, commit, tag, push.
-#
-# Usage:
-#   scripts/release.sh patch              # 0.2.5 -> 0.2.6
-#   scripts/release.sh minor              # 0.2.5 -> 0.3.0
-#   scripts/release.sh major              # 0.2.5 -> 1.0.0
-#   scripts/release.sh 0.3.0              # explicit version
-#   scripts/release.sh patch --dry-run    # show what would happen, do nothing
-#   scripts/release.sh patch --yes        # skip the push confirmation prompt
-#
-# The single source of truth for the plugin version is .claude-plugin/plugin.json.
-# Git tags must match it; CI in .github/workflows/release-check.yml enforces that.
+# Usage and the manual fallback: CONTRIBUTING.md -> "Releasing (maintainers)".
 
 set -euo pipefail
-
-# ---- arg parsing --------------------------------------------------------------
 
 if [[ $# -lt 1 ]]; then
   echo "usage: scripts/release.sh <patch|minor|major|X.Y.Z> [--dry-run] [--yes]" >&2
@@ -34,8 +22,6 @@ for arg in "$@"; do
   esac
 done
 
-# ---- locate repo root ---------------------------------------------------------
-
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$REPO_ROOT" ]]; then
   echo "error: not inside a git repository" >&2
@@ -48,8 +34,6 @@ if [[ ! -f "$MANIFEST" ]]; then
   echo "error: $MANIFEST not found (run from the squid repo)" >&2
   exit 1
 fi
-
-# ---- preconditions ------------------------------------------------------------
 
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
@@ -73,8 +57,6 @@ if [[ "$LOCAL_SHA" != "$REMOTE_SHA" ]]; then
   echo "  origin: $REMOTE_SHA" >&2
   exit 1
 fi
-
-# ---- compute new version ------------------------------------------------------
 
 CURRENT_VERSION="$(python3 -c "import json; print(json.load(open('$MANIFEST'))['version'])")"
 
@@ -100,8 +82,6 @@ esac
 
 NEW_TAG="v${NEW_VERSION}"
 
-# ---- check tag doesn't exist already ------------------------------------------
-
 if git rev-parse --verify --quiet "refs/tags/${NEW_TAG}" >/dev/null; then
   echo "error: tag ${NEW_TAG} already exists locally" >&2
   exit 1
@@ -111,8 +91,6 @@ if git ls-remote --tags origin "refs/tags/${NEW_TAG}" | grep -q "${NEW_TAG}"; th
   echo "error: tag ${NEW_TAG} already exists on origin" >&2
   exit 1
 fi
-
-# ---- announce + dry-run early exit --------------------------------------------
 
 echo
 echo "  current version: $CURRENT_VERSION"
@@ -125,7 +103,7 @@ if [[ $DRY_RUN -eq 1 ]]; then
   exit 0
 fi
 
-# ---- rewrite plugin.json safely (preserves key order via json round-trip) -----
+# json round-trip, not sed: preserves key order without a jq dependency.
 
 python3 - "$MANIFEST" "$NEW_VERSION" <<'PYEOF'
 import json, sys
@@ -138,13 +116,9 @@ with open(path, "w") as f:
     f.write("\n")
 PYEOF
 
-# ---- commit + tag -------------------------------------------------------------
-
 git add "$MANIFEST"
 git commit -m "chore: release ${NEW_TAG}"
 git tag -a "$NEW_TAG" -m "$NEW_TAG"
-
-# ---- confirm push -------------------------------------------------------------
 
 echo
 echo "ready to push:"

@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 """Validate the YAML frontmatter of every agent and skill in this plugin.
 
-Why this exists: `claude plugin validate .` from the repo root only reads
-`.claude-plugin/marketplace.json`. It never opens `agents/` or `skills/`, so a
-skill whose frontmatter fails to parse sails straight through — and Claude Code
-then loads that skill with *every frontmatter field silently dropped* (no name,
-no description, no disable-model-invocation). Even when pointed at a
-marketplace-free copy, `claude plugin validate` checks field *types* but never
-*values*: `model: not-a-real-model` and `effort: banana` both pass.
+Why this exists, and why `claude plugin validate` is not enough:
+AGENTS.md -> "Testing the plugin".
 """
 
 from __future__ import annotations
@@ -140,7 +135,6 @@ def main() -> int:
             continue
         check_common(rel, fm, path.parent.name)
 
-    # Squid's own model policy (AGENTS.md): Fable plans and reviews; it never writes code.
     swe = loaded.get("software-engineer")
     if swe and swe.get("model") == "fable":
         warn(
