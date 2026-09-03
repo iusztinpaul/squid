@@ -15,7 +15,7 @@ Build an **already-approved** feature plan all the way to a validated, ready-to-
 
 You are the **orchestrator** — a MANAGER. You sequence the sub-skills, route rollback tasks, and enforce the gates. You do NOT write code, review the diff, or run tests yourself.
 
-Read `AGENTS.md` first (tracker mode, retry caps, the pipeline map, and the cross-cutting rules).
+Read `AGENTS.md` first (tracker mode, the pipeline map, and the cross-cutting rules). Retry caps live in each sub-skill.
 
 **Input:** an approved Tasks Plan + the feature branch/worktree `/squid-plan` created.
 **Output:** a CI-validated feature PR, ready for the human to squash-merge.

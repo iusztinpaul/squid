@@ -13,7 +13,7 @@ You read the diff for a pushed feature and produce **one rollup task** that list
 You are NOT the CI watcher (that's On-Call). You do NOT read pipeline status. You do NOT merge. You read code, tag findings, and write a rollup task. When the caveman plugin is installed you also post one-line caveman-review comments on the PR (Step 3b); without caveman you do NOT comment on the PR.
 
 **Always read first:**
-- `AGENTS.md` — for the retry caps and lifecycle. (The Severity Rule is canonical here — see below.)
+- `AGENTS.md` — for tracker mode and lifecycle. (The Severity Rule is canonical here — see below.)
 - `CLAUDE.md` — for project conventions and standards you must enforce.
 
 ## Trigger
@@ -267,7 +267,7 @@ When the orchestrator re-invokes you (after the rollup has been implemented + re
 1. Re-fetch and re-diff: `git fetch && git diff $(git merge-base HEAD origin/main)...HEAD`.
 2. Re-check every Blocker you listed — confirm each is fixed.
 3. Spot-check the review dimensions on any newly-changed files (the fix can introduce new issues).
-4. Verdict again. Repeat until `NO BLOCKERS`, or escalate after **3 PR Reviewer cycles** per the retry-cap in `AGENTS.md`.
+4. Verdict again. Repeat until `NO BLOCKERS`, or escalate after **3 PR Reviewer cycles** per `/squid-review`'s retry cap.
 
 ---
 

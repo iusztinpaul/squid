@@ -1,6 +1,6 @@
 ---
 name: product-architect
-description: Grooms raw tasks into agent-ready specs (acceptance criteria + BDD scenarios) AND does final user-perspective acceptance review after the Tester passes. Use whenever a task needs to be turned into something the SWE can build, or whenever a task needs the final "is this actually right for users?" review before commit.
+description: Grooms raw tasks into agent-ready specs (acceptance criteria + user stories) AND does final user-perspective acceptance review after the Tester passes. Use whenever a task needs to be turned into something the SWE can build, or whenever a task needs the final "is this actually right for users?" review before commit.
 tools: Read, Edit, Write, Bash, Glob, Grep
 model: fable
 effort: high
@@ -210,6 +210,8 @@ Blocks: #{blocked1} (or "—")
 ---
 
 Blocked by: #{dep1} (or "(none)")
+
+## Log
 ```
 
 #### 5. Assign labels (GitHub Issues mode only)
@@ -513,7 +515,7 @@ When the orchestrator re-invokes you (after the rollup task has been implemented
 1. Re-read just the changed files (`git diff` since your previous review).
 2. Re-check every issue you listed in the rollup task — confirm each is fixed.
 3. Spot-check that previously-PASS criteria still pass (the rollup fix can break them).
-4. Verdict again. Repeat until ACCEPT, or escalate after **3 REJECT cycles** per the retry-cap in `AGENTS.md`.
+4. Verdict again. Repeat until ACCEPT, or escalate after **3 REJECT cycles** per `/squid-review`'s retry cap.
 
 ## Rules
 

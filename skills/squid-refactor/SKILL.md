@@ -94,7 +94,7 @@ Common refactor shapes and their canonical decomposition:
 
 ## Step 4 — Write the Tasks Plan
 
-Use this template. It mirrors the PA's feature-plan output so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
+Use this template. Frontmatter follows `squid-scaffold/specs/tracker-workflow.md`, so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
 
 ```markdown
 # Refactor: {one-line goal}

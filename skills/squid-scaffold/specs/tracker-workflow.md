@@ -49,21 +49,15 @@ ls tasks/ tasks/done/ 2>/dev/null | grep -oE '^[0-9]+' | sort -n | tail -1   # n
 
 ```markdown
 ---
-id: 003-search-ui
-feature: search          # the feature slug this task belongs to
 status: pending          # pending | in-progress | done
+feature: search          # the feature slug this task belongs to
 ---
 
 # Search UI
 
-## Scope
-{1–2 sentences — one atomic, independently-shippable unit of work.}
-
-## Acceptance criteria
-- [ ] ...
-
-## Out of scope
-- ...
+{Body = the PA's groomed spec: Tags / Depends on / Blocks, `## Scope`, `## Acceptance Criteria`,
+`## User Stories` — the template lives in `agents/product-architect.md` → "Write the groomed spec".
+The task id is the filename (`003-search-ui`).}
 
 ## Log
 ### [PA] 2026-04-27 12:30 — Grooming

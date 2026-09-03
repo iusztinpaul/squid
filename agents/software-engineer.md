@@ -61,7 +61,6 @@ git rev-parse --abbrev-ref HEAD
 
 - **Already on a feature / worktree branch** (the normal case — `/squid-plan` created `feat/{slug}` and `/squid-implement-task` runs there): **stay on it.** Each task is one commit on that shared feature branch; the human squash-merges the branch at the end. Do NOT create a `feat/NNN-slug` per task. *Bad:* on `feat/checkout`, run `git switch -c feat/017-add-tax` for task 017 — the commit strands on a branch `/squid-review` never pushes. *Good:* on `feat/checkout`, implement task 017 and commit straight onto `feat/checkout`.
 - **On `main`** (standalone, no feature branch exists yet): create ONE branch for the work (`feat/{slug}` / `fix/{slug}`), then stay on it for every task in this run.
-- **Launched under `isolation: "worktree"`:** skip this step — the orchestrator already put you on the worktree's branch.
 
 ### 4. Pull latest
 
@@ -80,7 +79,7 @@ When in doubt, ask: "Could I write a test that tells me unambiguously whether th
 
 #### 5a. Write the failing tests
 
-For every non-`[HUMAN]` acceptance criterion and every BDD scenario whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `squid-testing-python` skill:
+For every non-`[HUMAN]` acceptance criterion and every User Story whose contract is decidable, write at least one unit or integration test. Follow the conventions from `CLAUDE.md` and the `squid-testing-python` skill:
 
 - Tests live under `tests/unit/` and `tests/integration/`, mirroring the source tree.
 - Files named `test_*.py`; functions named `test_*`.
@@ -251,7 +250,7 @@ Repeat until the Tester reports PASS.
 
 ## Commit / PR / Review-response (only after Tester PASS)
 
-The orchestrator confirms the Tester passed. Then commit, push, and open/update the PR. Acceptance review happens later, in `/squid-review`, on the pushed PR — it is not a precondition for committing.
+The orchestrator confirms the Tester passed. Then commit — do NOT push. Pushing and the PR happen in `/squid-review`, which launches you with the Push / open PR section below. Acceptance review happens there, on the pushed PR — it is not a precondition for committing.
 
 ### Commit
 

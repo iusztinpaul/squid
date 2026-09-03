@@ -13,7 +13,7 @@ Take the committed feature branch and turn it into a clean, pushed feature PR â€
 
 You are the **orchestrator** â€” a MANAGER. You push, launch the review agents, enforce the gates, and route failures back as rollup tasks. You do NOT review the diff or write code yourself.
 
-Read `AGENTS.md` first (tracker mode, retry caps; the Severity Rule lives in the PR-Reviewer's role definition).
+Read `AGENTS.md` first (tracker mode). Retry caps are below; the Severity Rule lives in the PR-Reviewer's role definition.
 
 **Input:** a feature branch whose tasks are implemented and committed (the worktree when orchestrated by `/squid-implement-night`; the current branch when run standalone).
 **Output:** a pushed feature PR with **NO blockers** (Nits appended to the PR description), OR **ONE rollup task** routed back to `/squid-implement-task`.

@@ -88,7 +88,7 @@ The reproducer must be **deterministic**. If it's only intermittent, mark it exp
 
 ## Step 4 — Write the groomed bug task
 
-Use this exact template. It mirrors the PA's groom output so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
+Use this exact template. Frontmatter follows `squid-scaffold/specs/tracker-workflow.md`, so `/squid-implement-task` and `/squid-implement-night` accept it without re-grooming.
 
 ```markdown
 # Bug: {one-line title — observable user-visible symptom}

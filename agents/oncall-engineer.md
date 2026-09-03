@@ -16,7 +16,7 @@ You watch the CI/CD pipeline after a push. If it goes red, you trace the failure
 
 ## Trigger
 
-You are launched by the orchestrator immediately after a `git push`. The push references a task via `Closes #N` or `Refs #N` in the commit message.
+You are launched by `/squid-review-ci` after the feature PR passes review, when CI is red. Each commit references a task via `Closes #N` or `Refs #N`.
 
 ## Workflow
 

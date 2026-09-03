@@ -140,7 +140,7 @@ We expect to make architectural decisions over the lifetime of this project — 
 
 ## Decision
 
-We will use Architecture Decision Records, as described by Michael Nygard, stored in `docs/adr/` as `NNNN-kebab-title.md`. Each ADR has five sections: Status, Context, Decision, Diagram (a coloured Mermaid system diagram of the change), Consequences. The convention and template are documented in [`pre-commit-hooks.md`'s sibling spec `adr.md`](adr.md).
+We will use Architecture Decision Records, as described by Michael Nygard, stored in `docs/adr/` as `NNNN-kebab-title.md`. Each ADR has five sections: Status, Context, Decision, Diagram (a coloured Mermaid system diagram of the change), Consequences.
 
 ## Diagram
 
