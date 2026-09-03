@@ -5,7 +5,7 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
 ## What we're looking for
 
 - **New `/squid-scaffold` specs** — Rust, Java, mobile (Swift/Kotlin), additional Python/TS frameworks. Highest leverage.
-- **Stub fill-ins** — 12 of the 19 specs under `skills/squid-scaffold/specs/` are still placeholders. Fleshing one out is a great first PR.
+- **Stub fill-ins** — many specs under `skills/squid-scaffold/specs/` are still placeholders. Fleshing one out is a great first PR.
 - **Agent prompt improvements** — sharpening PA, SWE, Tester, PR Reviewer, or On-Call so they fail less often.
 - **Bug reports** with a concrete repro (which skill, what input, what went wrong).
 - **Doc clarifications** in `README.md`, `CLAUDE.md`, or this file.
@@ -23,10 +23,10 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
    ```
    claude --plugin-dir /path/to/your/fork
    ```
-   This is the only path that exercises uncommitted changes (the marketplace install always pulls from GitHub).
-3. Validate the manifest:
+   This is the only path that exercises uncommitted changes.
+3. Validate the frontmatter:
    ```
-   claude plugin validate
+   python3 scripts/check-frontmatter.py
    ```
 4. Run the affected skill against a scratch directory (see [Testing your change](#testing-your-change)).
 5. Open a PR.
@@ -41,10 +41,6 @@ Thanks for considering a contribution. Squid stays small and opinionated on purp
 | Agent-team lifecycle | `skills/squid-scaffold/AGENTS_TEMPLATE.md` (pipeline map + cross-cutting rules) + the agent contracts |
 
 See [`CLAUDE.md`](CLAUDE.md) for full editing conventions, spec-writing style, and publishing flow.
-
-## Adding a new spec (most common contribution)
-
-Specs are **opinions, not code** — see [`CLAUDE.md`](CLAUDE.md) → "Spec-writing style" for the five-section shape and rules.
 
 ## Testing your change
 
@@ -81,8 +77,6 @@ scripts/release.sh 0.3.0          # explicit version
 scripts/release.sh patch --dry-run
 scripts/release.sh patch --yes    # skip the push confirmation
 ```
-
-What it does, in order: verifies you're on `main` with a clean tree synced to `origin/main`; checks the new tag doesn't already exist; rewrites `plugin.json` via a Python JSON round-trip (preserves key order, no `jq` dependency); commits as `chore: release vX.Y.Z`; creates an annotated tag; and prompts before pushing the commit and the tag to `origin`.
 
 After release, smoke-test from a fresh Claude Code session:
 

@@ -38,7 +38,7 @@ Run `/squid-plan <feature-spec>` then `/squid-implement-night`, and Squid drives
                                                     HUMAN squash-merges (2/2)
 ```
 
-Branch + worktree, grooming, the per-task implement/verify loop, push, diff review, and CI are all automated — you only show up for the two gates. For a quick single change, run `/squid-implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/squid-scaffold` first (see [Quick start](#quick-start)).
+For a quick single change, run `/squid-implement-task <task>` (the same SWE ↔ Tester loop, no planning or review pipeline). Starting from an empty repo? Run `/squid-scaffold` first (see [Quick start](#quick-start)).
 
 ## Who this is for
 
@@ -187,15 +187,7 @@ Two things worth knowing:
 
 **Overriding.** Each value lives in the agent's frontmatter (`agents/*.md`), so a fork can just edit it. Note that a `CLAUDE_CODE_SUBAGENT_MODEL` environment variable **silently overrides every agent's `model:`** — if all five agents seem to be running on one model, that's why.
 
-The `/squid-scaffold` spec library (under `skills/squid-scaffold/specs/`) covers:
-
-- **Python:** backend layout, uv, pyproject, ruff, FastAPI, FastMCP, CLI tools
-- **TypeScript frontend:** package/tsconfig/vite conventions, React, Vue, Svelte, vanilla
-- **Go TUI:** layout + Bubbletea / tview patterns
-- **Infra:** Docker, docker-compose, GitHub Actions monorepo CI, OpenAPI contracts
-- **Process:** monorepo layout, Makefile delegator, tracker workflow
-
-Several specs are still stubs — the foundations are filled in (`python-backend`, `typescript-frontend`, `go-tui`, `uv-python`, `pyproject`, `makefile-delegator`, `monorepo-layout`); the rest are good first contributions.
+The `/squid-scaffold` spec library covers Python, TypeScript frontend, Go TUI, infra, and process conventions — every spec is indexed in [`skills/squid-scaffold/specs/README.md`](skills/squid-scaffold/specs/README.md), where the stubs make good first contributions.
 
 ## Contributing
 
@@ -223,14 +215,10 @@ It does **not** write application source. That's the next step:
 /squid-implement-task "Bootstrap packages/backend with a FastAPI /health endpoint and one unit test."
 ```
 
-The SWE agent reads `AGENTS.md`, picks up the specs it references, writes real code + tests, hands off to the Tester, and commits the task once it passes.
-
 ## Philosophy
 
-- **Specs over templates.** Opinions live as markdown the agent reads — no Jinja, no render step, no drift between a template and what the agent produces.
 - **Progressive disclosure.** A session loads only the skills whose descriptions match the task; the spec library is gated behind `/squid-scaffold` so it doesn't pollute every session's index.
 - **One skill per concern.** Adding a new stack is one markdown file, not a new scaffolding engine.
-- **`AGENTS.md` is the brief.** After `/squid-scaffold`, the generated `AGENTS.md` is the single source of truth for how that project builds. Specs are referenced, not transcluded.
 - **Agents are gates.** The PA catches scope drift and signs off from the user's perspective; the Tester catches false-confidence "tests pass" claims and runs an e2e adversarial pass; the PR Reviewer catches dead/duplicate/untested code, over-engineering, and hot-path regressions; On-Call catches CI breakage. No agent both writes code and decides whether it's correct.
 
 ## License
