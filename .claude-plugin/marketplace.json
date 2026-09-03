@@ -4,8 +4,7 @@
     "name": "iusztinpaul"
   },
   "metadata": {
-    "description": "Opinionated engineering agent team plus /squid-plan, /squid-implement-night, /squid-scaffold, and a library of language/framework/infra specs.",
-    "version": "1.0.5"
+    "description": "Opinionated engineering agent team plus /squid-plan, /squid-implement-night, /squid-scaffold, and a library of language/framework/infra specs."
   },
   "allowCrossMarketplaceDependenciesOn": [
     "claude-plugins-official"
@@ -15,7 +14,6 @@
       "name": "squid",
       "source": "./",
       "description": "PA / SWE / Tester / PR Reviewer / On-Call sub-agents plus /squid-plan, /squid-implement-task, /squid-implement-night, /squid-review, /squid-review-ci, /squid-scaffold, and supporting workflow skills.",
-      "version": "1.0.5",
       "author": {
         "name": "iusztinpaul",
         "url": "https://github.com/iusztinpaul"
