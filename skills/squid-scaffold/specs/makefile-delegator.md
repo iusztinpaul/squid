@@ -93,7 +93,7 @@ TUIs additionally implement:
 |---|---|
 | `run` | `go run ./cmd/<slug>`. |
 
-See [`canonical.md`](canonical.md) for the full root Makefile these verbs wire into.
+See the [canonical root Makefile](#canonical-root-makefile-polyglot-monorepo) below for the full file these verbs wire into.
 
 ### 5. `help` is a first-class target
 
@@ -134,7 +134,7 @@ Aggregate-only verbs that don't delegate into a single component:
 
 | Target | Semantics |
 |---|---|
-| `openapi-gen` | Regenerate OpenAPI clients (see [`openapi-contracts`](../openapi-contracts/SKILL.md)). |
+| `openapi-gen` | Regenerate OpenAPI clients (see [`openapi-contracts`](openapi-contracts.md)). |
 | `openapi-validate` | Lint the OpenAPI spec. |
 | `docker-up` / `docker-down` | `docker compose up -d` / `docker compose down`. |
 | `ci` | The full pre-PR fan: `install test lint-check format-check pre-commit build`. |

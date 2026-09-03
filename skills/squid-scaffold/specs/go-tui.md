@@ -38,7 +38,7 @@ Default to Bubbletea unless you specifically want tview's widget library.
 
 ### Layout
 
-See [`layout.md`](layout.md) for the full tree. Headlines:
+See [Go TUI — module layout](#go-tui--module-layout) below for the full tree. Headlines:
 
 ```
 packages/<name>/
@@ -104,7 +104,7 @@ Every Go TUI package exposes:
 | `format-check` | `gofmt -l .` (fails if any file needs formatting) |
 | `run` | `go run ./cmd/<slug>` |
 
-See [`makefile-delegator`](../makefile-delegator/SKILL.md) for how the root Makefile consumes these.
+See [`makefile-delegator`](makefile-delegator.md) for how the root Makefile consumes these.
 
 ### TUIs are NOT containerised for routine dev
 
@@ -118,7 +118,7 @@ When the TUI consumes a backend API defined in `packages/shared/openapi/api.yaml
 - Regen is driven by `make -C ../shared gen-go` (or root `make openapi-gen`).
 - **Never hand-edit `internal/api/client.go`.** Regenerate from the spec.
 - Base URL via an env var (`API_BASE_URL`), read at startup.
-- See [`openapi-contracts`](../openapi-contracts/SKILL.md).
+- See [`openapi-contracts`](openapi-contracts.md).
 
 
 ## Go TUI — module layout
@@ -158,7 +158,7 @@ packages/<name>/                # or repo root for a standalone project
 - **Tiny `main()`, real work in `run()`.** `main()` handles OS-level concerns (exit codes, signal setup, log setup). `run()` returns `error` and is callable from tests. This is the single most common Go main-function pattern — follow it.
 - **`internal/` is your real codebase.** The Go compiler enforces that packages under `internal/` can only be imported by the parent module. You get encapsulation without annotations.
 - **`internal/ui/` is the TUI boundary.** Anything Bubbletea- or tview-specific lives here. `cmd/<slug>/main.go` imports `internal/ui` and `internal/config`; it doesn't know about `tea.Program` or `tview.Application` directly if you split well.
-- **`internal/api/` is generated.** Treat it like a dependency — regenerate, don't edit. See [`openapi-contracts`](../openapi-contracts/SKILL.md).
+- **`internal/api/` is generated.** Treat it like a dependency — regenerate, don't edit. See [`openapi-contracts`](openapi-contracts.md).
 - **Tests beside code (`_test.go`).** Co-located tests can access unexported identifiers (they're in the same package). A separate `tests/` dir forces you to export things you shouldn't. Use `foo_test.go` (same package) for unit tests, and optionally `foo_blackbox_test.go` (package `foo_test`) for tests that exercise only the public API.
 - **`pkg/` is usually empty.** Only put code there if a separate module imports it. For a TUI that nobody else imports, `pkg/` is dead space.
 

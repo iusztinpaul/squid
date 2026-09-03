@@ -1,11 +1,11 @@
 ---
 name: pre-commit-hooks
-description: Project-side git hook conventions — which framework (`pre-commit` for Python-led repos, `lefthook` for polyglot, `husky` + `lint-staged` for TS-only), what runs in `pre-commit` vs `pre-push`, the escape-hatch policy. TRIGGER when adding hooks to a freshly scaffolded project, or when retrofitting hooks into a repo that doesn't have any. SKIP for the Claude Code agent guardrails — those live in `.claude/settings.json` (see the [`git-guardrails`](../../git-guardrails/SKILL.md) skill).
+description: Project-side git hook conventions — which framework (`pre-commit` for Python-led repos, `lefthook` for polyglot, `husky` + `lint-staged` for TS-only), what runs in `pre-commit` vs `pre-push`, the escape-hatch policy. TRIGGER when adding hooks to a freshly scaffolded project, or when retrofitting hooks into a repo that doesn't have any. SKIP for Claude Code agent guardrails — those live in `.claude/settings.json`.
 ---
 
 # Pre-commit hooks
 
-Project-side hooks fire on the developer's machine **and** in CI when the same hook framework runs as a check. They catch lint/format/type errors before they hit the PR, keep the diff focused, and make `make pre-commit` a meaningful target. They are **not** the same thing as Claude Code's `PreToolUse` hooks (those block agent commands; see [`git-guardrails`](../../git-guardrails/SKILL.md)).
+Project-side hooks fire on the developer's machine **and** in CI when the same hook framework runs as a check. They catch lint/format/type errors before they hit the PR, keep the diff focused, and make `make pre-commit` a meaningful target. They are **not** the same thing as Claude Code's `PreToolUse` hooks (those block agent commands).
 
 ## When to use
 
@@ -63,7 +63,7 @@ The split exists because **fast checks belong on every commit**, **slow checks b
 - **Allowed:** when committing WIP to a personal branch they're about to rebase.
 - **Not allowed:** as standard practice. CI re-runs the same hooks; bypassing local just defers the failure.
 
-The [`git-guardrails`](../../git-guardrails/SKILL.md) skill blocks `git push --no-verify` (see Rule 3) — that's deliberate. The dev still has the local commit-time escape hatch; what they can't do is *push* unverified.
+A Claude Code `PreToolUse` hook in `.claude/settings.json` blocks agents from `git push --no-verify` — that's deliberate. The dev still has the local commit-time escape hatch; what they can't do is *push* unverified.
 
 ### Hook config lives at the repo root
 
@@ -154,4 +154,4 @@ Bootstrap: `npm i -D husky lint-staged && npx husky init`.
 - **Hooks that auto-fix without telling you.** `lint-staged` re-stages files it modified; that's fine. But a hook that silently rewrites code and lets the commit succeed produces commits with diffs the dev didn't review. Prefer `--check` modes that block; let the dev re-run the fixer explicitly.
 - **Different hook frameworks per component in one monorepo.** Pick one. The friction of "which hook runner is this folder using" exceeds whatever per-language gain you got.
 - **Skipping the install step in `make install`.** If hooks aren't installed, they don't run. New contributors must hit them on day one.
-- **Mixing project-side hooks with Claude Code agent guardrails.** Different layers, different concerns. Don't put `git push --force` blocking in `pre-push` (it would also fire for legitimate force-pushes by humans on feature branches); use [`git-guardrails`](../../git-guardrails/SKILL.md) instead.
+- **Mixing project-side hooks with Claude Code agent guardrails.** Different layers, different concerns. Don't put `git push --force` blocking in `pre-push` (it would also fire for legitimate force-pushes by humans on feature branches); use a Claude Code `PreToolUse` hook in `.claude/settings.json` instead.

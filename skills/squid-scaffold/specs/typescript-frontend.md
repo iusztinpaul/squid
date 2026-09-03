@@ -21,10 +21,10 @@ Opinionated starter for browser-targeting TypeScript packages. This is the top-l
 
 ## Decision tree
 
-- **React** → this + [`react-app`](../react-app/SKILL.md).
-- **Vue** → this + [`vue-app`](../vue-app/SKILL.md).
-- **Svelte** → this + [`svelte-app`](../svelte-app/SKILL.md).
-- **No framework** (hand-rolled) → this + [`vanilla-ts-app`](../vanilla-ts-app/SKILL.md).
+- **React** → this + [`react-app`](react-app.md).
+- **Vue** → this + [`vue-app`](vue-app.md).
+- **Svelte** → this + [`svelte-app`](svelte-app.md).
+- **No framework** (hand-rolled) → this + [`vanilla-ts-app`](vanilla-ts-app.md).
 
 Every variant uses the same `typescript-frontend` foundation below; the framework skill layers on top.
 
@@ -59,11 +59,11 @@ Every frontend package exposes the same script names so the monorepo Makefile ca
 }
 ```
 
-See [`makefile-delegator`](../makefile-delegator/SKILL.md) for how the root Makefile consumes these.
+See [`makefile-delegator`](makefile-delegator.md) for how the root Makefile consumes these.
 
 ### Layout
 
-See [`config.md`](config.md) for canonical `package.json` / `tsconfig.json` / `vite.config.ts`. Headlines:
+See [canonical configs](#typescript-frontend--canonical-configs) below for `package.json` / `tsconfig.json` / `vite.config.ts`. Headlines:
 
 ```
 packages/<name>/
@@ -87,7 +87,7 @@ Module conventions:
 
 - **One exported component per file.** `Button.tsx` exports one `Button`. Co-locate tightly-coupled subcomponents in the same file; split when another module needs them.
 - **Tests mirror `src/` 1:1.** `src/foo/Bar.tsx` → `tests/foo/Bar.test.tsx`.
-- **`src/api/` is generated** (from `packages/shared/openapi/api.yaml`) when the monorepo uses shared contracts. **Never hand-edit.** See [`openapi-contracts`](../openapi-contracts/SKILL.md).
+- **`src/api/` is generated** (from `packages/shared/openapi/api.yaml`) when the monorepo uses shared contracts. **Never hand-edit.** See [`openapi-contracts`](openapi-contracts.md).
 - **`public/`** holds static assets Vite copies verbatim. Imported assets go in `src/assets/`.
 
 ### Environment variables (security-critical)

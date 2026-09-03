@@ -45,7 +45,7 @@ uv run ruff format --check        # asserts (no write)
 uv run ruff check                 # asserts (no write)
 ```
 
-CI runs only the asserting variants — drift is a failure, not something CI should silently paper over. See [`makefile-delegator`](../makefile-delegator/SKILL.md#9-fix-before-check-ordering-manual-loop) for how this wires into `make`.
+CI runs only the asserting variants — drift is a failure, not something CI should silently paper over. See [`makefile-delegator`](makefile-delegator.md#9-fix-before-check-ordering-manual-loop) for how this wires into `make`.
 
 ### 3. Canonical `[tool.ruff]` block
 

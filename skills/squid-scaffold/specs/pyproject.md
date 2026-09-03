@@ -5,7 +5,7 @@ description: pyproject.toml opinions — `[project]` metadata, `[build-system]`,
 
 # pyproject.toml
 
-Opinionated `pyproject.toml` structure for Python packages. Pairs with [`uv-python`](../uv-python/SKILL.md) (the tool that reads it) and [`ruff-python`](../ruff-python/SKILL.md) (owns the `[tool.ruff]` block in depth).
+Opinionated `pyproject.toml` structure for Python packages. Pairs with [`uv-python`](uv-python.md) (the tool that reads it) and [`ruff-python`](ruff-python.md) (owns the `[tool.ruff]` block in depth).
 
 ## When to use
 
@@ -22,7 +22,7 @@ Opinionated `pyproject.toml` structure for Python packages. Pairs with [`uv-pyth
 
 ## Canonical skeleton
 
-See [`canonical.md`](canonical.md) for a full reference file. Headline structure:
+See the [canonical `pyproject.toml`](#canonical-pyprojecttoml-python-backend) below for a full reference file. Headline structure:
 
 ```toml
 [build-system]
@@ -75,7 +75,7 @@ Expose CLIs as entry points so `uv run <cli-name>` works without specifying the 
 my-cli = "my_pkg.cli:main"
 ```
 
-After `uv sync`, users run `uv run my-cli --help`. See [`cli-tool-python`](../cli-tool-python/SKILL.md) for the CLI conventions themselves.
+After `uv sync`, users run `uv run my-cli --help`. See [`cli-tool-python`](cli-tool-python.md) for the CLI conventions themselves.
 
 ### `[dependency-groups]` (PEP 735)
 
@@ -101,11 +101,11 @@ Additional groups (`docs`, `type`, etc.) are fine — install per-group via `uv 
 packages = ["src/my_pkg"]
 ```
 
-Declares the src/ layout to hatchling. Non-negotiable when your source is under `src/` (which it should be — see [`python-backend/layout`](../python-backend/layout.md)).
+Declares the src/ layout to hatchling. Non-negotiable when your source is under `src/` (which it should be — see [`python-backend/layout`](python-backend.md)).
 
 ### `[tool.ruff]`
 
-Full config in [`ruff-python`](../ruff-python/SKILL.md). Headline: `target-version` pinned to the same Python minor as `requires-python` (e.g. `py312`).
+Full config in [`ruff-python`](ruff-python.md). Headline: `target-version` pinned to the same Python minor as `requires-python` (e.g. `py312`).
 
 ### `[tool.pytest.ini_options]`
 
@@ -153,9 +153,9 @@ install:
 
 ## Cross-references
 
-- [`uv-python`](../uv-python/SKILL.md) — how `uv` reads this file and what `uv add/sync/build/publish` do.
-- [`ruff-python`](../ruff-python/SKILL.md) — the full `[tool.ruff]` block.
-- [`python-backend`](../python-backend/SKILL.md) — the broader package layout.
+- [`uv-python`](uv-python.md) — how `uv` reads this file and what `uv add/sync/build/publish` do.
+- [`ruff-python`](ruff-python.md) — the full `[tool.ruff]` block.
+- [`python-backend`](python-backend.md) — the broader package layout.
 
 
 ## Canonical `pyproject.toml` (Python backend)

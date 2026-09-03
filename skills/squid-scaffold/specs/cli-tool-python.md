@@ -5,7 +5,7 @@ description: Python CLI tool conventions — Click/typer choice, entry points in
 
 # Python CLI tool
 
-Opinionated starter for Python command-line tools. Builds on [`python-backend`](../python-backend/SKILL.md) (layout, logging, types, testing) and [`pyproject`](../pyproject/SKILL.md) (entry-point config).
+Opinionated starter for Python command-line tools. Builds on [`python-backend`](python-backend.md) (layout, logging, types, testing) and [`pyproject`](pyproject.md) (entry-point config).
 
 ## When to use
 
@@ -14,17 +14,17 @@ Opinionated starter for Python command-line tools. Builds on [`python-backend`](
 
 ## When NOT to use
 
-- Library-only packages (no `__main__`) — just use [`python-backend`](../python-backend/SKILL.md).
-- HTTP APIs — use [`fastapi-service`](../fastapi-service/SKILL.md).
-- MCP servers — use [`fastmcp-server`](../fastmcp-server/SKILL.md).
-- One-off scripts — those live under `scripts/` per [`python-backend`](../python-backend/SKILL.md), not a framework-wrapped CLI.
+- Library-only packages (no `__main__`) — just use [`python-backend`](python-backend.md).
+- HTTP APIs — use [`fastapi-service`](fastapi-service.md).
+- MCP servers — use [`fastmcp-server`](fastmcp-server.md).
+- One-off scripts — those live under `scripts/` per [`python-backend`](python-backend.md), not a framework-wrapped CLI.
 
 ## Decision tree
 
 - Simple flag/arg parsing, no nested subcommands → `argparse` (stdlib, no dep).
 - Nested subcommands, rich `--help`, shell completion → **Click** (default choice).
 - Heavy type-hint-driven API, FastAPI-style dev experience → `typer` (wraps Click with better annotations).
-- Full interactive UI → wrong spec; look at `textual` or [`go-tui`](../go-tui/SKILL.md).
+- Full interactive UI → wrong spec; look at `textual` or [`go-tui`](go-tui.md).
 
 ## Canonical principles
 
@@ -37,11 +37,11 @@ Never rely on `python -m my_pkg.cli` for user-facing invocation. Declare the scr
 my-tool = "my_pkg.cli:cli"
 ```
 
-Users install the package and get `my-tool` on their PATH. `uv run my-tool` works inside the project venv. See [`pyproject`](../pyproject/SKILL.md) for the full file shape.
+Users install the package and get `my-tool` on their PATH. `uv run my-tool` works inside the project venv. See [`pyproject`](pyproject.md) for the full file shape.
 
 ### 2. `init_logger()` at module level, before any project import
 
-Same rule as [`python-backend`](../python-backend/SKILL.md#logging-first-init_logger-at-module-level):
+Same rule as [`python-backend`](python-backend.md#logging-first-init_logger-at-module-level):
 
 ```python
 ## src/my_pkg/cli.py
@@ -88,7 +88,7 @@ Always `raise click.exceptions.Exit(code=N)` — never `sys.exit(N)` — so Clic
 
 ### 5. Config via the project's settings module, not Click env-var magic
 
-Click offers `envvar=` and `auto_envvar_prefix`. Don't use them in this project. Env-var-driven config goes through [`python-backend`](../python-backend/SKILL.md#config-via-pydantic-settings)'s `config/settings.py` (pydantic-settings). Single source of truth for env vars; the CLI reads from `settings`.
+Click offers `envvar=` and `auto_envvar_prefix`. Don't use them in this project. Env-var-driven config goes through [`python-backend`](python-backend.md#config-via-pydantic-settings)'s `config/settings.py` (pydantic-settings). Single source of truth for env vars; the CLI reads from `settings`.
 
 ```python
 from my_pkg.config import settings

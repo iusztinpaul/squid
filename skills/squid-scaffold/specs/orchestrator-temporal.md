@@ -7,7 +7,7 @@ description: Temporal as the project's orchestrator — workflows, activities, w
 
 > **Stub — not yet written.** Flesh out as usage patterns reveal opinions worth capturing.
 
-See [`python-backend`](../python-backend/SKILL.md#pipelines-serving-and-triggering-orchestrator-ergonomics) for the generic serve-worker-in-background + trigger-via-make pattern this spec specialises.
+See [`python-backend`](python-backend.md#pipelines-serving-and-triggering-orchestrator-ergonomics) for the generic serve-worker-in-background + trigger-via-make pattern this spec specialises.
 
 ## When to use
 

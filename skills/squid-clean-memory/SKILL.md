@@ -95,9 +95,7 @@ Anything off: revert that commit, do not "fix forward".
 
 ## Step 7 — Hand-off
 
-Report `wc -w` before → after per file. Then ask the user to run `/checkup` (Claude Code only — a
-built-in you cannot invoke): it dedupes local memory against checked-in files and flags unused
-always-loaded guidance, catching what this pass missed.
+Report `wc -w` before → after per file.
 
 ## Notes on shape
 

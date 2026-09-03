@@ -171,8 +171,7 @@ If github-actions chosen:
 
 If agent team + tracker chosen:
 
-- `tasks/README.md` describing the one-file-per-task model (`tasks/<NNN>-<slug>.md` with a `status:` frontmatter field — `pending` / `in-progress` / `done` — and a `feature:` field). State lives in the frontmatter, not the filename; on completion the file is `git mv`'d into `tasks/done/`, so the top level of `tasks/` lists only open work (pending + in-progress) and `NNN` is allocated by scanning both `tasks/` and `tasks/done/`. (The agent-team lifecycle + cross-cutting rules are baked into the generated `AGENTS.md` from `AGENTS_TEMPLATE.md` — there is no separate `docs/PROCESS.md`.)
-- `.claude/` plugin assets (the squid agents/skills themselves) — only if the user isn't installing the plugin globally; otherwise skip (the global install provides them). This is separate from the `.claude/skills` symlink in the Always block, which points at *project-local* skills under `.agents/skills/` and is always created.
+- `tasks/README.md` describing the one-file-per-task model (`tasks/<NNN>-<slug>.md` with a `status:` frontmatter field — `pending` / `in-progress` / `done` — and a `feature:` field). State lives in the frontmatter, not the filename; on completion the file is `git mv`'d into `tasks/done/`, so the top level of `tasks/` lists only open work (pending + in-progress) and `NNN` is allocated by scanning both `tasks/` and `tasks/done/`.
 
 If `adr` chosen (Process & documentation):
 

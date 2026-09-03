@@ -20,7 +20,7 @@ Opinionated layout for a monorepo holding a Python backend + TypeScript web fron
 
 ## Canonical layout
 
-See [`tree.md`](tree.md) for the annotated tree. Headline:
+See the [annotated tree](#monorepo--annotated-tree) below. Headline:
 
 ```
 <repo-root>/
@@ -80,15 +80,15 @@ Create `packages/shared/` only when a backend + at least one frontend both consu
 - `Makefile` — `validate`, `gen-python`, `gen-ts`, `gen-go`, `gen-all`.
 - Nothing else. No runtime code, no TypeScript, no Python.
 
-See [`openapi-contracts`](../openapi-contracts/SKILL.md) for the codegen workflow.
+See [`openapi-contracts`](openapi-contracts.md) for the codegen workflow.
 
 ### 4. Root holds orchestration, not code
 
 Root-level files are infrastructure / coordination:
 
-- `Makefile` — delegator (see [`makefile-delegator`](../makefile-delegator/SKILL.md)).
+- `Makefile` — delegator (see [`makefile-delegator`](makefile-delegator.md)).
 - `docker-compose.yml` — local dev stack.
-- `.github/workflows/` — CI (see [`github-actions-monorepo`](../github-actions-monorepo/SKILL.md)).
+- `.github/workflows/` — CI (see [`github-actions-monorepo`](github-actions.md)).
 - `.pre-commit-config.yaml` — git hooks.
 - `.env.example` — *cross-cutting* env vars (DB URL, LLM API keys). Component-local env vars live in `packages/<c>/.env.example`.
 - `AGENTS.md` — repo-level brief, the single source of truth; `CLAUDE.md` — a symlink to it (`I4`). `README.md` — user-facing docs.
@@ -98,7 +98,7 @@ No source code at root. No `src/` at root. If code exists that doesn't belong to
 
 ### 5. Component boundaries = uniform Makefile target set
 
-Every component exposes the same verbs (see [`makefile-delegator`](../makefile-delegator/SKILL.md)). The root Makefile composes them. A component that "can't" expose `lint-check` or `format-check` is the wrong shape — either fix its tooling or revisit whether it belongs as a component.
+Every component exposes the same verbs (see [`makefile-delegator`](makefile-delegator.md)). The root Makefile composes them. A component that "can't" expose `lint-check` or `format-check` is the wrong shape — either fix its tooling or revisit whether it belongs as a component.
 
 ### 6. Cross-component dependencies flow through `shared/`, not direct imports
 
@@ -116,8 +116,8 @@ Each `packages/<c>/` has its own `AGENTS.md` describing that component's scope, 
 
 1. **Pick the name.** Language-and-role specific (`worker-python`, `mobile-rn`, `infra-terraform`).
 2. **Create `packages/<name>/`** with the standard skeleton for that language (see the relevant `python-backend` / `typescript-frontend` / `go-tui` skill).
-3. **Wire the Makefile.** Add per-component and aggregate targets in the root Makefile (see [`makefile-delegator`](../makefile-delegator/SKILL.md)).
-4. **Wire CI.** Add a per-component workflow dispatched from `ci.yml` via `dorny/paths-filter` (see [`github-actions-monorepo`](../github-actions-monorepo/SKILL.md)).
+3. **Wire the Makefile.** Add per-component and aggregate targets in the root Makefile (see [`makefile-delegator`](makefile-delegator.md)).
+4. **Wire CI.** Add a per-component workflow dispatched from `ci.yml` via `dorny/paths-filter` (see [`github-actions-monorepo`](github-actions.md)).
 5. **Wire docker-compose** if the component has a runtime.
 6. **Write `packages/<name>/AGENTS.md`** and symlink `CLAUDE.md` to it (`ln -s AGENTS.md CLAUDE.md`).
 7. **Update root `AGENTS.md`** to list the new component.
@@ -181,7 +181,7 @@ Full canonical tree for a `backend` + `frontend-web` + `frontend-tui` + `shared`
     ├── backend/                          # See python-backend, fastapi-service, cli-tool-python.
     │   ├── pyproject.toml                # See pyproject skill.
     │   ├── Makefile
-    │   ├── Dockerfile                    # See docker-slim.
+    │   ├── Dockerfile                    # See docker.md.
     │   ├── .dockerignore
     │   ├── .env.example                  # COMPONENT-LOCAL env vars.
     │   ├── AGENTS.md                     # Backend-specific brief — the source of truth.

@@ -5,7 +5,7 @@ description: FastMCP server conventions — tool and prompt design, session life
 
 # FastMCP server
 
-Opinionated FastMCP server structure. Builds on [`python-backend`](../python-backend/SKILL.md) — same `src/` layout, same logging discipline, same testing conventions.
+Opinionated FastMCP server structure. Builds on [`python-backend`](python-backend.md) — same `src/` layout, same logging discipline, same testing conventions.
 
 ## When to use
 
@@ -14,8 +14,8 @@ Opinionated FastMCP server structure. Builds on [`python-backend`](../python-bac
 
 ## When NOT to use
 
-- Non-MCP HTTP APIs — use [`fastapi-service`](../fastapi-service/SKILL.md).
-- Plain Python CLIs — use [`cli-tool-python`](../cli-tool-python/SKILL.md).
+- Non-MCP HTTP APIs — use [`fastapi-service`](fastapi-service.md).
+- Plain Python CLIs — use [`cli-tool-python`](cli-tool-python.md).
 - Projects using the lower-level `mcp` SDK directly. FastMCP is the opinionated wrapper; if you're hand-rolling session lifecycle, you've outgrown this spec.
 
 ## Decision tree
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     mcp.run()                                    # stdio by default
 ```
 
-Same rule as [`python-backend`](../python-backend/SKILL.md): `init_logger()` at module level, before FastMCP or any project import. FastMCP logs on import; if the logger isn't set up first, those lines bypass your formatter.
+Same rule as [`python-backend`](python-backend.md): `init_logger()` at module level, before FastMCP or any project import. FastMCP logs on import; if the logger isn't set up first, those lines bypass your formatter.
 
 ### 2. Tool naming: `verb_noun`, snake_case
 
@@ -137,7 +137,7 @@ Tool modules import `mcp` from `mcp_server` and register via `@mcp.tool()` at im
 
 - **Unit-test the tool body directly** (`await search_documents(SearchArgs(query="x"))`). No FastMCP runtime needed; mirrors the pattern in [`squid-testing-python`](../../squid-testing-python/SKILL.md).
 - **Integration-test the full session** via FastMCP's test client (`async with Client(mcp) as client: ...`).
-- Don't unit-test the FastMCP framework itself — infrastructure belongs in integration tests only (see [`python-backend`](../python-backend/SKILL.md#testing-discipline-reminder)).
+- Don't unit-test the FastMCP framework itself — infrastructure belongs in integration tests only (see [`python-backend`](python-backend.md#testing-discipline-reminder)).
 
 ## Anti-patterns
 
@@ -145,5 +145,5 @@ Tool modules import `mcp` from `mcp_server` and register via `@mcp.tool()` at im
 - **Bare `dict` / `Any` arguments.** Defeats schema generation; LLM loses structural guidance.
 - **Silent success on partial failure.** A tool that returns `[]` when a backend is down looks like "no results" to the LLM. Return a structured error instead.
 - **Opening a new DB connection per tool call.** Use `lifespan`; FastMCP runs one process.
-- **Logging via `print`.** Same rule as [`python-backend`](../python-backend/SKILL.md) — use the project logger.
+- **Logging via `print`.** Same rule as [`python-backend`](python-backend.md) — use the project logger.
 - **Registering tools inside functions the runtime never calls.** `@mcp.tool()` must execute at import time; otherwise the tool silently disappears from the schema.

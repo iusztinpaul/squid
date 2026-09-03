@@ -12,37 +12,37 @@ Every rule here is enforceable by the `tester` agent — when the code violates 
 ## When to use
 
 - Writing or modifying Python backend code (services, pipelines, libraries).
-- Adding a new Python package to an existing monorepo (under `packages/<name>/` — see [`monorepo-layout`](../monorepo-layout/SKILL.md)).
+- Adding a new Python package to an existing monorepo (under `packages/<name>/` — see [`monorepo-layout`](monorepo-layout.md)).
 - Bootstrapping a Python repo from scratch.
 
 ## When NOT to use
 
-- One-off scripts that live outside any package structure — put them at the repo root as `script_name.py` with a shebang.
+- One-off scripts that live outside any package structure — put them under `scripts/` (see Layout).
 - Jupyter notebooks — they have their own discipline (reproducibility, output cleaning) and this skill doesn't cover it.
-- Non-Python projects — use [`typescript-frontend`](../typescript-frontend/SKILL.md) or [`go-tui`](../go-tui/SKILL.md) instead.
+- Non-Python projects — use [`typescript-frontend`](typescript-frontend.md) or [`go-tui`](go-tui.md) instead.
 
 ## Decision tree
 
-- Building an **HTTP API** → this + [`fastapi-service`](../fastapi-service/SKILL.md).
-- Building an **MCP server** → this + [`fastmcp-server`](../fastmcp-server/SKILL.md).
-- Building a **CLI tool** → this + [`cli-tool-python`](../cli-tool-python/SKILL.md).
+- Building an **HTTP API** → this + [`fastapi-service`](fastapi-service.md).
+- Building an **MCP server** → this + [`fastmcp-server`](fastmcp-server.md).
+- Building a **CLI tool** → this + [`cli-tool-python`](cli-tool-python.md).
 - **Library only** (importable, no server, no CLI) → just this skill.
-- Any of the above — also pull [`uv-python`](../uv-python/SKILL.md), [`pyproject`](../pyproject/SKILL.md), [`ruff-python`](../ruff-python/SKILL.md), [`squid-testing-python`](../squid-testing-python/SKILL.md).
+- Any of the above — also pull [`uv-python`](uv-python.md), [`pyproject`](pyproject.md), [`ruff-python`](ruff-python.md), [`squid-testing-python`](../../squid-testing-python/SKILL.md).
 
 ## Canonical principles
 
 ### Versions & tooling
 
 - **Python 3.12 minimum.** Default to the latest stable the team is using (3.13+ is fine).
-- **Package manager:** [`uv`](../uv-python/SKILL.md) only. Never pip, poetry, or conda in project code.
-- **Formatter + linter:** [`ruff`](../ruff-python/SKILL.md). Never black / flake8 / isort / pylint.
-- **Build backend:** `hatchling` — see [`pyproject`](../pyproject/SKILL.md) for the `[build-system]` block.
-- **Testing:** `pytest` + `pytest-asyncio` + `pytest-mock`. Full conventions live in [`squid-testing-python`](../squid-testing-python/SKILL.md).
+- **Package manager:** [`uv`](uv-python.md) only. Never pip, poetry, or conda in project code.
+- **Formatter + linter:** [`ruff`](ruff-python.md). Never black / flake8 / isort / pylint.
+- **Build backend:** `hatchling` — see [`pyproject`](pyproject.md) for the `[build-system]` block.
+- **Testing:** `pytest` + `pytest-asyncio` + `pytest-mock`. Full conventions live in [`squid-testing-python`](../../squid-testing-python/SKILL.md).
 - **Typing:** stdlib generics (PEP 585) — `list[int]`, `dict[str, Foo]`, never `typing.List`.
 
 ### Layout
 
-These realise a **loose clean architecture**: infrastructure / serving / app / domain logic stay decoupled, but pragmatically — actionability over layer dogma. See [`layout.md`](layout.md) for the full tree, rationale, and anti-patterns. Headlines:
+These realise a **loose clean architecture**: infrastructure / serving / app / domain logic stay decoupled, but pragmatically — actionability over layer dogma. See [module layout](#python-backend--module-layout) below for the full tree, rationale, and anti-patterns. Headlines:
 
 - Source under `src/<package_name>/`; **never** at the project root.
 - Tests under `tests/{unit,integration}/` mirroring `src/` 1:1.
@@ -54,7 +54,7 @@ These realise a **loose clean architecture**: infrastructure / serving / app / d
 
 ### Discipline (non-negotiable)
 
-See [`discipline.md`](discipline.md) for rationale and concrete examples. Rules:
+See [discipline](#python-backend--discipline) below for rationale and concrete examples. Rules:
 
 - **Datetimes are timezone-aware, UTC by default.** Reject naive `datetime` objects at every system boundary. Type them explicitly.
 - **Type-annotate everything** — parameters, return types (including `-> None`), class attributes, module-level variables where inference is non-obvious.
@@ -63,7 +63,7 @@ See [`discipline.md`](discipline.md) for rationale and concrete examples. Rules:
 - **Pipelines are idempotent, retryable, and checkpointed.** If a run is killed halfway, re-running it is either a no-op or resumes from the last checkpoint.
 - **Async for I/O, sync for CPU.** Mix only where a profile justifies it.
 
-### Testing (headline; see [`squid-testing-python`](../squid-testing-python/SKILL.md) for depth)
+### Testing (headline; see [`squid-testing-python`](../../squid-testing-python/SKILL.md) for depth)
 
 - `tests/` mirrors `src/` 1:1.
 - Files `test_*.py`, functions `test_*`.
