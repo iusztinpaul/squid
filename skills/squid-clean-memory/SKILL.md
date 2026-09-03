@@ -89,7 +89,10 @@ Anything off: revert that commit, do not "fix forward".
 
 ## Step 7 — Hand-off
 
-Report `wc -w` before → after per file.
+Report `wc -w` before → after per file. Then ask the user to run `/doctor` (Claude Code only — a
+built-in you cannot invoke): Step 1 scopes this pass to tracked files, so the always-loaded
+local ones — `~/.claude/CLAUDE.md`, `CLAUDE.local.md` — are never reached here; `/doctor`
+dedupes those against the checked-in set.
 
 ## Notes on shape
 
