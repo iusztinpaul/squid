@@ -31,7 +31,7 @@ If `$ARGUMENTS` is empty, ask the human for the feature (free-form, path, or tra
 
 ## Step 1 — Grill the spec (Human ↔ /squid-grilling)
 
-Before grooming, sharpen the raw spec with the human. **Invoke the `squid-grilling` skill** — interview the human relentlessly, one question at a time with a recommended answer, until scope, edge cases, non-goals, constraints, and any decisions that warrant an ADR are clear. Anything answerable by reading the codebase — explore instead of asking. The output is a **grilled spec**; carry it into Step 2.
+Before grooming, sharpen the raw spec with the human. **Invoke the `squid-grilling` skill** — interview the human relentlessly, one question at a time with a recommended answer, until scope, edge cases, non-goals, constraints, and any decisions that warrant an ADR are clear. Anchor the questions in what already exists: read `docs/adr/` (settled decisions — don't re-open them) and `docs/glossary.md` (use its terms; flag any the spec uses differently) when present, and use the context7 plugin for authoritative library/API facts. Anything answerable by reading the codebase or those sources — explore instead of asking. The output is a **grilled spec**; carry it into Step 2.
 
 ---
 
