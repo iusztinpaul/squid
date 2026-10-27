@@ -4,7 +4,7 @@ This repo **is** a Claude Code plugin. The contract layer is markdown — agents
 
 Consumers install it two ways:
 
-1. `/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul` — global, all Claude Code sessions. The repo is a one-plugin marketplace (`.claude-plugin/marketplace.json`) named `iusztinpaul` (the GitHub account) cataloguing the `squid` plugin (the repo). The plugin's `source` is `./` — the plugin *is* the marketplace repo, so Claude Code resolves it from the marketplace checkout instead of re-cloning. Same shape as caveman, ponytail, and the official marketplace.
+1. `/plugin marketplace add iusztinpaul/squid && /plugin install squid@iusztinpaul` — global, all Claude Code sessions. The repo is a one-plugin marketplace (`.claude-plugin/marketplace.json`) named `iusztinpaul` (the GitHub account) cataloguing the `squid` plugin (the repo). The plugin's `source` is `./` — the plugin *is* the marketplace repo, so Claude Code resolves it from the marketplace checkout instead of re-cloning. Same shape as the official marketplace.
 2. `claude --plugin-dir /path/to/squid` — for plugin-development sessions only; loads the plugin from the working tree without registering or installing anything.
 
 Either way they get an opinionated agent team plus a `/squid-scaffold` flow that bootstraps new repos from a light spec library.
@@ -55,15 +55,6 @@ The directory layout is what Claude Code's plugin loader expects natively: `agen
 - **Editing scaffold rules** — edit `skills/squid-scaffold/rules.md`, the single source of truth that both `/squid-scaffold` modes (`create` + `evaluate`) consume. `SKILL.md` and `AGENTS_TEMPLATE.md` only reference rule IDs — never re-inline a rule into them.
 - **Editing the lifecycle** — the pipeline is defined by the skills (`squid-plan` / `squid-implement-task` / `squid-implement-night` / `squid-review` / `squid-review-ci`) and the agent contracts. Cross-cutting rules + the pipeline map live in `skills/squid-scaffold/AGENTS_TEMPLATE.md`, which `/squid-scaffold` bakes into each project's `AGENTS.md`.
 - **Don't add language-specific build systems for the plugin contract** (no `pyproject.toml`, no `Makefile`, no `tests/`).
-
-## Companion plugin: caveman (optional)
-
-Squid integrates with [caveman](https://github.com/JuliusBrussee/caveman) as an **optional** companion — a separate Claude Code plugin (`/plugin marketplace add JuliusBrussee/caveman && /plugin install caveman@caveman`). When it's installed Squid delegates to it at four touchpoints; when it's absent every touchpoint falls back to native behavior (mirroring the existing `commit-commands` pattern). Keep it optional — never make Squid hard-depend on it, and phrase each hook as "if the caveman plugin is installed…".
-
-- **Commits** → `/caveman-commit` — `agents/software-engineer.md` (Commit section).
-- **Reviews** → PR-Reviewer posts one-line `/caveman-review` comments on the PR, on top of the rollup — `agents/pr-reviewer.md` (Step 3b). The rollup stays the machine-readable routing artifact.
-- **Memory compression** → `/caveman-compress` — offered by `/squid-scaffold` on the `AGENTS.md` it generates, run by `/squid-clean-memory` before de-duplicating, and by `/squid-clean-harness` for its wording pass.
-- **Shorter replies** → caveman's own `SessionStart` hook; no Squid wiring. User-facing docs live in `README.md`; downstream projects learn of it via `AGENTS_TEMPLATE.md`.
 
 ## Spec-writing style (for `squid-scaffold/specs/`)
 

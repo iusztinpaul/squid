@@ -258,7 +258,7 @@ EOF
 ```
 
 Commit message rules:
-- **Subject MUST start with a Conventional Commits type prefix** followed by `: ` — `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `perf:`, `build:`, `ci:`, `style:`. The feature branch keeps per-task commits and the human squash-merges via GitHub at the end; the prefixes make the auto-generated squash-commit body read as a clean changelog.
+- **Follow [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):** `type(optional-scope): description`, with `!` after the type/scope plus a `BREAKING CHANGE:` footer for breaking changes. Types: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `perf:`, `build:`, `ci:`, `style:`. The feature branch keeps per-task commits and the human squash-merges via GitHub at the end; the prefixes make the auto-generated squash-commit body read as a clean changelog.
 - Subject after the prefix: short imperative ("Add user pagination" not "Added user pagination"). Keep under ~72 characters.
 - Blank line, then the task reference:
   - `Closes #N` — closes the GitHub issue.
@@ -266,8 +266,6 @@ Commit message rules:
   - **File mode:** use `Closes-task: NNN-{slug}` (and archive the task in the same commit — see below).
 - Every commit MUST reference a task ID — this is how the On-Call Engineer traces CI failures back to the responsible task.
 - **Do not squash locally.** Each task is its own commit. The orchestrator never squashes; the human uses GitHub's "Squash and merge" button.
-
-If a commit-message generator is available, **always** use it instead of hand-crafting the message: prefer `/caveman-commit` when the caveman plugin is installed (Conventional Commits, ≤50-char subject, why-over-what — it already matches the rules above), otherwise a `commit-commands` plugin/skill. The generator is the canonical source of the message and is required, not optional, whenever one is present.
 
 **File mode** — also mark the task done and archive it:
 ```bash

@@ -29,12 +29,12 @@ Discover the set with `git ls-files '*AGENTS.md' '*CLAUDE.md'` (tracked files on
 stay out), narrow to `$ARGUMENTS` if given, and collapse symlink pairs. The files must be clean in
 git.
 
-## Step 2 — Compress wording (caveman pass)
+## Step 2 — Compress wording
 
-If the caveman plugin is installed, ask, then run `/caveman-compress <file>` on each file in the set
-and commit the pass as one commit (code, paths, and URLs are byte-preserved). Compress before cutting:
-normalised wording turns reworded duplicates into literal ones. Not installed → skip; the cuts below
-still shrink the files, just without the wording-level pass.
+Rewrite each line in the fewest words that keep its meaning — drop filler, hedges, and pleasantries
+("Please make sure to always run the tests" → "Run the tests"); keep code, paths, and URLs
+byte-identical. Commit the pass as one commit. Compress before cutting: normalised wording turns
+reworded duplicates into literal ones.
 
 ## Step 3 — Apply the keep/delete test
 

@@ -49,9 +49,9 @@ Each component's manifest ({`pyproject.toml`}{ / `package.json`}{ / `go.mod`}) a
 
 ## Access Documentation
 
-Use the `context7` MCP server (when connected) to look up authoritative usage for any dependency or external service in this project; falls back to web search otherwise.
+Look up authoritative usage for any dependency or external service in this project in its official docs.
 
-{Emit the block below only if the user named one or more `llms.txt`-publishing tools at scaffold time (rules.md P5); otherwise omit it entirely and rely on `context7` alone.}
+{Emit the block below only if the user named one or more `llms.txt`-publishing tools at scaffold time (rules.md P5); otherwise omit it entirely.}
 
 **Reference docs (`llms.txt` — fetch on demand).** Each link below is an *index* of doc pages. Fetch the index first, then fetch only the specific page(s) you need. Do **not** pull whole `llms-full.txt` files into context unless a task truly requires the full reference.
 
@@ -103,8 +103,6 @@ This project uses the **squid** agent team (`/plugin marketplace add iusztinpaul
 ```
 
 Engineering discipline — TDD-first, branch off the active branch, run the feature end-to-end before hand-off, regression-test-first for bugs, the format/lint/unit/integration cadence — lives in the squid `software-engineer` + `tester` agent contracts and is enforced automatically by the pipelines.
-
-**Optional — caveman.** If the [caveman](https://github.com/JuliusBrussee/caveman) plugin is installed, the SWE writes each commit with `/caveman-commit`, the PR-Reviewer posts one-line `/caveman-review` comments on the PR (on top of its rollup), and you can shrink this file with `/caveman-compress AGENTS.md` to cut per-session tokens. Everything works without it — the integrations fall back to native behavior.
 
 **Tracker:** `TRACKER_MODE: file` *(or `gh` for GitHub Issues)*. File mode: one `tasks/<NNN>-<slug>.md` per task, `status:` frontmatter, done tasks move to `tasks/done/` — full model in [`tasks/README.md`](tasks/README.md).
 

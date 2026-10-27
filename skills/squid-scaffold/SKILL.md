@@ -104,8 +104,6 @@ Skip any row where the user picked `none` / `other`. `Read` each selected spec e
 
 Write the project's root memory file from the canonical template in [`AGENTS_TEMPLATE.md`](AGENTS_TEMPLATE.md) (the template body and section structure). Compose it following the `I#` artifact invariants in [`rules.md`](rules.md). Read both end-to-end, then emit a tailored `AGENTS.md` at the target project root (or wherever `/squid-scaffold` was invoked).
 
-**Optional — compress with caveman.** If the caveman plugin is installed, offer to run `/caveman-compress AGENTS.md` on the composed file (ask first — the result is terser to hand-edit). Skip silently when caveman isn't installed.
-
 ### 4. Create the folder skeleton
 
 Create these files / directories, **empty or with minimal placeholders** (`P1`).

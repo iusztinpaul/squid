@@ -86,7 +86,7 @@ Agent(
 Agent(
   subagent_type="squid:software-engineer",
   prompt="""Tester PASSED task {ID}. {Working directory: {path}.} Commit JUST this task per your Commit section
-  (generator, specific files, task reference, file-mode `status: done` + `git mv` to tasks/done/). DO NOT push."""
+  (Conventional Commits message, specific files, task reference, file-mode `status: done` + `git mv` to tasks/done/). DO NOT push."""
 )
 ```
 

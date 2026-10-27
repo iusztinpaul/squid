@@ -88,5 +88,3 @@ where.
 ## Notes on shape
 
 - **Removing beats rewriting.** Prefer deleting a paragraph to shortening it.
-- If the caveman plugin is installed, run this first and `/caveman-compress` after — this decides what
-  exists, that compresses wording.

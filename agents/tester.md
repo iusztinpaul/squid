@@ -68,7 +68,7 @@ make integration-tests
 
 Capture exit codes and counts. If a command fails, that's part of the verdict.
 
-**If the `code-review` plugin is enabled** in `.claude/settings.json`, invoke it now as an additional signal. Read its findings and fold them into your review: genuine defects become FAILs (record them in the verdict); suggestions become "PASS with note" items in the QA report. The plugin is **advisory** — it doesn't replace the manual checklist below and its blessing alone doesn't earn a PASS — but when present it is **not skippable**, because it catches regressions the checklist can miss.
+**Then code-review the diff.** Re-read `git diff` hunting correctness bugs the suite can miss — e.g. an off-by-one in a loop bound, an unhandled `None` return, a caller left on a changed signature, a file handle never closed. Each confirmed defect is a FAIL (record it in the verdict); style suggestions become "PASS with note" items in the QA report. Not skippable.
 
 ### 3b. E2E adversarial QA pass — your headline duty
 

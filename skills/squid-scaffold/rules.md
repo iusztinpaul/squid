@@ -26,7 +26,7 @@ If the target already has an `AGENTS.md` / `CLAUDE.md`, or a `packages/<c>/` for
 *Why:* specs are shared canon; a consumer project must not fork them silently.
 
 ### P5 — Ask which tools get `llms.txt` reference links
-During create, ask the user which tools / frameworks / external services this project uses that publish an `llms.txt`, and collect each one's index URL. Render them into the `AGENTS.md` "Access Documentation" section per [`AGENTS_TEMPLATE.md`](AGENTS_TEMPLATE.md); everything the user doesn't name is covered by the `context7` fallback already in that section.
+During create, ask the user which tools / frameworks / external services this project uses that publish an `llms.txt`, and collect each one's index URL. Render them into the `AGENTS.md` "Access Documentation" section per [`AGENTS_TEMPLATE.md`](AGENTS_TEMPLATE.md); everything the user doesn't name falls back to its official docs, per that section.
 *Why:* an `llms.txt` index is the cheapest authoritative doc source, but only the user knows which of their tools publish one and at what URL — guessing ships dead links, and skipping the question loses the cheap path. (Format, e.g.: `**Modal:** https://modal.com/llms.txt`, not a vague "the Modal docs".)
 
 ## Artifact invariants (checkable)

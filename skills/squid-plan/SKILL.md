@@ -31,7 +31,7 @@ If `$ARGUMENTS` is empty, ask the human for the feature (free-form, path, or tra
 
 ## Step 1 — Grill the spec (Human ↔ /squid-grilling)
 
-Before grooming, sharpen the raw spec with the human. **Invoke the `squid-grilling` skill** — interview the human relentlessly, in rounds of up to 5 questions, each with a recommended answer, until scope, edge cases, non-goals, constraints, and any decisions that warrant an ADR are clear. Anchor the questions in what already exists: read `docs/adr/` (settled decisions — don't re-open them) and `docs/glossary.md` (use its terms; flag any the spec uses differently) when present, and use the context7 plugin for authoritative library/API facts. Anything answerable by reading the codebase or those sources — explore instead of asking. The output is a **grilled spec**; carry it into Step 2.
+Before grooming, sharpen the raw spec with the human. **Invoke the `squid-grilling` skill** — interview the human relentlessly, in rounds of up to 5 questions, each with a recommended answer, until scope, edge cases, non-goals, constraints, and any decisions that warrant an ADR are clear. Anchor the questions in what already exists: read `docs/adr/` (settled decisions — don't re-open them) and `docs/glossary.md` (use its terms; flag any the spec uses differently) when present, and the official docs for authoritative library/API facts. Anything answerable by reading the codebase or those sources — explore instead of asking. The output is a **grilled spec**; carry it into Step 2.
 
 ---
 
@@ -49,7 +49,7 @@ Agent(
   Also draft: (a) any new docs/glossary.md terms, and (b) IF the feature warrants non-obvious architectural decisions,
   ONE proposed ADR for the WHOLE feature per your ADR rule.
   DO NOT WRITE ANYTHING TO DISK — hand everything back as drafts; the human approves and the orchestrator writes them.
-  Use the context7 plugin for authoritative library/API usage wherever the feature touches an external framework.
+  Check the official docs for authoritative library/API usage wherever the feature touches an external framework.
   Return: (1) the ordered task files with their full content, (2) the glossary additions (or 'none'), (3) the proposed
   ADR draft (or 'none')."""
 )

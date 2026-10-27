@@ -63,10 +63,8 @@ agents too: delete only defaults universal to whatever loads the skill; flag the
 ones. Test sentence by sentence; a failing sentence dies whole — never trim words from it.
 
 **Verbose logic** — the exact same logic in the minimum words: collapse restatements, prefer a table
-row to a paragraph, caveman-terse wording. Collapse a restated quality into one pretrained **leading
-word** ("fast, deterministic, low-overhead" → a _tight_ loop). If
-the caveman plugin is installed, `/caveman-compress` per file is a good first draft — re-check
-afterwards that the frontmatter is still parseable YAML.
+row to a paragraph, terse wording. Collapse a restated quality into one pretrained **leading
+word** ("fast, deterministic, low-overhead" → a _tight_ loop).
 
 **Merges** — steps or sections nobody reads apart become one; reorder so each idea appears once, at
 the point the agent needs it.
