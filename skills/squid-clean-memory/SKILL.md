@@ -1,6 +1,5 @@
 ---
 name: squid-clean-memory
-disable-model-invocation: true
 argument-hint: "[scope-path] (default: every memory file in the repo)"
 description: >-
   Shrink the memory files sessions load — the root AGENTS.md plus every nested AGENTS.md /
@@ -93,6 +92,8 @@ Report `wc -w` before → after per file. Then ask the user to run `/doctor` (Cl
 built-in you cannot invoke): Step 1 scopes this pass to tracked files, so the always-loaded
 local ones — `~/.claude/CLAUDE.md`, `CLAUDE.local.md` — are never reached here; `/doctor`
 dedupes those against the checked-in set.
+
+When run unattended (a scheduled routine), also send that report with PushNotification — nobody reads the session.
 
 ## Notes on shape
 
