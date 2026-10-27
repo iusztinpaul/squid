@@ -1,6 +1,5 @@
 ---
 name: squid-clean-docs
-disable-model-invocation: true
 argument-hint: "[scope-path] (default: whole repo)"
 description: >-
   Strip redundancy from prose — docs, READMEs, code comments, docstrings — keeping behaviour
@@ -84,6 +83,8 @@ Anything red: revert that commit, do not "fix forward".
 
 Report lines removed per category and the verify result. If the README was reorganised, say what moved
 where.
+
+When run unattended (a scheduled routine), also send that report with PushNotification — nobody reads the session.
 
 ## Notes on shape
 

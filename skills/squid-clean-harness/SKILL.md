@@ -1,6 +1,5 @@
 ---
 name: squid-clean-harness
-disable-model-invocation: true
 argument-hint: "[.agents-path] (default: ./.agents)"
 description: >-
   Shrink an agent harness (.agents/ skills + resources) to the minimum tokens that keep the exact
@@ -134,3 +133,5 @@ Anything off: revert that commit (or restore the snapshot), do not "fix forward"
 Report `wc -w` before → after per file, what moved into `resources/`, and every flagged dangling
 item. Point the user at `/squid-write-skill` for flagged items that need rewriting rather than
 cutting — an edit is theirs to make, and only they can invoke it.
+
+When run unattended (a scheduled routine), also send that report with PushNotification — nobody reads the session.
