@@ -3,8 +3,9 @@ name: squid-write-navigation-docs
 disable-model-invocation: true
 argument-hint: "[repo-path] (default: current repo)"
 description: >-
-  Write an open-source repo's navigation docs — a short landing-page README for people plus
-  guides/ runbooks for agents (full setup, every run scenario).
+  Write an open-source repo's navigation docs — a short landing-page README for people, guides/
+  runbooks for agents (full setup, every run scenario), and the GitHub About description and
+  trending topics.
 ---
 
 # Write navigation docs
@@ -129,7 +130,29 @@ CTA URLs.
 
 Done when every row above is written or omitted per the omission rule.
 
-## Step 5 — Verify
+## Step 5 — Write the GitHub About
+
+The repo's About box is what search results and link previews show. Write both parts:
+
+- **Description:** ≤ 20 words, plain text — what it is, for whom, one checkable fact. Good:
+  "Build a coding agent from scratch in Python — tools, memory and evals, explained in 8
+  articles."; bad: "🚀 The ultimate next-gen AI framework!"
+- **Topics:** fetch `https://trendshift.io/topics` (server-rendered; each `/topics/<slug>` link is
+  one topic) and pick the 3–8 slugs that name what the repo does, then add the language and main
+  framework from the inventory; ≤ 12 in all, lowercase-hyphenated. Good: `ai-agent`, `mcp`,
+  `llm-evaluation`, `python`, `fastapi` for a Python MCP agent; bad: `ai`, `awesome`, `game-engine`
+  picked only because it trends.
+
+Print the description and topics with the `gh` command, and run it only after approval:
+
+```bash
+gh repo edit {{owner}}/{{repo}} --description "{{description}}" --add-topic {{topic}} --add-topic {{topic}}
+```
+
+Done when the description is ≤ 20 words and every topic is a trendshift slug or comes from the
+inventory.
+
+## Step 6 — Verify
 
 - `wc -l README.md` ≤ 250, sections in table order.
 - `ls guides/` matches the Guides table both ways: every file has a row, every row a file.
@@ -142,7 +165,8 @@ Done when every row above is written or omitted per the omission rule.
 
 Fix every failure and re-run the whole list; done when all checks pass in one run.
 
-## Step 6 — Hand-off
+## Step 7 — Hand-off
 
-Report the README line count, the guides written, the sections omitted and why, and every command
-you could not run or whose expected output is unverified.
+Report the README line count, the guides written, the sections omitted and why, the About
+description and topics (and whether `gh repo edit` ran), and every command you could not run or
+whose expected output is unverified.
