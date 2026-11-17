@@ -105,6 +105,21 @@ Ask me for any API key it needs.
 ```
 ````
 
+### Agent-run prompt (#8)
+
+Last block of See it in action: the featured example as one copyable prompt.
+
+````markdown
+**Run it with your coding agent:**
+
+```txt
+In https://github.com/{{owner}}/{{repo}} (set up per guides/01_setup.md if it isn't yet), follow
+guides/02_running.md#{{scenario-anchor}} to run {{example: e.g. the GraphRAG night}} with
+{{command}}, until {{end state: e.g. done.json is written}}. Use 00_troubleshooting.md on any
+error and ask me for any API key or budget it needs.
+```
+````
+
 ### Sponsors (#10)
 
 Take the lines from the sponsor's CTA text or the article's footer, with "the series" changed to
