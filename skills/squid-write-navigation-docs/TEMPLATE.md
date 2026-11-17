@@ -91,34 +91,46 @@ Agents`; bad: `## Stay updated`. Copy `assets/decodingai-banner.jpg` from this s
 </a>
 ```
 
-### Agent-setup prompt (#5)
+### Agent prompts (#5, #8)
 
-Last block of the Quickstart.
+Each section ends with a `###` subtitle and one copyable prompt per run mode the guides document
+(local, cloud), each labelled by the mode and what it needs. A repo with one run mode drops the
+labels and keeps one prompt. Good: "**Local** (Docker on your machine, no keys)" / "**Inngest
+Cloud** (needs your Inngest event and signing keys)"; bad: "**Option 2:**". Each prompt names the
+mode's guide anchors, its command, and an end state the agent can check.
+
+Setup — last block of the Quickstart (#5):
 
 ````markdown
-**Set up with your coding agent:**
+### Set up with your coding agent
+
+**{{Mode}}** ({{what it runs on and needs: e.g. Docker on your machine, no keys}}):
 
 ```txt
-Clone https://github.com/{{owner}}/{{repo}}, follow guides/ from 01_setup.md onward
+Clone https://github.com/{{owner}}/{{repo}}, follow guides/ from 01_setup.md onward, including
+{{mode anchors: e.g. 01_setup.md#inngest-cloud}}
 (00_troubleshooting.md on any error), and set it up until {{end state: e.g. make test passes}}.
-Ask me for any API key it needs.
+Ask me for {{mode keys: e.g. INNGEST_EVENT_KEY}} and any other API key it needs.
 ```
 ````
 
-### Agent-run prompt (#8)
-
-Last block of See it in action: the featured example as one copyable prompt.
+Run — last block of See it in action (#8), the featured example:
 
 ````markdown
-**Run it with your coding agent:**
+### Run it with your coding agent
+
+**{{Mode}}** ({{what it runs on: e.g. runs and traces in the Inngest dashboard}}):
 
 ```txt
 In https://github.com/{{owner}}/{{repo}} (set up per guides/01_setup.md if it isn't yet), follow
-guides/02_running.md#{{scenario-anchor}} to run {{example: e.g. the GraphRAG night}} with
+guides/02_running.md#{{scenario-anchor}} and #{{mode-anchor}} to run {{example: e.g. the GraphRAG night}} with
 {{command}}, until {{end state: e.g. done.json is written}}. Use 00_troubleshooting.md on any
 error and ask me for any API key or budget it needs.
 ```
 ````
+
+Repeat the `**{{Mode}}**` line and its fence for each mode; drop `including …` and `{{mode keys}} and` when a
+mode adds no anchors or keys.
 
 ### Sponsors (#10)
 
