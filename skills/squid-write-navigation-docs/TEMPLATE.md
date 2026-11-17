@@ -20,7 +20,7 @@ Section numbers refer to the Step 4 table in [`SKILL.md`](SKILL.md).
 
 ## Diagram (#3)
 
-Use an architecture image already in the repo. Otherwise write a Mermaid `flowchart LR` of ≤ 8
+Use `assets/architecture.png` (from the repo or Step 2). Otherwise write a Mermaid `flowchart LR` of ≤ 8
 nodes, each node a component a reader can find in the tree — good: 6 nodes, ingest → index →
 agent; bad: a 15-node diagram of every module.
 
@@ -41,8 +41,8 @@ Step 2 answers.
 ```html
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="{{logo-dark-path}}">
-    <img src="{{logo-light-path}}" alt="{{repo}} logo" width="140">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-light.png" alt="{{repo}} logo" width="140">
   </picture>
   <h1>{{title}}</h1>
   <h3>{{tagline}}</h3>
@@ -73,6 +73,10 @@ engineering`; bad: `## Stay updated`.
 ```markdown
 > {{one sentence: what Decoding AI teaches about this repo's topic}}
 
+<a href="https://www.decodingai.com/">
+  <img src="assets/decodingai-banner.png" alt="Decoding AI Magazine" width="100%">
+</a>
+
 <p align="center">
   <a href="https://www.decodingai.com/">
     <img src="https://img.shields.io/static/v1?label&logo=substack&message=Read%20on%20Substack&style=for-the-badge&color=black" alt="Decoding AI on Substack" height="40">
@@ -83,6 +87,8 @@ engineering`; bad: `## Stay updated`.
   </a>
 </p>
 ```
+
+Drop the banner `<a>` when Step 2 gave no banner link.
 
 ### Agent-setup prompt (#5)
 
@@ -104,7 +110,7 @@ One `<a>` per sponsor, joined by `&nbsp;&nbsp;`.
 
 ```html
 <p align="center">
-  <a href="{{sponsor-url}}"><img src="{{sponsor-logo-path}}" alt="{{sponsor}}" height="45"></a>
+  <a href="{{sponsor-url}}"><img src="assets/sponsors/{{sponsor-slug}}.png" alt="{{sponsor}}" height="45"></a>
 </p>
 
 <p align="center">Special thanks to {{sponsor links: comma-separated}} for sponsoring this project.</p>

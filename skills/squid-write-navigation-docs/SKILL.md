@@ -28,16 +28,34 @@ image dirs (`assets/`, `static/`). Run `git remote get-url origin` and
 
 Done when you have **written the inventory**: every install and run command with the file that
 defines it; every env var with the file that reads it; the CI workflow file, default branch and
-published package name; logo and architecture-image paths; and whether the repo executes code,
+published package name; every image already in the repo; and whether the repo executes code,
 holds credentials or sends telemetry (#12's condition).
 
 ## Step 2 — Ask for what the repo cannot tell you
 
 One `AskUserQuestion` call (up to 4 questions; a second call only for what remains), only for the
 gaps: the problem and the solution, who it is for, which 1–2 examples to feature, article, video
-and code-folder links per piece, sponsors (name, link, logo path).
+and code-folder links per piece, sponsors (name and link).
 
-Every link and name comes from the repo or the user — good: "sponsor logo `assets/qdrant.png`,
+**Assets:** in the same round, ask for a source link (URL or local path) for every image the README
+needs that the inventory lacks: logo (light + dark), architecture diagram, Decoding AI banner, one
+screenshot or GIF per example, sponsor logos. Download each into `assets/` under the name below,
+and copy in any inventory image that lives elsewhere (`static/`, `docs/`); the README loads images
+only from `assets/`. An asset with no link drops its block (the diagram falls back to Mermaid).
+
+| Asset              | Saved as                                        |
+| ------------------ | ----------------------------------------------- |
+| Logo               | `assets/logo-light.png`, `assets/logo-dark.png` |
+| Architecture       | `assets/architecture.png`                       |
+| Decoding AI banner | `assets/decodingai-banner.png`                  |
+| Example N          | `assets/example-N.png` (or `.gif`)              |
+| Sponsor            | `assets/sponsors/{{sponsor-slug}}.png`          |
+
+Keep the source's extension (`.svg`, `.jpg`) when it is not PNG. Good: `curl -fL <url> -o
+assets/architecture.png`, referenced as `assets/architecture.png`; bad: hot-linking
+`https://github.com/user-attachments/...` in the README.
+
+Every link and name comes from the repo or the user — good: "sponsor logo `assets/sponsors/qdrant.png`,
 given by the user"; bad: "a guessed `youtube.com/@{{repo}}` link".
 
 **Existing README?** Every section gets a destination. Print a move map
@@ -45,8 +63,8 @@ given by the user"; bad: "a guessed `youtube.com/@{{repo}}` link".
 file list for Step 3 — and wait for approval before writing anything. Good: "`## Installation` →
 guides/01_setup.md"; bad: "move the technical stuff to guides".
 
-Done when every Step 4 section has content or an omission reason from the omission rule, and the
-move map (if any) is approved.
+Done when every Step 4 section has content or an omission reason from the omission rule, every
+asset is in `assets/` or its block is marked dropped, and the move map (if any) is approved.
 
 ## Step 3 — Write the runbooks
 
@@ -115,7 +133,7 @@ Done when every row above is written or omitted per the omission rule.
 
 - `wc -l README.md` ≤ 250, sections in table order.
 - `ls guides/` matches the Guides table both ways: every file has a row, every row a file.
-- Every relative link, image path and `#anchor` (nav bar included) in `README.md` and `guides/`
+- Every image path points into `assets/`, and every relative link, image path and `#anchor` (nav bar included) in `README.md` and `guides/`
   resolves.
 - Every command in the docs traces to the Step 1 inventory. Run the quickstart in a fresh clone
   when it needs no secrets.
