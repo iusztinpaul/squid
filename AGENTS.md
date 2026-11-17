@@ -41,6 +41,7 @@ Either way they get an opinionated agent team plus a `/squid-scaffold` flow that
 │   ├── squid-clean-docs/              # /squid-clean-docs — prose cleanup: docs, comments, docstrings
 │   ├── squid-clean-memory/            # /squid-clean-memory — memory-file shrink: compress, dedupe, merge
 │   ├── squid-clean-harness/           # /squid-clean-harness — .agents shrink: skills + resources, same logic fewer tokens
+│   ├── squid-write-navigation-docs/   # /squid-write-navigation-docs — landing-page README for people + guides/ runbooks for agents
 │   └── squid-write-skill/             # /squid-write-skill — skill-authoring reference (vendored from mattpocock/skills, MIT)
 └── README.md                          # user-facing (install + what's inside)
 ```
