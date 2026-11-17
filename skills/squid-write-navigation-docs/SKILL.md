@@ -7,7 +7,7 @@ description: >-
   guides/ runbooks for agents (full setup, every run scenario).
 ---
 
-# Write navigation docs — landing page for people, runbooks for agents
+# Write navigation docs
 
 You write two kinds of doc, each for one reader:
 
@@ -17,116 +17,114 @@ You write two kinds of doc, each for one reader:
 - **`guides/*.md` are the runbooks.** An agent operates the repo from them alone: exact commands,
   env vars, expected output, every scenario.
 
-Each fact has one home. Setup detail lives in a runbook; the landing page links to it.
-
 `$ARGUMENTS` is an optional repo path. Empty means the current repo.
 
 ## Step 1 — Survey the repo
 
 Read the existing `README.md`, every doc it links, the task runner (`Makefile`, `package.json`
-scripts, `pyproject.toml` entry points), `.env.example`, `LICENSE`, and the image dirs (`assets/`,
-`static/`). Run `git remote get-url origin` for the owner and repo name.
+scripts, `pyproject.toml` entry points), `.env.example`, `.github/workflows/`, `LICENSE`, and the
+image dirs (`assets/`, `static/`). Run `git remote get-url origin` and
+`git symbolic-ref --short refs/remotes/origin/HEAD` for owner, repo and default branch.
 
-Done when you can list every install and run command with the file that defines it, and every
-env var with the file that reads it.
+Done when you have **written the inventory**: every install and run command with the file that
+defines it; every env var with the file that reads it; the CI workflow file, default branch and
+published package name; logo and architecture-image paths; and whether the repo executes code,
+holds credentials or sends telemetry (#12's condition).
 
 ## Step 2 — Ask for what the repo cannot tell you
 
-One `AskUserQuestion` round, only for the gaps: the problem and the solution, who it is for, which
-1–2 examples to feature, article + video links, sponsors (name, link, logo path). Every link and
-name comes from the repo or the user; a section left without content is omitted.
+One `AskUserQuestion` call (up to 4 questions; a second call only for what remains), only for the
+gaps: the problem and the solution, who it is for, which 1–2 examples to feature, article, video
+and code-folder links per piece, sponsors (name, link, logo path).
 
-**Existing README?** Relocate: every technical detail it holds moves into a runbook. Print a move
-map (`existing section → destination file`, or `→ cut: <reason>`) and wait for approval before
-writing anything.
+Every link and name comes from the repo or the user — good: "sponsor logo `assets/qdrant.png`,
+given by the user"; bad: "a guessed `youtube.com/@{{repo}}` link".
+
+**Existing README?** Every section gets a destination. Print a move map
+(`existing section → README #N | guides/<file> | cut: <reason>`) — it also fixes the `guides/`
+file list for Step 3 — and wait for approval before writing anything. Good: "`## Installation` →
+guides/01_setup.md"; bad: "move the technical stuff to guides".
+
+Done when every Step 4 section has content or an omission reason from the omission rule, and the
+move map (if any) is approved.
 
 ## Step 3 — Write the runbooks
 
 One file per job under `guides/`, numbered in reading order (`00_` is the lookup, read on failure):
 
-| File                    | Holds                                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `01_setup.md`           | Prerequisites with versions, install, every env var and where to get its value; a `Path \| Cost` table when cost differs by run path |
-| `02_running.md`         | Every run scenario (local, Docker, cloud, tests, evals), one `##` per scenario                                                       |
-| `03_<topic>.md` …       | Whatever else this repo needs: deploy, data, architecture, project structure                                                         |
-| `00_troubleshooting.md` | Each known failure as error text → cause → fix, then an `## FAQ`. Only when either has content                                       |
+| File                    | Holds                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| `01_setup.md`           | Prerequisites, install, env vars, external services; a `## Cost` table when cost differs by run path |
+| `02_running.md`         | Every run scenario (local, Docker, cloud, tests, evals), one `##` per scenario                       |
+| `03_{{topic}}.md` …     | Whatever else this repo needs: deploy, data, architecture, project structure, security               |
+| `00_troubleshooting.md` | Each known failure as error text → cause → fix, then an `## FAQ`. Only when either has content       |
 
 Runbook rules:
 
-| Rule                                                                                                   | Good                                                                         | Bad                                               |
-| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------- |
-| First line states the end state.                                                                       | "After this guide `make test` passes on a fresh clone."                      | "Welcome! Let's get you set up."                  |
-| Every command sits in a fenced block, runnable from the repo root.                                     | `uv sync && cp .env.example .env`                                            | "Install the dependencies and configure env."     |
-| Every command that can fail is followed by its expected output.                                        | "Prints `Uvicorn running on http://127.0.0.1:8000`."                         | "The server should now be working."               |
-| Every env var is named, with its source and whether it is required.                                    | "`OPENAI_API_KEY` — required; platform.openai.com/api-keys"                  | "Add your API keys."                              |
-| `01_setup.md`: prerequisites form one table `Tool \| Min version \| Purpose \| Install`.               | "`uv \| ≥0.5 \| Python env + deps \| [install](https://docs.astral.sh/uv/)`" | "Make sure you have Python and Docker installed." |
-| `01_setup.md`: one `###` per external service — sign-up link, env var it fills, free tier or paid.     | "`### Qdrant` — free cloud tier; fills `QDRANT_URL`, `QDRANT_API_KEY`"       | "Create accounts on the services we use."         |
-| `02_running.md`: scenarios follow the order the system runs in, each naming its prerequisite scenario. | "`## Train` — needs `## Generate dataset` to have run"                       | Scenarios in alphabetical order                   |
-| `02_running.md`: each scenario names its code entry point — the first file to open when it breaks.     | "Entry point: `pipelines/feature_engineering.py`"                            | "The logic is spread across the codebase."        |
-| A GitHub alert (`> [!WARNING]`) marks only a step that breaks something if skipped; one sentence.      | "`> [!WARNING]` Run `make infra-up` first — every pipeline needs MongoDB."   | A `> [!NOTE]` on every other paragraph            |
-| The last line links the next guide; the last guide links the README's Guides table.                    | "Next: [02_running.md](02_running.md)"                                       | A guide that dead-ends.                           |
+| Rule                                                                                                                                               | Good                                                                                     | Bad                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| The first line under the title states the end state.                                                                                               | "After this guide `make test` passes on a fresh clone."                                  | "Welcome! Let's get you set up."                  |
+| Every command sits in a fenced block, runnable from the repo root.                                                                                 | `uv sync && cp .env.example .env`                                                        | "Install the dependencies and configure env."     |
+| A command that can fail is followed by its expected output, copied from a run or the repo's code; otherwise it goes in the hand-off as unverified. | "Prints `Uvicorn running on http://127.0.0.1:8000`."                                     | "The server should now be working."               |
+| Every env var is named, with its source and whether it is required.                                                                                | "`OPENAI_API_KEY` — required; platform.openai.com/api-keys"                              | "Add your API keys."                              |
+| `01_setup.md`: prerequisites form one table `Tool \| Min version \| Purpose \| Install`.                                                           | "`uv \| ≥0.5 \| Python env + deps \| [install](https://docs.astral.sh/uv/)`"             | "Make sure you have Python and Docker installed." |
+| `01_setup.md`: one `###` per external service — sign-up link, env var it fills, free tier or paid.                                                 | "`### Qdrant` — free cloud tier; fills `QDRANT_URL`, `QDRANT_API_KEY`"                   | "Create accounts on the services we use."         |
+| `02_running.md`: scenarios follow the order the system runs in, each naming its prerequisite scenario.                                             | "`## Train` — needs `## Generate dataset` to have run"                                   | Scenarios in alphabetical order                   |
+| `02_running.md`: each scenario names its code entry point — the first file to open when it breaks.                                                 | "Entry point: `pipelines/feature_engineering.py`"                                        | "The logic is spread across the codebase."        |
+| A GitHub alert marks only a step that breaks something if skipped: marker on its own line, one sentence.                                           | `> [!WARNING]` / `> Run make infra-up first — every pipeline needs MongoDB.` (two lines) | A `> [!NOTE]` on every other paragraph            |
+| The last line links the next guide by number; the highest-numbered guide and `00_troubleshooting.md` link `../README.md#guides`.                   | "Next: [02_running.md](02_running.md)"                                                   | A guide that dead-ends.                           |
+
+Done when every command and env var in the Step 1 inventory appears in exactly one runbook, and
+every runbook rule holds in every file.
 
 ## Step 4 — Write the landing page
 
-Sections in this order; headings as written. Budgets are caps, and the default for the whole file
-is **250 lines**.
+Sections in this order; headings as written, in sentence case — capitalise only the first word and
+words capitalised in prose (`## Who is this for`, not `## Who Is This For`). Budgets are caps; the
+whole file is capped at **250 lines**.
 
-| #   | Section                               | Holds                                                                                                                                          | Budget                                                         |
-| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 1   | Header                                | Logo, title, tagline naming the transformation, nav bar, badges                                                                                | Tagline ≤ 15 words, 1 nav line, ≤ 4 badges                     |
-| 2   | `## What Is This`                     | The problem, then how this repo solves it, then a **Before / After** line; a library adds its smallest runnable example                        | ≤ 4 sentences + 1 line + ≤ 15-line code block                  |
-| 3   | `### How It Works`                    | Architecture diagram + one bullet per main component naming its tool, directly under #2                                                        | 1 diagram, ≤ 5 bullets                                         |
-| 4   | `## <headline for this repo's topic>` | CTA to the Decoding AI Substack and YouTube                                                                                                    | 1 sentence + 2 buttons                                         |
-| 5   | `## Quickstart`                       | A **Needs** line, clone → install → run on the cheapest path, the result you should see, then the agent-setup prompt                           | 1 line + 1 code block ≤ 6 commands + 1 line + the prompt block |
-| 6   | `## Guides`                           | Index table `Guide \| Read it when`, one row per `guides/` file                                                                                | 1 row per guide                                                |
-| 7   | `## Who Is This For`                  | Table `Audience \| What you get`                                                                                                               | ≤ 3 rows                                                       |
-| 8   | `## See It Work`                      | 1–2 examples, each: problem → command → screenshot, GIF or output                                                                              | 1 sentence + 1 visual each                                     |
-| 9   | `## Go Deeper`                        | Table `# \| Article \| Video \| Code`; each cell is a linked title, text only                                                                  | 1 row per piece                                                |
-| 10  | `## Sponsors`                         | Linked logos                                                                                                                                   | 1 row of logos + 1 sentence                                    |
-| 11  | `## Questions and Troubleshooting`    | Link to GitHub issues + `00_troubleshooting.md` when it exists                                                                                 | ≤ 2 sentences                                                  |
-| 12  | `## Security`                         | What runs where, what leaves the machine, link to the sandboxing guide. Only when the repo executes code, holds credentials or sends telemetry | ≤ 3 sentences                                                  |
-| 13  | `## <headline for this repo's topic>` | The #4 CTA block again, same headline                                                                                                          | The block                                                      |
-| 14  | `## Star History`                     | Star-history chart                                                                                                                             | The block                                                      |
-| 15  | `## License`                          | License name linked to `LICENSE`                                                                                                               | 1 line                                                         |
+| #   | Section                            | Holds                                                                                                     | Budget                                                         |
+| --- | ---------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 1   | Header                             | Logo, title, tagline naming the transformation, nav bar, badges                                           | Tagline ≤ 15 words, 1 nav line, ≤ 4 badges                     |
+| 2   | No heading, right after #1         | Problem → solution → **Before / After** line; a library adds its smallest runnable example                | ≤ 4 sentences + 1 line + ≤ 15-line code block                  |
+| 3   | `## How it works`                  | Architecture diagram + component bullets                                                                  | 1 diagram, ≤ 5 bullets                                         |
+| 4   | `## {{topic headline}}`            | CTA to the Decoding AI Substack and YouTube                                                               | 1 sentence + 2 buttons                                         |
+| 5   | `## Quickstart`                    | **Needs** line, clone → install → run on the cheapest path, the result you should see, agent-setup prompt | 1 line + 1 code block ≤ 6 commands + 1 line + the prompt block |
+| 6   | `## Guides`                        | Index table `Guide \| Read it when`, one row per `guides/` file                                           | 1 row per guide                                                |
+| 7   | `## Who is this for`               | Table `Audience \| What you get`                                                                          | ≤ 3 rows                                                       |
+| 8   | `## See it in action`              | 1–2 examples, each: problem → command → screenshot, GIF or output                                         | 1 sentence + 1 command + 1 visual each                         |
+| 9   | `## Learn more`                    | Table `# \| Article \| Video \| Code`; each cell is a linked title, text only                             | 1 row per piece                                                |
+| 10  | `## Sponsors`                      | Linked logos                                                                                              | 1 row of logos + 1 sentence                                    |
+| 11  | `## Questions and troubleshooting` | Link to GitHub issues, `00_troubleshooting.md` when it exists, `CONTRIBUTING.md` when it exists           | ≤ 2 sentences                                                  |
+| 12  | `## Security`                      | What runs where, what leaves the machine, link to the runbook that covers it                              | ≤ 3 sentences                                                  |
+| 13  | `## {{topic headline}}`            | The #4 CTA block again, same headline                                                                     | The block                                                      |
+| 14  | `## Star history`                  | Star-history chart                                                                                        | The block                                                      |
+| 15  | `## License`                       | License name linked to `LICENSE`                                                                          | 1 line                                                         |
 
-Omit #9 and #10 when Step 2 gave nothing for them, and #12 when its condition fails. Everything else a README usually carries —
-full prerequisites, project structure, FAQ (in `00_troubleshooting.md`), contributing — lives in a runbook or
-`CONTRIBUTING.md` and earns at most a Guides row.
+**Omission rule:** omit #8 when no example exists, #9 and #10 when Step 2 gave nothing for them,
+and #12 unless the repo executes code, holds credentials or sends telemetry. Everything else lives
+in a runbook.
 
-**Read [`TEMPLATE.md`](TEMPLATE.md) before writing #1, #4, #5, #10, #13 and #14** — it holds their exact
-HTML and the CTA URLs.
+**Read [`TEMPLATE.md`](TEMPLATE.md) before writing any README section** — it holds the
+landing-page rules, the diagram fallback, the exact HTML for #1, #4, #5, #10, #13 and #14, and the
+CTA URLs.
 
-**Diagram (#3):** use an architecture image already in the repo; otherwise write a Mermaid
-`flowchart LR` of ≤ 8 nodes, each node a component a reader can find in the tree.
-
-Landing-page rules:
-
-| Rule                                                                                      | Good                                                                                          | Bad                                                     |
-| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Open on the reader's problem, then the solution.                                          | "Notes pile up unread. This turns 500 Notion pages into an assistant that answers from them." | "This repository contains the code for our RAG course." |
-| Before / After names the reader's concrete state on each side.                            | "**Before:** grep 500 notes by hand. **After:** ask, get a cited answer in 3 s."              | "**Before:** inefficient. **After:** streamlined."      |
-| Needs lists runtime, keys, cost and hardware — everything a reader checks before cloning. | "**Needs:** Python 3.12 · one free Gemini key · $0 · no GPU"                                  | "**Needs:** see the setup guide"                        |
-| Every sentence carries a checkable fact: a number, a name, a command.                     | "Runs on a laptop for $0 with a free Gemini key."                                             | "A powerful, production-ready pipeline."                |
-| Show first: a diagram, code block or table replaces a paragraph.                          | A 6-node diagram of ingest → index → agent                                                    | Three paragraphs describing the data flow               |
-| A How It Works bullet names the component, its tool and its job.                          | "**Vector search** — MongoDB Atlas; retrieves the top-5 chunks per query"                     | "Uses a modern, scalable database."                     |
-| The Needs line shows the cheapest path's cost; the full table lives in `01_setup.md`.     | "**Needs:** … · from $0 ([cost by path](guides/01_setup.md#cost))"                            | A 4-row cost table in the README                        |
-| An example is a result someone wanted.                                                    | "`/demo-snake` builds a playable Snake game in one prompt" + screenshot                       | "Supports many use cases."                              |
-| A Guides row says when to open it.                                                        | "`02_running.md` — you want to run the evals or the Docker stack"                             | "`02_running.md` — Running guide"                       |
-| The nav bar links this page's anchors, in section order.                                  | "[Quickstart](#quickstart) · [Guides](#guides) · [Go Deeper](#go-deeper)"                     | A nav bar to the org's homepage and Twitter             |
-| A library's example runs as pasted and shows the output it prints.                        | 8-line FastMCP server with `@mcp.tool def add(a, b)`, then "`mcp.run()` serves it on stdio"   | A signature-only snippet with `...` in the body         |
-| The agent-setup prompt sends the agent to `guides/` and names the end state.              | "Read guides/ in order and set this repo up until `make test` passes."                        | "Use AI to install this."                               |
-| Link the runbook for anything past the quickstart.                                        | "Full setup: [guides/01_setup.md](guides/01_setup.md)"                                        | Docker and cloud install steps inline                   |
+Done when every row above is written or omitted per the omission rule.
 
 ## Step 5 — Verify
 
-- `wc -l README.md` ≤ 250, sections in table order, License last.
+- `wc -l README.md` ≤ 250, sections in table order.
 - `ls guides/` matches the Guides table both ways: every file has a row, every row a file.
-- Every relative link, image path and `#anchor` (nav bar included) in `README.md` and `guides/` resolves.
-- Every command in the docs traces to the file found in Step 1. Run the quickstart in a fresh
-  clone when it needs no secrets.
-- `grep -nE '\{\{|TODO' README.md guides/*.md` returns nothing — every template placeholder is filled.
+- Every relative link, image path and `#anchor` (nav bar included) in `README.md` and `guides/`
+  resolves.
+- Every command in the docs traces to the Step 1 inventory. Run the quickstart in a fresh clone
+  when it needs no secrets.
+- `grep -nE '\{\{[a-z][a-z -]*(:|\}\})|TODO' README.md guides/*.md` returns nothing — every
+  template placeholder is filled.
+
+Fix every failure and re-run the whole list; done when all checks pass in one run.
 
 ## Step 6 — Hand-off
 
-Report the README line count, the guides written, the sections omitted and why, and any command
-you could not run.
+Report the README line count, the guides written, the sections omitted and why, and every command
+you could not run or whose expected output is unverified.
